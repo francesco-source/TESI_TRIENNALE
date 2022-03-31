@@ -47,7 +47,7 @@ void MSD(){
      TH1F *hPointsMSDSawTWNo=
      new TH1F("hPointsMSDSawTWNo","Quanti punti vede l'MSD quando il TW non vede nulla?",20,0,20);
      TH1F *hEnergyMSDSawTWNo=
-     new TH1F("hEnergyMSDSawTWNo","Che energia vede l'MSD quando il TW non vede nulla?",100,0,100);
+     new TH1F("hEnergyMSDSawTWNo","Che energia vede l'MSD quando il TW non vede nulla con Pile up?",100,0,100);
      TH1F *hPointsMSDSawFrag=
      new TH1F("hPointsMSDSawFrag","Quanti punti vede l'MSD quando il fascio primario frammenta",20,0,20);
      std::vector<int>     *MSDPoints=0;
@@ -190,6 +190,14 @@ void MSD(){
              }
              ausiliarsum=0;
      }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+     //////////////////////////////////////////////////////////////////////////////////////////////
+     ///////////////////////Cosmetica//////////////////////////////////////////////////////////////
+     //////////////////////////////////////////////////////////////////////////////////////////////
+
      hTWPointDE1->SetLineColor(kGreen);
      hTWPointDE1o->SetLineColor(kBlue);
      hTWPointDE1Clean->SetLineColor(kRed);
@@ -277,11 +285,11 @@ void MSD(){
     hTWPointDE1NoPileUP->Draw("Same");
   TCanvas *c8=new TCanvas("c8","Pile up= file pile up. Eventi= new Geom");
     hPointsMSDSawTWNo->GetXaxis()->SetTitle("Points");
-    hPointsMSDSawTWNo->GetXaxis()->SetTitle("Events");
+    hPointsMSDSawTWNo->GetYaxis()->SetTitle("Events");
     hPointsMSDSawTWNo->Draw();
    TCanvas *c9=new TCanvas("c9","Pile up= file pile up. Eventi= new Geom");
    hPointsMSDSawFrag->GetXaxis()->SetTitle("Points");
-    hPointsMSDSawFrag->GetXaxis()->SetTitle("Events");
+    hPointsMSDSawFrag->GetYaxis()->SetTitle("Events");
     hPointsMSDSawFrag->Draw();
 
     c4->Print("Grafici/TwLostEnergy.pdf");
