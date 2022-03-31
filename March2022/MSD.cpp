@@ -26,27 +26,44 @@ void MSD(){
      filePileUp->ls();
      TTree* TGeomOut=(TTree*)fileGeom->Get("Tree;5");
      TTree* TPileUpOut=(TTree*)filePileUp->Get("Tree;3");
-     TH1F *hMSDPoints= new TH1F("hMSDPoints"," Punti nel MSD",10,0,10);
-     TH1F *hTWPointDE1Clean= new TH1F("hTWPointClean"," Energia persa con MSD==3 e 1 punto nel TW",100,0,100);
-     TH1F *hTWPointDE1o= new TH1F("hTWPoint"," Energia persa con MSD==3 e con carica 8 nel TW",100,0,100);
-     TH1F *hTWPointDE1= new TH1F("hTWPoint"," Energia persa vista dal TW",100,0,100);
-     TH1F *hMSDDE1Points3= new TH1F("hMSDDE1Points3","Perdita di energia MSD==3",1000,0,5000);
-     TH1F *hMSDDE1Points= new TH1F("hMSDDE1Points","Perdita di energia MSD",1000,0,5000);
-     TH1F *hMSDDE1Points3TW= new TH1F("hMSDDE1Points3TW","Perdita di energia MSD==3 e TW=1",1000,0,5000);
-     TH1F *hMSDDE1Points3TWOssigeni= new TH1F("hMSDDE1Points3TWOssigeni","Perdita di energia MSD==3, TW=1, Carica 8",1000,0,5000);
-     TH1F *hTWPointDE1NoPileUP=new TH1F("hTWPointNoPileUP"," Energia persa vista dal TW senza pile up",100,0,100);
-     TH1F *hPointsMSDSawTWNo=new TH1F("hPointsMSDSawTWNo","Quanti punti vede l'MSD quando il TW non vede nulla?",10,0,20);
-     TH1F *hEnergyMSDSawTWNo=new TH1F("hEnergyMSDSawTWNo","Che energia vede l'MSD quando il TW non vede nulla?",10,0,20);
+     TH1F *hMSDPoints= 
+     new TH1F("hMSDPoints"," Punti nel MSD",10,0,10);
+     TH1F *hTWPointDE1Clean= 
+     new TH1F("hTWPointClean"," Energia persa con MSD==3 e 1 punto nel TW",100,0,100);
+     TH1F *hTWPointDE1o= 
+     new TH1F("hTWPoint"," Energia persa con MSD==3 e con carica 8 nel TW",100,0,100);
+     TH1F *hTWPointDE1=
+      new TH1F("hTWPoint"," Energia persa vista dal TW",100,0,100);
+     TH1F *hMSDDE1Points3= 
+     new TH1F("hMSDDE1Points3","Perdita di energia MSD==3",1000,0,5000);
+     TH1F *hMSDDE1Points= 
+     new TH1F("hMSDDE1Points","Perdita di energia MSD",1000,0,5000);
+     TH1F *hMSDDE1Points3TW=
+      new TH1F("hMSDDE1Points3TW","Perdita di energia MSD==3 e TW=1",1000,0,5000);
+     TH1F *hMSDDE1Points3TWOssigeni= 
+     new TH1F("hMSDDE1Points3TWOssigeni","Perdita di energia MSD==3, TW=1, Carica 8",1000,0,5000);
+     TH1F *hTWPointDE1NoPileUP=
+     new TH1F("hTWPointNoPileUP"," Energia persa vista dal TW senza pile up",100,0,100);
+     TH1F *hPointsMSDSawTWNo=
+     new TH1F("hPointsMSDSawTWNo","Quanti punti vede l'MSD quando il TW non vede nulla?",20,0,20);
+     TH1F *hEnergyMSDSawTWNo=
+     new TH1F("hEnergyMSDSawTWNo","Che energia vede l'MSD quando il TW non vede nulla?",100,0,100);
+     TH1F *hPointsMSDSawFrag=
+     new TH1F("hPointsMSDSawFrag","Quanti punti vede l'MSD quando il fascio primario frammenta",20,0,20);
      std::vector<int>     *MSDPoints=0;
      std::vector<double>  *TWDe1Point=0;
      std::vector<int>     *TWChargePoint=0;
       std::vector<double>  *MSDDe1Point=0;
+      Bool_t          Frag;
+      Bool_t          SCPileup=0;
      Int_t           TWPoints=0;
      TBranch        *b_MSDPoints=0; 
      TBranch        *b_TWPoints=0; 
      TBranch        *b_TWDe1Point=0;
      TBranch        *b_TWChargePoint=0;
      TBranch        *b_MSDDe1Point=0;
+      TBranch        *b_SCPileup=0; 
+        TBranch        *b_Frag=0;
      Long64_t tGeomEntry=0;
      Long64_t tPileUpEntry=0;
      UInt_t nentriesGeom=TGeomOut->GetEntries();
@@ -57,6 +74,8 @@ void MSD(){
      TGeomOut->SetBranchAddress("TWDe1Point", &TWDe1Point, &b_TWDe1Point);
      TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint, &b_TWChargePoint);
      TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
+     TPileUpOut->SetBranchAddress("SCPileup", &SCPileup, &b_SCPileup);
+     TGeomOut->SetBranchAddress("Frag", &Frag, &b_Frag);
      for(UInt_t i=0;i<nentriesGeom;++i){
        ///////////////////////////////////////////////////////////////
        /////////////////////Get-Entries del tree//////////////////////
@@ -67,7 +86,8 @@ void MSD(){
          b_TWDe1Point->GetEntry(i);
          b_TWChargePoint->GetEntry(i);
          b_MSDDe1Point->GetEntry(i);
-
+         b_SCPileup->GetEntry(i);
+         b_Frag->GetEntry(i);
          //////////////////////////////////////////////////////////
          //////////////////Riempio energia osservata dal TW////////
          //////////////////////////////////////////////////////////
@@ -101,11 +121,42 @@ void MSD(){
             }
             hMSDDE1Points->Fill(variab);
 
-         
-          /////////////////////////////////////////////////////////
-          ///////////////Condizioni di visibilità del rivelatore///
-          /////////////////////////////////////////////////////////
 
+
+
+
+
+
+          ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+          ///////////////Condizioni di visibilità del rivelatore////////////////////////////////////////////////////////
+          ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+        ////////////////////////////////////////////////////////////////
+        ///Punti visti da MSD quando TW non vede niente e c' è pile up//
+        ////////////////////////////////////////////////////////////////
+        if( TWPoints==0 && SCPileup==true){
+          hPointsMSDSawTWNo->Fill(sum[i]);
+        }
+
+      ////////////////////////////////////////////////////////////////
+      ////Quanti punti vede l' MSD quando il fascio frammenta?///////////////
+      ///////////////////////////////////////////////////////////////
+      if(Frag==true){
+        hPointsMSDSawFrag->Fill(sum[i]);
+      }
+        //////////////////////////////////////////////////////////////
+        //Energia persa in MSD quando TW non vede nulla con Pile UP///
+        //////////////////////////////////////////////////////////////
+          if(TWPoints==0 && SCPileup==true){
+              //Riempilo con il grafico metto uno zero ora di default
+              hEnergyMSDSawTWNo->Fill(0);
+          }
           //Energia TW quando TW ed MSD vedono solo un punto che succede/////
          if( sum[i]==3 && TWPoints==1){  
              for(UInt_t j=0;j<TWDe1Point->size();++j)
@@ -224,9 +275,19 @@ void MSD(){
     gPad->SetLogy();
     hTWPointDE1->Draw();
     hTWPointDE1NoPileUP->Draw("Same");
+  TCanvas *c8=new TCanvas("c8","Pile up= file pile up. Eventi= new Geom");
+    hPointsMSDSawTWNo->GetXaxis()->SetTitle("Points");
+    hPointsMSDSawTWNo->GetXaxis()->SetTitle("Events");
+    hPointsMSDSawTWNo->Draw();
+   TCanvas *c9=new TCanvas("c9","Pile up= file pile up. Eventi= new Geom");
+   hPointsMSDSawFrag->GetXaxis()->SetTitle("Points");
+    hPointsMSDSawFrag->GetXaxis()->SetTitle("Events");
+    hPointsMSDSawFrag->Draw();
 
     c4->Print("Grafici/TwLostEnergy.pdf");
     c5->Print("Grafici/MSDLostEnergy.pdf");
     c6->Print("Grafici/MSDLostEnergyConfronto.pdf");
     c7->Print("Grafici/TW Energy lost and pile up.pdf");
+    c8->Print("Grafici/Quanti punti vede l'MSd quando TW non vede nulla con Pile up?.pdf");
+    c9->Print("Grafici/Quando ho frammentazione quanti punti vede MSD?.pdf");
 }
