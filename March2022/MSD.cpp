@@ -195,11 +195,12 @@ void MSD(){
     gPad->SetLogy();
     hTWPointDE1NoPileUP->Draw();
     c7->cd(3);
+    gPad->SetLogy();
     hTWPointDE1->Draw();
     hTWPointDE1NoPileUP->Draw("Same");
 
-    c4->Print("Immagini/TwLostEnergy.pdf");
-    c5->Print("Immagini/MSDLostEnergy.pdf");
-    c6->Print("Immagini/MSDLostEnergyConfronto.pdf");
-    c7->Print("Immagini/TW Energy lost and pile up.pdf");
+    c4->Print("Grafici/TwLostEnergy.pdf");
+    c5->Print("Grafici/MSDLostEnergy.pdf");
+    c6->Print("Grafici/MSDLostEnergyConfronto.pdf");
+    c7->Print("Grafici/TW Energy lost and pile up.pdf");
 }
