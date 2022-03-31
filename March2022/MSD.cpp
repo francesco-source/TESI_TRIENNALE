@@ -18,169 +18,188 @@
 #include "TRandom.h"
 #include "TStyle.h"
 #include "THStack.h"
- 
- void macro(){
+void MSD(){
      TFile* fileGeom= new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
      TFile* filePileUp= new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
+     TFile* file = new TFile("MSD.root");
      fileGeom->ls();
      filePileUp->ls();
      TTree* TGeomOut=(TTree*)fileGeom->Get("Tree;5");
      TTree* TPileUpOut=(TTree*)filePileUp->Get("Tree;3");
-     TH1F *hSCTimeNoPileUp=
-           new TH1F("SCTimeNoPileUp","Start counter time without pile up",100,0,200);
-     TH1F *hSCTimePileUp=
-           new TH1F("SCTimePileUp","Start counter time with pile up",100,0,200);
-     TH1F *hSCChargePileUp= 
-           new TH1F("SCCharge"," Carica rilasciata nel start counter con pile up",100,0,30);
-     TH1F *hSCChargeNoPileUp=
-           new TH1F("SCChargeNoPileUP"," Carica rilasciata nel start counter senza pile up",100,0,30);
-     TH1F *hTWChargePointPileUp= 
-           new TH1F("TWPileup","TOF wall charge con pile up",10,-1,10);
-     TH1F *hTWChargeNoPointPileUp= 
-           new TH1F("TWNoPileup","TOF wall charge senza pile up",10,-1,10);
-  TH1F *hTWDe1Point= new TH1F("TWDe1Point","TWDe1Point con pile up",100,0,100);
-  TH1F *hTWDe1PointNoPileUp= new TH1F("TWDe1PointNoPileUP","TWDe1Point senza pile up",100,0,100);
-  TH1F *hTWDe1PointPileUp= new TH1F("TWDe1PointPileUP","TWDe1Point  pile up",100,0,100);
-  TH1F *hTWPoints=new TH1F("hTWPoints","Punti osservati dal TW in caso di avvenuto Pile UP",7,-2,5);
-     Double_t SCCharge=0;//lo leggo da new Geom
-     Double_t SCTime=0;//lo leggo da new Geom
-     Bool_t SCPileup=false;//lo leggo d PileUpFile
-    std::vector<int>     *TWChargePoint=0;
+     TH1F *hMSDPoints= new TH1F("hMSDPoints"," Punti nel MSD",10,0,10);
+     TH1F *hTWPointDE1Clean= new TH1F("hTWPointClean"," Energia persa con MSD==3 e 1 punto nel TW",100,0,100);
+     TH1F *hTWPointDE1o= new TH1F("hTWPoint"," Energia persa con MSD==3 e con carica 8 nel TW",100,0,100);
+     TH1F *hTWPointDE1= new TH1F("hTWPoint"," Energia persa vista dal TW",100,0,100);
+     TH1F *hMSDDE1Points3= new TH1F("hMSDDE1Points3","Perdita di energia MSD==3",1000,0,5000);
+     TH1F *hMSDDE1Points= new TH1F("hMSDDE1Points","Perdita di energia MSD",1000,0,5000);
+     TH1F *hMSDDE1Points3TW= new TH1F("hMSDDE1Points3TW","Perdita di energia MSD==3 e TW=1",1000,0,5000);
+     TH1F *hMSDDE1Points3TWOssigeni= new TH1F("hMSDDE1Points3TWOssigeni","Perdita di energia MSD==3, TW=1, Carica 8",1000,0,5000);
+     TH1F *hTWPointDE1NoPileUP=new TH1F("hTWPointNoPileUP"," Energia persa vista dal TW senza pile up",100,0,100);
+     std::vector<int>     *MSDPoints=0;
      std::vector<double>  *TWDe1Point=0;
-      Int_t           TWPoints;
-    TBranch        *b_SCCharge=0;   
-    TBranch        *b_SCTime=0;   
-    TBranch        *b_SCPileup=0;
-    TBranch        *b_TWChargePoint=0; 
-     TBranch        *b_TWDe1Point=0; 
-     TBranch        *b_TWPoints=0;  
-     int var=0;
-    Int_t nentriesGeom=TGeomOut->GetEntries();
-    Int_t nentriesPileUp=TPileUpOut->GetEntries();
-    if(nentriesGeom!=nentriesPileUp){for(int i=0;;){}}
-    TGeomOut->SetBranchAddress("SCCharge", &SCCharge, &b_SCCharge);
-    TGeomOut->SetBranchAddress("SCTime", &SCTime, &b_SCTime);
-    TPileUpOut->SetBranchAddress("SCPileup",&SCPileup,&b_SCPileup);
-    TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint, &b_TWChargePoint);
+     std::vector<int>     *TWChargePoint=0;
+      std::vector<double>  *MSDDe1Point=0;
+     Int_t           TWPoints=0;
+     TBranch        *b_MSDPoints=0; 
+     TBranch        *b_TWPoints=0; 
+     TBranch        *b_TWDe1Point=0;
+     TBranch        *b_TWChargePoint=0;
+     TBranch        *b_MSDDe1Point=0;
+     Long64_t tGeomEntry=0;
+     Long64_t tPileUpEntry=0;
+     UInt_t nentriesGeom=TGeomOut->GetEntries();
+     std::vector<int> sum;
+     int ausiliarsum=0;
+     TGeomOut->SetBranchAddress("MSDPoints", &MSDPoints, &b_MSDPoints);
+     TGeomOut->SetBranchAddress("TWPoints", &TWPoints, &b_TWPoints);
      TGeomOut->SetBranchAddress("TWDe1Point", &TWDe1Point, &b_TWDe1Point);
-       TGeomOut->SetBranchAddress("TWPoints", &TWPoints, &b_TWPoints);
-    Long64_t tGeomEntry=0;
-    Long64_t tPileUpEntry=0;
-    for(Int_t i=0;i<nentriesGeom;++i){
-        tGeomEntry=TGeomOut->LoadTree(i);
-        tPileUpEntry=TPileUpOut->LoadTree(i);
-        b_SCCharge->GetEntry(tGeomEntry);
-        b_SCTime->GetEntry(tGeomEntry);
-        b_SCPileup->GetEntry(tPileUpEntry);
-        b_TWChargePoint->GetEntry(tGeomEntry);
-        b_TWDe1Point->GetEntry(tGeomEntry);
-        b_TWPoints->GetEntry(tGeomEntry);
-        if(SCPileup==false){
-            hSCTimeNoPileUp->Fill(SCTime);
-            hSCChargeNoPileUp->Fill(SCCharge);
-            for(UInt_t j=0;j<TWChargePoint->size();++j){hTWChargeNoPointPileUp->Fill(TWChargePoint->at(j)); }
-            for(UInt_t j=0;j<TWDe1Point->size();++j){hTWDe1PointNoPileUp->Fill(TWDe1Point->at(j));}
-        } 
-         
-        //int counter=1;;
-        if(SCPileup==true){         
-           for(int j=0;j<TWDe1Point->size();j++){hTWDe1PointPileUp->Fill(TWDe1Point->at(j));
-           var=var+1;
-           std::cout<<var<<" ";
-        
-          }
-         if(TWDe1Point->size()==0){
-            var=var+1;
-            std::cout<<var<<" ";
-          }
-          //std::cout<<TWDe1Point->size()<<std::endl;
-          /*var=var+1;*/
-           
-          hTWPoints->Fill(TWPoints);  
-        }
-        hSCTimePileUp->Fill(SCTime);    
-        hSCChargePileUp->Fill(SCCharge); 
-        for(UInt_t j=0;j<TWChargePoint->size();++j){hTWChargePointPileUp->Fill(TWChargePoint->at(j));}
-        for(UInt_t j=0;j<TWDe1Point->size();++j){hTWDe1Point->Fill(TWDe1Point->at(j));}
-    }
+     TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint, &b_TWChargePoint);
+     TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
+     for(UInt_t i=0;i<nentriesGeom;++i){
+         tGeomEntry=TGeomOut->LoadTree(i);
+         b_MSDPoints->GetEntry(i);
+         b_TWPoints->GetEntry(i);
+         b_TWDe1Point->GetEntry(i);
+         b_TWChargePoint->GetEntry(i);
+         b_MSDDe1Point->GetEntry(i);
+         for(UInt_t j=0;j<MSDPoints->size();++j){
+             ausiliarsum=ausiliarsum+MSDPoints->at(j);
+         }
+          for(UInt_t j=0;j<TWDe1Point->size();++j){
+               
+                 {{hTWPointDE1->Fill(TWDe1Point->at(j));}
+             } 
+            }
+            for(UInt_t j=0;j<TWDe1Point->size();++j){
+                if(TWChargePoint->at(j)==8)
+                 {{hTWPointDE1o->Fill(TWDe1Point->at(j));}
+             } 
+            }
+            double variab=0;
+            for(UInt_t j=0;j<MSDDe1Point->size();++j){
+               variab=variab+MSDDe1Point->at(j);
+            }
+            hMSDDE1Points->Fill(variab);
+
+         sum.push_back(ausiliarsum);
+
+         if( sum[i]==3 && TWPoints==1){  
+             for(UInt_t j=0;j<TWDe1Point->size();++j)
+             { hTWPointDE1Clean->Fill(TWDe1Point->at(j));}  }
 
 
-    TCanvas *c= new TCanvas("c","Pile up= file pile up. Eventi= new Geom");
+             if(sum[i]==3){
+                 double var=0;
+                 for(UInt_t j=0;j<MSDDe1Point->size();++j)
+                 {var= var+ MSDDe1Point->at(j); }
+                 hMSDDE1Points3->Fill(var);
+             }
+              if(sum[i]==3 && TWPoints==1){
+                  double v=0;
+                 for(UInt_t j=0;j<MSDDe1Point->size();++j){
+                   v=v+ MSDDe1Point->at(j);
+                 }
+                 hMSDDE1Points3TW->Fill(v);
+             }
 
-    c->Divide(2,2);
-      c->cd(1);
+               if(sum[i]==3 && TWPoints==1 ){
+                   double var=0;
+                 for(UInt_t j=0;j<MSDDe1Point->size();++j){
+                         var=var+MSDDe1Point->at(j);
+                 }
+                 for(UInt_t j=0;j<TWChargePoint->size();++j){
+                     if(TWChargePoint->at(j)==8) {hMSDDE1Points3TWOssigeni->Fill(var);}
+                 }
+             }
+             ausiliarsum=0;
+     }
+     hTWPointDE1->SetLineColor(kGreen);
+     hTWPointDE1o->SetLineColor(kBlue);
+     hTWPointDE1Clean->SetLineColor(kRed);
+    TCanvas *c4=new TCanvas("c4","Pile up= file pile up. Eventi= new Geom");
+    c4->Divide(2,2);
+
+    c4->cd(1);
     gPad->SetLogy();
-    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
-      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
-    hSCTimeNoPileUp->Draw();
+    hTWPointDE1->GetXaxis()->SetTitle("dE/dx");
+     hTWPointDE1->GetYaxis()->SetTitle("Events");
+    hTWPointDE1->Draw();
 
-      c->cd(2);
+    c4->cd(2);
     gPad->SetLogy();
-     hSCTimePileUp->GetXaxis()->SetTitle("Time");
-     hSCTimePileUp->GetYaxis()->SetTitle("Events");
-     hSCTimePileUp->Draw();
-    
-    c->cd(3);
-    gPad->SetLogy();
-    hSCChargeNoPileUp->GetXaxis()->SetTitle("Charge");
-     hSCChargeNoPileUp->GetYaxis()->SetTitle("Events");
-      hSCChargeNoPileUp->Draw();
-    c->cd(4);
-    gPad->SetLogy();
-    hSCChargePileUp->GetXaxis()->SetTitle("Charge");
-     hSCChargePileUp->GetYaxis()->SetTitle("Events");
-    hSCChargePileUp->Draw();
+     hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
+     hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
+    hTWPointDE1Clean->Draw();
 
-    TCanvas *c1=new TCanvas("c1","Pile up= file pile up. Eventi= new Geom");
-    c1->Divide(2,2);
-      c1->cd(1);
-       gPad->SetLogy();
-       hTWChargeNoPointPileUp->Draw();
-      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
-      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
+    c4->cd(3);
+    gPad->SetLogy();
+    hTWPointDE1o->GetXaxis()->SetTitle("dE/dx");
+     hTWPointDE1o->GetYaxis()->SetTitle("Events");
+    hTWPointDE1o->Draw();
 
-      c1->cd(2);
-       gPad->SetLogy();
-       hTWChargePointPileUp->GetXaxis()->SetTitle("Charge");
-      hTWChargePointPileUp->GetYaxis()->SetTitle("Events");
-       hTWChargePointPileUp->Draw();
+    c4->cd(4);
+    gPad->SetLogy();
+     hTWPointDE1o->GetXaxis()->SetTitle("dE/dx");
+     hTWPointDE1o->GetYaxis()->SetTitle("Events");
+    hTWPointDE1o->Draw();
+    hTWPointDE1Clean->Draw("SAME");
+    hTWPointDE1->Draw("SAME");
+
+    TCanvas *c5=new TCanvas("c5","Pile up= file pile up. Eventi= new Geom");
+    c5->Divide(2,2);
+     hMSDDE1Points3->SetLineColor(kBlack);
+     hMSDDE1Points->SetLineColor(kRed);
+     hMSDDE1Points3TW->SetLineColor(kGreen);
+     hMSDDE1Points3TWOssigeni->SetLineColor(kBlue);
+    c5->cd(1);
+    gPad->SetLogy();
+     hMSDDE1Points->GetXaxis()->SetTitle("dE/dx");
+     hMSDPoints->GetYaxis()->SetTitle("Events");
+    hMSDDE1Points->Draw();
      
-       hTWDe1Point->SetLineColor(kBlue);
-       hTWDe1PointNoPileUp->SetLineColor(kRed);
-
-      c1->cd(3);
-      gPad->SetLogy();
-      hTWDe1PointNoPileUp->GetXaxis()->SetTitle("dE/dx");
-      hTWDe1PointNoPileUp->GetYaxis()->SetTitle("Events");
-      hTWDe1PointNoPileUp->Draw();
-      c1->cd(4);
-      gPad->SetLogy();
-       hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
-      hTWDe1Point->GetYaxis()->SetTitle("Events");
-      hTWDe1Point->Draw();
-
-      TCanvas *c2=new TCanvas("c2","Pile up= file pile up. Eventi= new Geom");
-      c2->Divide(3);
-      c2->cd(1);
-      gPad->SetLogy();
-      hTWDe1Point->Draw();
+    c5->cd(2);
+    gPad->SetLogy();
+     hMSDDE1Points3->GetXaxis()->SetTitle("dE/dx");
+     hMSDDE1Points3->GetYaxis()->SetTitle("Events");
+     hMSDDE1Points3->Draw();
       
-       c2->cd(2);
-        gPad->SetLogy();
-       hTWDe1PointPileUp->Draw();
+     c5->cd(3);
+     gPad->SetLogy();
+      hMSDDE1Points3TW->GetXaxis()->SetTitle("dE/dx");
+     hMSDDE1Points3TW->GetYaxis()->SetTitle("Events");
+     hMSDDE1Points3TW->Draw();
+     
+     c5->cd(4);
+     gPad->SetLogy();
+      hMSDDE1Points3TWOssigeni->GetXaxis()->SetTitle("dE/dx");
+     hMSDDE1Points3TWOssigeni->GetYaxis()->SetTitle("Events");
+     hMSDDE1Points3TWOssigeni->Draw();
 
-       c2->cd(3);
-      gPad->SetLogy();
-      hTWDe1Point->Draw();
-      hTWDe1PointPileUp->Draw("SAME");
+    TCanvas *c6=new TCanvas("c6","Pile up= file pile up. Eventi= new Geom");
+    gPad->SetLogy();
+     hMSDPoints->GetXaxis()->SetTitle("dE/dx");
+     hMSDPoints->GetYaxis()->SetTitle("Events");
+    hMSDDE1Points->Draw();
+    hMSDDE1Points3->Draw("SAME");
+    hMSDDE1Points3TW->Draw("SAME");
+    hMSDDE1Points3TWOssigeni->Draw("SAME");
 
+     TCanvas *c7=new TCanvas("c7","Pile up= file pile up. Eventi= new Geom");
+     hTWPointDE1->SetLineColor(kRed);
+     hTWPointDE1NoPileUP->SetLineColor(kBlue);
+     c7->Divide(3);
+     c7->cd(1);
+     gPad->SetLogy();
+     hTWPointDE1->Draw();
+    c7->cd(2);
+    gPad->SetLogy();
+    hTWPointDE1NoPileUP->Draw();
+    c7->cd(3);
+    hTWPointDE1->Draw();
+    hTWPointDE1NoPileUP->Draw("Same");
 
-      TCanvas *c3=new TCanvas("c3","Pile up= file pile up. Eventi= new Geom");
-
-      hTWPoints->Draw();
-
-      c->Print("Immagini/Pile_up_time_and_charge_Start_Counter.pdf");
-      c1->Print("Immagini/Pile_Up_TW.pdf");
-      c2->Print("Immagini/TWPoints confronto con Pile up.pdf");
-      c3->Print("Immagini/Punti osservati dal TW in casp di avvenuto Pile UP.pdf");
- }
+    c4->Print("Immagini/TwLostEnergy.pdf");
+    c5->Print("Immagini/MSDLostEnergy.pdf");
+    c6->Print("Immagini/MSDLostEnergyConfronto.pdf");
+    c7->Print("Immagini/TW Energy lost and pile up.pdf");
+}
