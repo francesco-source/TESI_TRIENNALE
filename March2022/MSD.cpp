@@ -35,6 +35,8 @@ void MSD(){
      TH1F *hMSDDE1Points3TW= new TH1F("hMSDDE1Points3TW","Perdita di energia MSD==3 e TW=1",1000,0,5000);
      TH1F *hMSDDE1Points3TWOssigeni= new TH1F("hMSDDE1Points3TWOssigeni","Perdita di energia MSD==3, TW=1, Carica 8",1000,0,5000);
      TH1F *hTWPointDE1NoPileUP=new TH1F("hTWPointNoPileUP"," Energia persa vista dal TW senza pile up",100,0,100);
+     TH1F *hPointsMSDSawTWNo=new TH1F("hPointsMSDSawTWNo","Quanti punti vede l'MSD quando il TW non vede nulla?",10,0,20);
+     TH1F *hEnergyMSDSawTWNo=new TH1F("hEnergyMSDSawTWNo","Che energia vede l'MSD quando il TW non vede nulla?",10,0,20);
      std::vector<int>     *MSDPoints=0;
      std::vector<double>  *TWDe1Point=0;
      std::vector<int>     *TWChargePoint=0;
@@ -56,44 +58,68 @@ void MSD(){
      TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint, &b_TWChargePoint);
      TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
      for(UInt_t i=0;i<nentriesGeom;++i){
+       ///////////////////////////////////////////////////////////////
+       /////////////////////Get-Entries del tree//////////////////////
+       ///////////////////////////////////////////////////////////////
          tGeomEntry=TGeomOut->LoadTree(i);
          b_MSDPoints->GetEntry(i);
          b_TWPoints->GetEntry(i);
          b_TWDe1Point->GetEntry(i);
          b_TWChargePoint->GetEntry(i);
          b_MSDDe1Point->GetEntry(i);
-         for(UInt_t j=0;j<MSDPoints->size();++j){
-             ausiliarsum=ausiliarsum+MSDPoints->at(j);
-         }
+
+         //////////////////////////////////////////////////////////
+         //////////////////Riempio energia osservata dal TW////////
+         //////////////////////////////////////////////////////////
           for(UInt_t j=0;j<TWDe1Point->size();++j){
                
                  {{hTWPointDE1->Fill(TWDe1Point->at(j));}
              } 
             }
-            for(UInt_t j=0;j<TWDe1Point->size();++j){
-                if(TWChargePoint->at(j)==8)
-                 {{hTWPointDE1o->Fill(TWDe1Point->at(j));}
-             } 
-            }
+          /////////////////////////////////////////////////////////////////
+          /////Riempio energia osservata nel TW dei soli ossigeni//////////
+          ////////////////////////////////////////////////////////////////
+        for(UInt_t j=0;j<TWDe1Point->size();++j){
+                      if(TWChargePoint->at(j)==8)
+                      {{hTWPointDE1o->Fill(TWDe1Point->at(j));}
+                  } 
+                  } 
+        /////////////////////////////////////////////////////////
+        //////Conto i punti totali osservati dall'MSD////////////
+        /////////////////////////////////////////////////////////
+         for(UInt_t j=0;j<MSDPoints->size();++j){
+             ausiliarsum=ausiliarsum+MSDPoints->at(j);
+         }
+         sum.push_back(ausiliarsum);
+
+        /////////////////////////////////////////////////////////
+        ///////Riempio la perdita di energia del MSD/////////////
+        /////////////////////////////////////////////////////////
             double variab=0;
             for(UInt_t j=0;j<MSDDe1Point->size();++j){
                variab=variab+MSDDe1Point->at(j);
             }
             hMSDDE1Points->Fill(variab);
 
-         sum.push_back(ausiliarsum);
+         
+          /////////////////////////////////////////////////////////
+          ///////////////Condizioni di visibilità del rivelatore///
+          /////////////////////////////////////////////////////////
 
+          //Energia TW quando TW ed MSD vedono solo un punto che succede/////
          if( sum[i]==3 && TWPoints==1){  
              for(UInt_t j=0;j<TWDe1Point->size();++j)
              { hTWPointDE1Clean->Fill(TWDe1Point->at(j));}  }
 
-
+          ///Energia quando l' MSD vede un solo punto//////////////
              if(sum[i]==3){
                  double var=0;
                  for(UInt_t j=0;j<MSDDe1Point->size();++j)
                  {var= var+ MSDDe1Point->at(j); }
                  hMSDDE1Points3->Fill(var);
              }
+
+             ////Energia MSD quando TW ed MSD vedono solo un punto che succede////// 
               if(sum[i]==3 && TWPoints==1){
                   double v=0;
                  for(UInt_t j=0;j<MSDDe1Point->size();++j){
@@ -101,7 +127,7 @@ void MSD(){
                  }
                  hMSDDE1Points3TW->Fill(v);
              }
-
+              //Energia ossigeni quando TW ed MSD vedono un solo punto///////////////
                if(sum[i]==3 && TWPoints==1 ){
                    double var=0;
                  for(UInt_t j=0;j<MSDDe1Point->size();++j){
