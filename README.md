@@ -1,2 +1,2 @@
 # TESI_TRIENNALE
-Tesi riguardante l'esperimento Foot delll'INFN.
+Tesi riguardante l'esperimento Foot dell'INFN.
