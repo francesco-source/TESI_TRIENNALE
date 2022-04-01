@@ -153,7 +153,7 @@ void MSD(){
         //////////////////////////////////////////////////////////////
         //Energia persa in MSD quando TW non vede nulla con Pile UP///
         //////////////////////////////////////////////////////////////
-          if(TWPoints==0 && SCPileup==true){
+           if(TWPoints==0 && SCPileup==true){
 
               //Riempilo con il grafico metto uno zero ora di default devo finire
               std::vector<int> same_charge;
