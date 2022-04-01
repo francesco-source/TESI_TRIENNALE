@@ -154,9 +154,19 @@ void MSD(){
         //Energia persa in MSD quando TW non vede nulla con Pile UP///
         //////////////////////////////////////////////////////////////
           if(TWPoints==0 && SCPileup==true){
-              //Riempilo con il grafico metto uno zero ora di default
-              hEnergyMSDSawTWNo->Fill(0);
+
+              //Riempilo con il grafico metto uno zero ora di default devo finire
+              std::vector<int> same_charge;
+              for(int j=0;j<MSDDe1Point->size();++j){
+                hEnergyMSDSawTWNo->Fill(0);
+              }
+              
+
           }
+
+
+
+          
           //Energia TW quando TW ed MSD vedono solo un punto che succede/////
          if( sum[i]==3 && TWPoints==1){  
              for(UInt_t j=0;j<TWDe1Point->size();++j)
