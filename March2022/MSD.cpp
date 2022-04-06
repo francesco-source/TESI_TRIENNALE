@@ -5,6 +5,7 @@
 #include "TF1.h"
 #include "TFile.h"
 #include "TFitResult.h"
+#include "TGraphErrors.h"
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TH3F.h"
@@ -18,6 +19,25 @@
 #include "TRandom.h"
 #include "TStyle.h"
 #include "THStack.h"
+auto GeometryBeamTGLine(std::vector<std::vector<Float_t>>& coordinates, Float_t& lenght){
+Float_t x[3];
+Float_t y[3];
+Float_t z[3];
+for(int i=0;i<3;++i){x[i]=coordinates[i][0];}
+for(int i=0;i<3;++i){y[i]=(coordinates[i][1]);}
+for(int i=0;i<3;++i){z[i]=coordinates[i][2];}
+TGraphErrors* XZ= new TGraphErrors(3,x,z);
+TGraphErrors* YZ= new TGraphErrors(3,y,z);
+TF1 *fitXZ= new TF1("fitXZ","[0]*x+[1]",0,40);
+TF1 *fitYZ= new TF1("fitYZ","[0]*x+[1]",0,40);
+fitXZ->SetParameter(0,0);
+fitXZ->SetParameter(1,0);
+fitYZ->SetParameter(0,0);
+fitYZ->SetParameter(1,0);
+
+
+
+};
 void MSD(){
      TFile* fileGeom= new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
      TFile* filePileUp= new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
