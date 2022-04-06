@@ -20,7 +20,7 @@
 #include "TRandom.h"
 #include "TStyle.h"
 #include "TTree.h"
-bool GeometryBeamTGLine(std::vector<std::vector<Float_t>> &coordinates,
+bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
                         Float_t xTarget = 1, Float_t yTarget = 1) {
     ///////////////////////////////////////////////////////////////////////////////
     /////////////Ritorna Falso se la retta prolungata esce dal
@@ -275,7 +275,7 @@ void MSD() {
             coordinates.push_back(fillCordinates);
             fillCordinates.clear();
             coordinates.push_back(MSDZ);
-            if (GeometryBeamTGLine(coordinates) == true) {
+            if (GeometryMSDTGLine(coordinates) == true) {
                 for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                     if (TWChargePoint->at(j) == 8) {
                         hGeometryOxigen->Fill(TWDe1Point->at(0));
