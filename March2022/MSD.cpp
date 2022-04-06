@@ -21,7 +21,7 @@
 #include "TStyle.h"
 #include "TTree.h"
 bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
-                        Float_t xTarget = 1, Float_t yTarget = 1) {
+                        Float_t xTarget = 10, Float_t yTarget = 10) {
     ///////////////////////////////////////////////////////////////////////////////
     /////////////Ritorna Falso se la retta prolungata esce dal
     ///target//////////////
@@ -38,10 +38,10 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     for (int i = 0; i < 3; ++i) {
         z[i] = coordinates[2][i];
     }
-    TGraphErrors *XZ = new TGraphErrors(3, x, z);
-    TGraphErrors *YZ = new TGraphErrors(3, y, z);
-    TF1 *fitXZ = new TF1("fitXZ", "[0]*x+[1]", 0, 15);
-    TF1 *fitYZ = new TF1("fitYZ", "[0]*x+[1]", 0, 15);
+    TGraphErrors *XZ = new TGraphErrors(3, z, x);
+    TGraphErrors *YZ = new TGraphErrors(3, z, x);
+    TF1 *fitXZ = new TF1("fitXZ", "[0]*x+[1]", 0, 50);
+    TF1 *fitYZ = new TF1("fitYZ", "[0]*x+[1]", 0, 50);
     fitXZ->SetParameter(0, 0);
     fitXZ->SetParameter(1, 0);
     fitYZ->SetParameter(0, 0);
@@ -54,6 +54,7 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     delete YZ;
     delete fitXZ;
     delete fitYZ;
+     //std::cout<<absXZ<<" "<<absYZ<<std::endl;
     if (absXZ >= xTarget || absYZ >= yTarget) {
         return false;
     } else if (absXZ < xTarget && absYZ < yTarget) {
@@ -61,6 +62,7 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     } else {
         return false;
     }
+   
 }
 
 void MSD() {
