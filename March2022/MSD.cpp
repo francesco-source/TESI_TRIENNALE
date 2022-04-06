@@ -21,39 +21,46 @@
 #include "TStyle.h"
 #include "TTree.h"
 bool GeometryBeamTGLine(std::vector<std::vector<Float_t>> &coordinates,
-                        Float_t &lenght, Float_t xTarget, Float_t yTarget) {
+                        Float_t xTarget = 1, Float_t yTarget = 1) {
+    ///////////////////////////////////////////////////////////////////////////////
+    /////////////Ritorna Falso se la retta prolungata esce dal
+    ///target//////////////
+    ///////////////////////////////////////////////////////////////////////////////
     Float_t x[3];
     Float_t y[3];
     Float_t z[3];
     for (int i = 0; i < 3; ++i) {
-        x[i] = coordinates[i][0];
+        x[i] = coordinates[0][i];
     }
     for (int i = 0; i < 3; ++i) {
-        y[i] = (coordinates[i][1]);
+        y[i] = coordinates[1][i];
     }
     for (int i = 0; i < 3; ++i) {
-        z[i] = coordinates[i][2];
+        z[i] = coordinates[2][i];
     }
     TGraphErrors *XZ = new TGraphErrors(3, x, z);
     TGraphErrors *YZ = new TGraphErrors(3, y, z);
-    TF1 *fitXZ = new TF1("fitXZ", "[0]*x+[1]", 0, 40);
-    TF1 *fitYZ = new TF1("fitYZ", "[0]*x+[1]", 0, 40);
+    TF1 *fitXZ = new TF1("fitXZ", "[0]*x+[1]", 0, 15);
+    TF1 *fitYZ = new TF1("fitYZ", "[0]*x+[1]", 0, 15);
     fitXZ->SetParameter(0, 0);
     fitXZ->SetParameter(1, 0);
     fitYZ->SetParameter(0, 0);
     fitYZ->SetParameter(1, 0);
-    gStyle->SetOptFit(1111);
-    XZ->Fit("fitXZ", "R");
-    YZ->Fit("fitYZ", "R");
-    if (fitXZ->GetParameter(1) > xTarget || fitYZ->GetParameter(1) > yTarget) {
-        return false;
-    } else {
-        return true;
-    }
+    XZ->Fit("fitXZ", "QN");
+    YZ->Fit("fitYZ", "QN");
+    Float_t absXZ = abs(fitXZ->GetParameter(1));
+    Float_t absYZ = abs(fitYZ->GetParameter(1));
     delete XZ;
     delete YZ;
     delete fitXZ;
     delete fitYZ;
+    if (absXZ >= xTarget || absYZ >= yTarget) {
+        return false;
+    } else if (absXZ < xTarget && absYZ < yTarget) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void MSD() {
@@ -116,9 +123,14 @@ void MSD() {
     TBranch *b_Frag = 0;
     TBranch *b_MSDXPoint = 0;
     TBranch *b_MSDYPoint = 0;
+    Float_t MSDZ0 = 40;
+    Float_t MSDZ1 = 40 + 3.8;
+    Float_t MSDZ2 = 40 + 3.8 + 3.8;
+    std::vector<Float_t> MSDZ = {MSDZ0, MSDZ1, MSDZ2};
     Long64_t tGeomEntry = 0;
     Long64_t tPileUpEntry = 0;
     UInt_t nentriesGeom = TGeomOut->GetEntries();
+    int counter = 0;
     std::vector<int> sum;
     int ausiliarsum = 0;
     TGeomOut->SetBranchAddress("MSDPoints", &MSDPoints, &b_MSDPoints);
@@ -129,10 +141,13 @@ void MSD() {
     TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
     TPileUpOut->SetBranchAddress("SCPileup", &SCPileup, &b_SCPileup);
     TGeomOut->SetBranchAddress("Frag", &Frag, &b_Frag);
+    TGeomOut->SetBranchAddress("MSDXPoint", &MSDXPoint, &b_MSDXPoint);
+    TGeomOut->SetBranchAddress("MSDYPoint", &MSDYPoint, &b_MSDYPoint);
     for (UInt_t i = 0; i < nentriesGeom; ++i) {
-        ///////////////////////////////////////////////////////////////
-        /////////////////////Get-Entries del tree//////////////////////
-        ///////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
+        /////////////////////Get-Entries del
+        ///tree/////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
         tGeomEntry = TGeomOut->LoadTree(i);
         b_MSDPoints->GetEntry(i);
         b_TWPoints->GetEntry(i);
@@ -141,20 +156,20 @@ void MSD() {
         b_MSDDe1Point->GetEntry(i);
         b_SCPileup->GetEntry(i);
         b_Frag->GetEntry(i);
+        b_MSDXPoint->GetEntry(i);
+        b_MSDYPoint->GetEntry(i);
         //////////////////////////////////////////////////////////
         //////////////////Riempio energia osservata dal TW////////
         //////////////////////////////////////////////////////////
         for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
-            {
-                { hTWPointDE1->Fill(TWDe1Point->at(j)); }
-            }
+            { hTWPointDE1->Fill(TWDe1Point->at(j)); }
         }
         /////////////////////////////////////////////////////////////////
         /////Riempio energia osservata nel TW dei soli ossigeni//////////
         ////////////////////////////////////////////////////////////////
         for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
             if (TWChargePoint->at(j) == 8) {
-                { hTWPointDE1o->Fill(TWDe1Point->at(j)); }
+                hTWPointDE1o->Fill(TWDe1Point->at(j));
             }
         }
         /////////////////////////////////////////////////////////
@@ -176,7 +191,7 @@ void MSD() {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////Condizioni di visibilità del
-        ///rivelatore////////////////////////////////////////////////////////
+        /// rivelatore////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -241,7 +256,36 @@ void MSD() {
             }
         }
         ausiliarsum = 0;
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////Geometria
+        ///Primari//////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        if (sum[i] == 3 && TWPoints==1) {
+            std::vector<std::vector<Float_t>> coordinates;
+            std::vector<Float_t> fillCordinates;
+            for (UInt_t j = 0; j < MSDXPoint->size(); ++j) {
+                fillCordinates.push_back(MSDXPoint->at(j));
+            }
+            coordinates.push_back(fillCordinates);
+            fillCordinates.clear();
+            for (UInt_t j = 0; j < MSDYPoint->size(); ++j) {
+                fillCordinates.push_back(MSDYPoint->at(j));
+            }
+            coordinates.push_back(fillCordinates);
+            fillCordinates.clear();
+            coordinates.push_back(MSDZ);
+            if (GeometryBeamTGLine(coordinates) == true) {
+                for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
+                    if (TWChargePoint->at(j) == 8) {
+                        hGeometryOxigen->Fill(TWDe1Point->at(0));
+                        counter++;
+                    }
+                }
+            }
+        }
     }
+    std::cout << counter << std::endl;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
