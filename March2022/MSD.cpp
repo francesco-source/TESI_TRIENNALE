@@ -71,14 +71,27 @@ void MSD() {
     TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;5");
     TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
     TH1F *hMSDPoints = new TH1F("hMSDPoints", " Punti nel MSD", 10, 0, 10);
+    //////Energia TW//////////////////////////////////////////
+      TH1F *hTWPointDE1 =
+        new TH1F("hTWPoint", " DE1 TW", 100, 0, 100);
+         TH1F *hTWPointDE1o =
+        new TH1F("hTWPoint", " DE1  TWCharge=8",
+                 100, 0, 100);
     TH1F *hTWPointDE1Clean =
-        new TH1F("hTWPointClean", " Energia persa con MSD==3 e 1 punto nel TW",
+        new TH1F("hTWPointClean", " DE1 persa con MSD==3 e 1 punto nel TW",
                  100, 0, 100);
-    TH1F *hTWPointDE1o =
-        new TH1F("hTWPoint", " Energia persa con MSD==3 e con carica 8 nel TW",
+    TH1F *hTWDE1MSD3TW1NoFrag=new TH1F("hTWDE1MSD3TW1NoFrag", " DE1 TW MSD=3,TW=1,Frag=false",
                  100, 0, 100);
-    TH1F *hTWPointDE1 =
-        new TH1F("hTWPoint", " Energia persa vista dal TW", 100, 0, 100);
+    TH1F *hTWDE1MSD3TW1NoFragOxigen=new TH1F("hTWDE1MSD3TW1NoFragOxigen", " DE1 TW MSD=3,TW=1,Frag=false,TWCharge=8",
+                 100, 0, 100);
+    TH1F*hTWDE1MSD3NoFragOxigen=new TH1F("hTWDE1MSD3NoFragOxigen", " DE1 TW MSD=3,TW=1,TWCharge=8",
+                 100, 0, 100);
+   
+    TH1F *hGeometryOxigen =
+        new TH1F("hGeometryOxigen", "DE1 TW MSD=3,Frag=0,TW=1,TWCharge=8,geometria", 100, 0, 100);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     TH1F *hMSDDE1Points3 =
         new TH1F("hMSDDE1Points3", "Perdita di energia MSD==3", 1000, 0, 5000);
     TH1F *hMSDDE1Points =
@@ -102,8 +115,7 @@ void MSD() {
         new TH1F("hPointsMSDSawFrag",
                  "Quanti punti vede l'MSD quando il fascio primario frammenta",
                  20, 0, 20);
-    TH1F *hGeometryOxigen =
-        new TH1F("hGeometryOxigen", "Geometria Primari che provengono dal target con Frag=0", 100, 0, 100);
+
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
     std::vector<int> *TWChargePoint = 0;
