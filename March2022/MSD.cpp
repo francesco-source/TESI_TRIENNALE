@@ -89,8 +89,11 @@ void MSD() {
     TH1F *hGeometryOxigen =
         new TH1F("hGeometryOxigen", "DE1 TW MSD=3,Frag=0,TW=1,TWCharge=8,geometria", 100, 0, 100);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////Grafici confronto con cui faccio la sottrazione///////////////////////////////////
+    TH1F *hAirFrag=new TH1F("hAirFrag", "hTWDE1MSD3TW1Oxigen-hGeometryOxigen", 100, 0, 100);
+    TH1F *hAirFragMSDTW=new TH1F("hAirFragMSDTW", "hTWDE1MSD3TW1NoFragOxigen-hGeometryOxigen", 100, 0, 100);
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     TH1F *hMSDDE1Points3 =
         new TH1F("hMSDDE1Points3", "Perdita di energia MSD==3", 1000, 0, 5000);
     TH1F *hMSDDE1Points =
@@ -301,19 +304,22 @@ void MSD() {
         }
     }
     std::cout << counter << std::endl;
-
+    hAirFrag->Add(hTWDE1MSD3TW1Oxigen,hGeometryOxigen,1,-1);
+    hAirFragMSDTW->Add(hTWDE1MSD3TW1NoFragOxigen,hGeometryOxigen,1,-1);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////Cosmetica//////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
     hTWPointDE1->SetLineColor(kBlack);
     hTWPointDE1o->SetLineColor(kBlue);
     hTWPointDE1Clean->SetLineColor(kRed);
     hGeometryOxigen->SetLineColor(kGreen);
     TCanvas *c4 = new TCanvas("c4", "Pile up= file pile up. Eventi= new Geom");
-    c4->Divide(3,3);
+    c4->Divide(3,4);
 
     c4->cd(1);
     gPad->SetLogy();
@@ -374,6 +380,26 @@ void MSD() {
      hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
     hGeometryOxigen->GetYaxis()->SetTitle("Events");
     hGeometryOxigen->Draw();
+
+    c4->cd(10);
+     gPad->SetLogy();
+     hTWDE1MSD3TW1Oxigen->GetXaxis()->SetTitle("dE/dx");
+    hTWDE1MSD3TW1Oxigen->GetYaxis()->SetTitle("Events");
+    hTWDE1MSD3TW1Oxigen->Draw();
+     hTWDE1MSD3TW1NoFragOxigen->Draw("SAME");
+      hGeometryOxigen->Draw("SAME");
+
+     c4->cd(11);
+    gPad->SetLogy();
+    hAirFrag->GetXaxis()->SetTitle("dE/dx");
+    hAirFrag->GetYaxis()->SetTitle("Events");
+    hAirFrag->Draw();
+    c4->cd(12);
+    gPad->SetLogy();
+    hAirFragMSDTW->GetXaxis()->SetTitle("dE/dx");
+    hAirFragMSDTW->GetYaxis()->SetTitle("Events");
+    hAirFragMSDTW->Draw();
+
 
     TCanvas *c5 = new TCanvas("c5", "Pile up= file pile up. Eventi= new Geom");
     c5->Divide(2, 2);
