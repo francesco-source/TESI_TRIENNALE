@@ -394,6 +394,8 @@ void MSD() {
     hAirFrag->GetXaxis()->SetTitle("dE/dx");
     hAirFrag->GetYaxis()->SetTitle("Events");
     hAirFrag->Draw();
+
+    
     c4->cd(12);
     gPad->SetLogy();
     hAirFragMSDTW->GetXaxis()->SetTitle("dE/dx");
