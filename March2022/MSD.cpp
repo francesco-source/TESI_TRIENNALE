@@ -21,7 +21,7 @@
 #include "TStyle.h"
 #include "TTree.h"
 bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
-                        Float_t xTarget = 5, Float_t yTarget = 5) {
+                        Float_t xTarget = 2, Float_t yTarget = 2,Float_t errorxyMSd=0.01,Float_t errorZ=0.1) {
     ///////////////////////////////////////////////////////////////////////////////
     /////////////Ritorna Falso se la retta prolungata esce dal
     ///target//////////////
@@ -38,23 +38,20 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     for (int i = 0; i < 3; ++i) {
         z[i] = coordinates[2][i];
     }
-    TGraphErrors *XZ = new TGraphErrors(3, z, x);
-    TGraphErrors *YZ = new TGraphErrors(3, z, x);
-    TF1 *fitXZ = new TF1("fitXZ", "[0]*x+[1]", 0, 50);
-    TF1 *fitYZ = new TF1("fitYZ", "[0]*x+[1]", 0, 50);
-    fitXZ->SetParameter(0, 0);
-    fitXZ->SetParameter(1, 0);
-    fitYZ->SetParameter(0, 0);
-    fitYZ->SetParameter(1, 0);
-    XZ->Fit("fitXZ", "QN");
-    YZ->Fit("fitYZ", "QN");
-    Float_t absXZ = abs(fitXZ->GetParameter(1));
-    Float_t absYZ = abs(fitYZ->GetParameter(1));
-    delete XZ;
-    delete YZ;
-    delete fitXZ;
-    delete fitYZ;
-     //std::cout<<absXZ<<" "<<absYZ<<std::endl;
+    Float_t errorxy[3]={errorxyMSd,errorxyMSd,errorxyMSd};
+    Float_t errorZeta[3]={errorZ,errorZ,errorZ};
+    TGraphErrors XZ(3, z, x,errorZeta,errorxy);
+    TGraphErrors YZ(3, z, y,errorZeta,errorxy);
+    TF1 fitXZ("fitXZ", "[0]*x+[1]", 0, 50);
+    TF1 fitYZ("fitYZ", "[0]*x+[1]", 0, 50);
+    fitXZ.SetParameter(0, 0);
+    fitXZ.SetParameter(1, 0);
+    fitYZ.SetParameter(0, 0);
+    fitYZ.SetParameter(1, 0);
+    XZ.Fit("fitXZ", "QN");
+    YZ.Fit("fitYZ", "QN");
+    Float_t absXZ = abs(fitXZ.GetParameter(1)-fitXZ.GetParError(1));
+    Float_t absYZ = abs(fitYZ.GetParameter(1)-fitYZ.GetParError(1));
     if (absXZ >= xTarget || absYZ >= yTarget) {
         return false;
     } else if (absXZ < xTarget && absYZ < yTarget) {
