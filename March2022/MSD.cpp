@@ -313,7 +313,7 @@ void MSD() {
     hTWPointDE1Clean->SetLineColor(kRed);
     hGeometryOxigen->SetLineColor(kGreen);
     TCanvas *c4 = new TCanvas("c4", "Pile up= file pile up. Eventi= new Geom");
-    c4->Divide(3,2);
+    c4->Divide(3,3);
 
     c4->cd(1);
     gPad->SetLogy();
@@ -327,11 +327,6 @@ void MSD() {
     hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
     hTWPointDE1Clean->Draw();
 
-    c4->cd(4);
-    gPad->SetLogy();
-    hTWPointDE1o->GetXaxis()->SetTitle("dE/dx");
-    hTWPointDE1o->GetYaxis()->SetTitle("Events");
-    hTWPointDE1o->Draw();
 
     c4->cd(3);
     gPad->SetLogy();
@@ -339,17 +334,47 @@ void MSD() {
     hTWPointDE1o->GetYaxis()->SetTitle("Events");
     hTWPointDE1Clean->Draw();
     hTWPointDE1->Draw("SAME");
+
+
+
+    c4->cd(4);
+     gPad->SetLogy();
+    hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
+    hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
+    hTWPointDE1Clean->Draw();
+
+   
     c4->cd(5);
     gPad->SetLogy();
-    hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
-    hGeometryOxigen->GetYaxis()->SetTitle("Events");
-    hGeometryOxigen->Draw();
+    hTWDE1MSD3TW1NoFrag->GetXaxis()->SetTitle("dE/dx");
+    hTWDE1MSD3TW1NoFrag->GetYaxis()->SetTitle("Events");
+    hTWDE1MSD3TW1NoFrag->Draw();
+
     c4->cd(6);
     gPad->SetLogy();
-    hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
+    hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
+    hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
+    hTWPointDE1Clean->Draw();
+    hTWDE1MSD3TW1NoFrag->Draw("SAME");
+
+    c4->cd(7);
+     gPad->SetLogy();
+     hTWDE1MSD3TW1Oxigen->GetXaxis()->SetTitle("dE/dx");
+    hTWDE1MSD3TW1Oxigen->GetYaxis()->SetTitle("Events");
+    hTWDE1MSD3TW1Oxigen->Draw();
+
+    c4->cd(8);
+     gPad->SetLogy();
+     hTWDE1MSD3TW1NoFragOxigen->GetXaxis()->SetTitle("dE/dx");
+    hTWDE1MSD3TW1NoFragOxigen->GetYaxis()->SetTitle("Events");
+    hTWDE1MSD3TW1NoFragOxigen->Draw();
+    
+    c4->cd(9);
+    gPad->SetLogy();
+     hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
     hGeometryOxigen->GetYaxis()->SetTitle("Events");
-     hTWPointDE1o->Draw();
-    hGeometryOxigen->Draw("Same");
+    hGeometryOxigen->Draw();
+
     TCanvas *c5 = new TCanvas("c5", "Pile up= file pile up. Eventi= new Geom");
     c5->Divide(2, 2);
     hMSDDE1Points3->SetLineColor(kBlack);
