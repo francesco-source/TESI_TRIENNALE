@@ -27,19 +27,19 @@
      TTree* TGeomOut=(TTree*)fileGeom->Get("Tree;5");
      TTree* TPileUpOut=(TTree*)filePileUp->Get("Tree;3");
      TH1F *hSCTimeNoPileUp=
-           new TH1F("SCTimeNoPileUp","Start counter time without pile up",100,0,200);
+           new TH1F("SCTimeNoPileUp","SCTime without SCPileUp=true",100,0,200);
      TH1F *hSCTimePileUp=
-           new TH1F("SCTimePileUp","Start counter time with pile up",100,0,200);
+           new TH1F("SCTimePileUp","SCTime ",100,0,200);
      TH1F *hSCChargePileUp= 
-           new TH1F("SCCharge"," Carica rilasciata nel start counter con pile up",100,0,30);
+           new TH1F("SCCharge"," SCCharge ",100,0,30);
      TH1F *hSCChargeNoPileUp=
-           new TH1F("SCChargeNoPileUP"," Carica rilasciata nel start counter senza pile up",100,0,30);
+           new TH1F("SCChargeNoPileUP","SCCharge  without SCPileUp=true",100,0,30);
      TH1F *hTWChargePointPileUp= 
-           new TH1F("TWPileup","TOF wall charge con pile up",10,-1,10);
+           new TH1F("TWPileup","TWCharge ",10,-1,10);
      TH1F *hTWChargeNoPointPileUp= 
-           new TH1F("TWNoPileup","TOF wall charge senza pile up",10,-1,10);
-  TH1F *hTWDe1Point= new TH1F("TWDe1Point","TWDe1Point con pile up",100,0,100);
-  TH1F *hTWDe1PointNoPileUp= new TH1F("TWDe1PointNoPileUP","TWDe1Point senza pile up",100,0,100);
+           new TH1F("TWNoPileup","TWCharge without SCPileUp=true",10,-1,10);
+  TH1F *hTWDe1Point= new TH1F("TWDe1Point","TWDe1Point ",100,0,100);
+  TH1F *hTWDe1PointNoPileUp= new TH1F("TWDe1PointNoPileUP","TWDe1Point without SCPileUp=true",100,0,100);
   TH1F *hTWDe1PointPileUp= new TH1F("TWDe1PointPileUP","TWDe1Point  pile up",100,0,100);
   TH1F *hTWPoints=new TH1F("hTWPoints","Punti osservati dal TW in caso di avvenuto Pile UP",7,-2,5);
      Double_t SCCharge=0;//lo leggo da new Geom
@@ -106,70 +106,91 @@
 
 
     TCanvas *c= new TCanvas("c","Pile up= file pile up. Eventi= new Geom");
-
-    c->Divide(2,2);
-      c->cd(1);
-    gPad->SetLogy();
-    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
-      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
-    hSCTimeNoPileUp->Draw();
-
-      c->cd(2);
+    hSCTimePileUp->SetLineColor(kGreen);
+    hSCTimeNoPileUp->SetLineColor(kBlue);
+    hSCChargePileUp->SetLineColor(kBlack);
+    hSCChargeNoPileUp->SetLineColor(kRed);
+    hTWDe1Point->SetLineColor(kBlue);
+       hTWDe1PointNoPileUp->SetLineColor(kRed);
+       hTWChargeNoPointPileUp->SetLineColor(kBlue);
+       hTWChargePointPileUp->SetLineColor(kRed);
+    c->Divide(3,5);
+       c->cd(1);
     gPad->SetLogy();
      hSCTimePileUp->GetXaxis()->SetTitle("Time");
      hSCTimePileUp->GetYaxis()->SetTitle("Events");
      hSCTimePileUp->Draw();
-    
-    c->cd(3);
+      c->cd(2);
     gPad->SetLogy();
-    hSCChargeNoPileUp->GetXaxis()->SetTitle("Charge");
-     hSCChargeNoPileUp->GetYaxis()->SetTitle("Events");
-      hSCChargeNoPileUp->Draw();
-    c->cd(4);
+    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
+      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
+    hSCTimeNoPileUp->Draw();
+    c->cd(3);
+     gPad->SetLogy();
+    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
+      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
+    hSCTimeNoPileUp->Draw();
+     hSCTimePileUp->Draw("SAME");
+     c->cd(4);
     gPad->SetLogy();
     hSCChargePileUp->GetXaxis()->SetTitle("Charge");
      hSCChargePileUp->GetYaxis()->SetTitle("Events");
     hSCChargePileUp->Draw();
-
-    TCanvas *c1=new TCanvas("c1","Pile up= file pile up. Eventi= new Geom");
-    c1->Divide(2,2);
-      c1->cd(1);
+    c->cd(5);
+    gPad->SetLogy();
+    hSCChargeNoPileUp->GetXaxis()->SetTitle("Charge");
+     hSCChargeNoPileUp->GetYaxis()->SetTitle("Events");
+      hSCChargeNoPileUp->Draw();
+      c->cd(6);
        gPad->SetLogy();
-       hTWChargeNoPointPileUp->Draw();
-      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
-      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
-
-      c1->cd(2);
+    hSCChargePileUp->GetXaxis()->SetTitle("Charge");
+     hSCChargePileUp->GetYaxis()->SetTitle("Events");
+    hSCChargePileUp->Draw();
+    hSCChargeNoPileUp->Draw("SAME");
+      c->cd(7);
        gPad->SetLogy();
        hTWChargePointPileUp->GetXaxis()->SetTitle("Charge");
       hTWChargePointPileUp->GetYaxis()->SetTitle("Events");
        hTWChargePointPileUp->Draw();
+      c->cd(8);
+       gPad->SetLogy();
+       hTWChargeNoPointPileUp->Draw();
+      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
+      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
+      c->cd(9);
+       gPad->SetLogy();
+       hTWChargeNoPointPileUp->Draw();
+        hTWChargePointPileUp->Draw("SAME");
+      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
+      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
      
-       hTWDe1Point->SetLineColor(kBlue);
-       hTWDe1PointNoPileUp->SetLineColor(kRed);
 
-      c1->cd(3);
+      c->cd(10);
       gPad->SetLogy();
       hTWDe1PointNoPileUp->GetXaxis()->SetTitle("dE/dx");
       hTWDe1PointNoPileUp->GetYaxis()->SetTitle("Events");
       hTWDe1PointNoPileUp->Draw();
-      c1->cd(4);
+      c->cd(11);
       gPad->SetLogy();
        hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
       hTWDe1Point->GetYaxis()->SetTitle("Events");
       hTWDe1Point->Draw();
-
-      TCanvas *c2=new TCanvas("c2","Pile up= file pile up. Eventi= new Geom");
-      c2->Divide(3);
-      c2->cd(1);
+      c->cd(12);
+       gPad->SetLogy();
+       hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
+      hTWDe1Point->GetYaxis()->SetTitle("Events");
+      hTWDe1Point->Draw();
+      hTWDe1PointNoPileUp->Draw("SAME");
+    
+      c->cd(13);
       gPad->SetLogy();
       hTWDe1Point->Draw();
       
-       c2->cd(2);
+       c->cd(14);
         gPad->SetLogy();
        hTWDe1PointPileUp->Draw();
 
-       c2->cd(3);
+       c->cd(15);
       gPad->SetLogy();
       hTWDe1Point->Draw();
       hTWDe1PointPileUp->Draw("SAME");
@@ -179,9 +200,7 @@
 
       hTWPoints->Draw();
 
-      c->Print("Immagini/Pile_up_time_and_charge_Start_Counter.pdf");
-      c1->Print("Immagini/Pile_Up_TW.pdf");
-      c2->Print("Immagini/TWPoints confronto con Pile up.pdf");
-      c3->Print("Immagini/Punti osservati dal TW in casp di avvenuto Pile UP.pdf");
+      c->Print("Grafici/Pile_up.pdf");
+      c3->Print("Grafici/Punti osservati dal TW in casp di avvenuto Pile UP.pdf");
       
  }
