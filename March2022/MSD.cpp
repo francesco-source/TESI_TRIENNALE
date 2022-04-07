@@ -395,7 +395,7 @@ void MSD() {
     hAirFrag->GetYaxis()->SetTitle("Events");
     hAirFrag->Draw();
 
-    
+
     c4->cd(12);
     gPad->SetLogy();
     hAirFragMSDTW->GetXaxis()->SetTitle("dE/dx");
@@ -404,7 +404,7 @@ void MSD() {
 
 
     TCanvas *c5 = new TCanvas("c5", "Pile up= file pile up. Eventi= new Geom");
-    c5->Divide(2, 2);
+    c5->Divide(2,3);
     hMSDDE1Points3->SetLineColor(kBlack);
     hMSDDE1Points->SetLineColor(kRed);
     hMSDDE1Points3TW->SetLineColor(kGreen);
@@ -433,7 +433,7 @@ void MSD() {
     hMSDDE1Points3TWOssigeni->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3TWOssigeni->Draw();
 
-    TCanvas *c6 = new TCanvas("c6", "Pile up= file pile up. Eventi= new Geom");
+    c5->cd(5);
     gPad->SetLogy();
     hMSDPoints->GetXaxis()->SetTitle("dE/dx");
     hMSDPoints->GetYaxis()->SetTitle("Events");
@@ -442,34 +442,19 @@ void MSD() {
     hMSDDE1Points3TW->Draw("SAME");
     hMSDDE1Points3TWOssigeni->Draw("SAME");
 
-    TCanvas *c7 = new TCanvas("c7", "Pile up= file pile up. Eventi= new Geom");
-    hTWPointDE1NoPileUP->SetLineColor(kBlue);
-    c7->Divide(3);
-    c7->cd(1);
-    gPad->SetLogy();
-    hTWPointDE1->Draw();
-    c7->cd(2);
-    gPad->SetLogy();
-    hTWPointDE1NoPileUP->Draw();
-    c7->cd(3);
-    gPad->SetLogy();
-    hTWPointDE1->Draw();
-    hTWPointDE1NoPileUP->Draw("Same");
     TCanvas *c8 = new TCanvas("c8", "Pile up= file pile up. Eventi= new Geom");
+    c8->Divide(2);
+    c8->cd(1);
     hPointsMSDSawTWNo->GetXaxis()->SetTitle("Points");
     hPointsMSDSawTWNo->GetYaxis()->SetTitle("Events");
     hPointsMSDSawTWNo->Draw();
-    TCanvas *c9 = new TCanvas("c9", "Pile up= file pile up. Eventi= new Geom");
+   c8->cd(2);
     hPointsMSDSawFrag->GetXaxis()->SetTitle("Points");
     hPointsMSDSawFrag->GetYaxis()->SetTitle("Events");
     hPointsMSDSawFrag->Draw();
 
     c4->Print("Grafici/TwLostEnergy.pdf");
     c5->Print("Grafici/MSDLostEnergy.pdf");
-    c6->Print("Grafici/MSDLostEnergyConfronto.pdf");
-    c7->Print("Grafici/TW Energy lost and pile up.pdf");
     c8->Print(
-        "Grafici/Quanti punti vede l'MSd quando TW non vede nulla con Pile "
-        "up?.pdf");
-    c9->Print("Grafici/Quando ho frammentazione quanti punti vede MSD?.pdf");
+        "Grafici/MSD-Points-Seen.pdf");
 }

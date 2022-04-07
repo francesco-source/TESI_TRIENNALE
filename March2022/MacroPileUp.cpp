@@ -197,10 +197,11 @@
 
 
       TCanvas *c3=new TCanvas("c3","Pile up= file pile up. Eventi= new Geom");
-
       hTWPoints->Draw();
+      hTWPoints->GetXaxis()->SetTitle("Points");
+      hTWPoints->GetYaxis()->SetTitle("Events");
 
       c->Print("Grafici/Pile_up.pdf");
-      c3->Print("Grafici/Punti osservati dal TW in casp di avvenuto Pile UP.pdf");
+      c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");
       
  }
