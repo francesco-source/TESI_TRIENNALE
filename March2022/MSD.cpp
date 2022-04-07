@@ -21,7 +21,7 @@
 #include "TStyle.h"
 #include "TTree.h"
 bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
-                        Float_t xTarget = 10, Float_t yTarget = 10) {
+                        Float_t xTarget = 5, Float_t yTarget = 5) {
     ///////////////////////////////////////////////////////////////////////////////
     /////////////Ritorna Falso se la retta prolungata esce dal
     ///target//////////////
@@ -106,7 +106,7 @@ void MSD() {
                  "Quanti punti vede l'MSD quando il fascio primario frammenta",
                  20, 0, 20);
     TH1F *hGeometryOxigen =
-        new TH1F("hGeometryOxigen", "Fascio Primagio geometria", 100, 0, 100);
+        new TH1F("hGeometryOxigen", "Geometria Primari che provengono dal target con Frag=0", 100, 0, 100);
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
     std::vector<int> *TWChargePoint = 0;
@@ -263,7 +263,7 @@ void MSD() {
         ///////////////////////////Geometria
         ///Primari//////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        if (sum[i] == 3 && TWPoints==1) {
+        if (sum[i] == 3 && TWPoints==1 && Frag==false) {
             std::vector<std::vector<Float_t>> coordinates;
             std::vector<Float_t> fillCordinates;
             for (UInt_t j = 0; j < MSDXPoint->size(); ++j) {
@@ -295,11 +295,12 @@ void MSD() {
     ///////////////////////Cosmetica//////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    hTWPointDE1->SetLineColor(kGreen);
+    hTWPointDE1->SetLineColor(kBlack);
     hTWPointDE1o->SetLineColor(kBlue);
     hTWPointDE1Clean->SetLineColor(kRed);
+    hGeometryOxigen->SetLineColor(kGreen);
     TCanvas *c4 = new TCanvas("c4", "Pile up= file pile up. Eventi= new Geom");
-    c4->Divide(2, 2);
+    c4->Divide(3,2);
 
     c4->cd(1);
     gPad->SetLogy();
@@ -313,20 +314,29 @@ void MSD() {
     hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
     hTWPointDE1Clean->Draw();
 
-    c4->cd(3);
-    gPad->SetLogy();
-    hTWPointDE1o->GetXaxis()->SetTitle("dE/dx");
-    hTWPointDE1o->GetYaxis()->SetTitle("Events");
-    hTWPointDE1o->Draw();
-
     c4->cd(4);
     gPad->SetLogy();
     hTWPointDE1o->GetXaxis()->SetTitle("dE/dx");
     hTWPointDE1o->GetYaxis()->SetTitle("Events");
     hTWPointDE1o->Draw();
-    hTWPointDE1Clean->Draw("SAME");
-    hTWPointDE1->Draw("SAME");
 
+    c4->cd(3);
+    gPad->SetLogy();
+    hTWPointDE1o->GetXaxis()->SetTitle("dE/dx");
+    hTWPointDE1o->GetYaxis()->SetTitle("Events");
+    hTWPointDE1Clean->Draw();
+    hTWPointDE1->Draw("SAME");
+    c4->cd(5);
+    gPad->SetLogy();
+    hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
+    hGeometryOxigen->GetYaxis()->SetTitle("Events");
+    hGeometryOxigen->Draw();
+    c4->cd(6);
+    gPad->SetLogy();
+    hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
+    hGeometryOxigen->GetYaxis()->SetTitle("Events");
+     hTWPointDE1o->Draw();
+    hGeometryOxigen->Draw("Same");
     TCanvas *c5 = new TCanvas("c5", "Pile up= file pile up. Eventi= new Geom");
     c5->Divide(2, 2);
     hMSDDE1Points3->SetLineColor(kBlack);
@@ -367,7 +377,6 @@ void MSD() {
     hMSDDE1Points3TWOssigeni->Draw("SAME");
 
     TCanvas *c7 = new TCanvas("c7", "Pile up= file pile up. Eventi= new Geom");
-    hTWPointDE1->SetLineColor(kRed);
     hTWPointDE1NoPileUP->SetLineColor(kBlue);
     c7->Divide(3);
     c7->cd(1);
