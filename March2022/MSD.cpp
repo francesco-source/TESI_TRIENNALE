@@ -84,9 +84,8 @@ void MSD() {
                  100, 0, 100);
     TH1F *hTWDE1MSD3TW1NoFragOxigen=new TH1F("hTWDE1MSD3TW1NoFragOxigen", " DE1 TW MSD=3,TW=1,Frag=false,TWCharge=8",
                  100, 0, 100);
-    TH1F*hTWDE1MSD3NoFragOxigen=new TH1F("hTWDE1MSD3NoFragOxigen", " DE1 TW MSD=3,TW=1,TWCharge=8",
+    TH1F*hTWDE1MSD3TW1Oxigen=new TH1F("hTWDE1MSD3TW1FragOxigen", " DE1 TW MSD=3,TW=1,TWCharge=8",
                  100, 0, 100);
-   
     TH1F *hGeometryOxigen =
         new TH1F("hGeometryOxigen", "DE1 TW MSD=3,Frag=0,TW=1,TWCharge=8,geometria", 100, 0, 100);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,8 +233,13 @@ void MSD() {
         if (sum[i] == 3 && TWPoints == 1) {
             for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
                 hTWPointDE1Clean->Fill(TWDe1Point->at(j));
+                if(Frag==false){hTWDE1MSD3TW1NoFrag->Fill(TWDe1Point->at(j));}
+                if(TWChargePoint->at(j)==8){hTWDE1MSD3TW1Oxigen->Fill(TWDe1Point->at(j));}
+                if(Frag==false && TWChargePoint->at(j)==8){hTWDE1MSD3TW1NoFragOxigen->Fill(TWDe1Point->at(j));}
+               
             }
         }
+
 
         /// Energia quando l' MSD vede un solo punto//////////////
         if (sum[i] == 3) {
