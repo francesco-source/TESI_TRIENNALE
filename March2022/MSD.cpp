@@ -126,6 +126,7 @@ void MSD() {
     std::vector<double> *TWDe1Point = 0;
     std::vector<int> *TWChargePoint = 0;
     std::vector<double> *MSDDe1Point = 0;
+    std::vector<double>  *MSDDe2Point =0;
     std::vector<double> *MSDXPoint = 0;
     std::vector<double> *MSDYPoint = 0;
     Bool_t Frag;
@@ -136,6 +137,7 @@ void MSD() {
     TBranch *b_TWDe1Point = 0;
     TBranch *b_TWChargePoint = 0;
     TBranch *b_MSDDe1Point = 0;
+    TBranch *b_MSDDe2Point =0;
     TBranch *b_SCPileup = 0;
     TBranch *b_Frag = 0;
     TBranch *b_MSDXPoint = 0;
@@ -156,6 +158,7 @@ void MSD() {
     TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint,
                                &b_TWChargePoint);
     TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
+    TGeomOut->SetBranchAddress("MSDDe2Point", &MSDDe2Point, &b_MSDDe2Point);
     TPileUpOut->SetBranchAddress("SCPileup", &SCPileup, &b_SCPileup);
     TGeomOut->SetBranchAddress("Frag", &Frag, &b_Frag);
     TGeomOut->SetBranchAddress("MSDXPoint", &MSDXPoint, &b_MSDXPoint);
@@ -171,6 +174,7 @@ void MSD() {
         b_TWDe1Point->GetEntry(i);
         b_TWChargePoint->GetEntry(i);
         b_MSDDe1Point->GetEntry(i);
+        b_MSDDe2Point->GetEntry(i);
         b_SCPileup->GetEntry(i);
         b_Frag->GetEntry(i);
         b_MSDXPoint->GetEntry(i);
