@@ -93,20 +93,20 @@ void MSD() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     TH1F *hMSDDE1Points3 =
-        new TH1F("hMSDDE1Points3", "Perdita di energia MSD==3", 1000, 0, 10000);
+        new TH1F("hMSDDE1Points3", "DE1 MSD==3", 1000, 0, 10000);
     TH1F *hMSDDE1Points =
-        new TH1F("hMSDDE1Points", "Perdita di energia MSD", 1000, 0, 10000);
+        new TH1F("hMSDDE1Points", "DE1 MSD", 1000, 0, 10000);
     TH1F *hMSDDE1Points3TW = new TH1F(
-        "hMSDDE1Points3TW", "Perdita di energia MSD==3 e TW=1", 1000, 0, 10000);
+        "hMSDDE1Points3TW", "DE1 MSD==3 e TW=1", 1000, 0, 10000);
     TH1F *hMSDDE1Points3TWOssigeni =
         new TH1F("hMSDDE1Points3TWOssigeni",
-                 "Perdita di energia MSD==3, TW=1, TWCharge=8", 1000, 0, 10000);
+                 "DE1 MSD==3, TW=1, TWCharge=8", 1000, 0, 10000);
      TH1F *hMSDDE1Points3TWOssigeniNoFrag =
         new TH1F("hMSDDE1Points3TWOssigeniNoFrag",
-                 "Perdita di energia MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);  
+                 "DE1 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);  
       TH1F *hMSDDE1Points3TWOssigeniNoFragGeometry =
         new TH1F("hMSDDE1Points3TWOssigeniNoFragGeometry",
-                 "Perdita di energia MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);                     
+                 "DE1 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);                     
     TH1F *hTWPointDE1NoPileUP =
         new TH1F("hTWPointNoPileUP",
                  " Energia persa vista dal TW senza pile up", 100, 0, 100);
