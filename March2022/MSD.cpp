@@ -1,7 +1,6 @@
 #include <TCanvas.h>
 #include <TH2.h>
 #include <TStyle.h>
-
 #include "TCanvas.h"
 #include "TF1.h"
 #include "TFile.h"
@@ -72,8 +71,7 @@ void MSD() {
     TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
     TH1F *hMSDPoints = new TH1F("hMSDPoints", " Punti nel MSD", 10, 0, 10);
     //////Energia TW//////////////////////////////////////////
-      TH1F *hTWPointDE1 =
-        new TH1F("hTWPoint", " DE1 TW", 100, 0, 100);
+      TH1F *hTWPointDE1 =new TH1F("hTWPoint", " DE1 TW", 100, 0, 100);
          TH1F *hTWPointDE1o =
         new TH1F("hTWPoint", " DE1  TWCharge=8",
                  100, 0, 100);
@@ -95,14 +93,20 @@ void MSD() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     TH1F *hMSDDE1Points3 =
-        new TH1F("hMSDDE1Points3", "Perdita di energia MSD==3", 1000, 0, 5000);
+        new TH1F("hMSDDE1Points3", "Perdita di energia MSD==3", 1000, 0, 10000);
     TH1F *hMSDDE1Points =
-        new TH1F("hMSDDE1Points", "Perdita di energia MSD", 1000, 0, 5000);
+        new TH1F("hMSDDE1Points", "Perdita di energia MSD", 1000, 0, 10000);
     TH1F *hMSDDE1Points3TW = new TH1F(
-        "hMSDDE1Points3TW", "Perdita di energia MSD==3 e TW=1", 1000, 0, 5000);
+        "hMSDDE1Points3TW", "Perdita di energia MSD==3 e TW=1", 1000, 0, 10000);
     TH1F *hMSDDE1Points3TWOssigeni =
         new TH1F("hMSDDE1Points3TWOssigeni",
-                 "Perdita di energia MSD==3, TW=1, Carica 8", 1000, 0, 5000);
+                 "Perdita di energia MSD==3, TW=1, TWCharge=8", 1000, 0, 10000);
+     TH1F *hMSDDE1Points3TWOssigeniNoFrag =
+        new TH1F("hMSDDE1Points3TWOssigeniNoFrag",
+                 "Perdita di energia MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);  
+      TH1F *hMSDDE1Points3TWOssigeniNoFragGeometry =
+        new TH1F("hMSDDE1Points3TWOssigeniNoFragGeometry",
+                 "Perdita di energia MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);                     
     TH1F *hTWPointDE1NoPileUP =
         new TH1F("hTWPointNoPileUP",
                  " Energia persa vista dal TW senza pile up", 100, 0, 100);
@@ -197,10 +201,10 @@ void MSD() {
         ///////Riempio la perdita di energia del MSD/////////////
         /////////////////////////////////////////////////////////
         double variab = 0;
-        for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
+       /* for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
             variab = variab + MSDDe1Point->at(j);
         }
-        hMSDDE1Points->Fill(variab);
+        hMSDDE1Points->Fill(variab);*/
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////Condizioni di visibilità del
@@ -262,14 +266,18 @@ void MSD() {
             hMSDDE1Points3TW->Fill(v);
         }
         // Energia ossigeni quando TW ed MSD vedono un solo punto///////////////
+        double var = 0;
         if (sum[i] == 3 && TWPoints == 1) {
-            double var = 0;
+            
             for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
                 var = var + MSDDe1Point->at(j);
             }
             for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                 if (TWChargePoint->at(j) == 8) {
                     hMSDDE1Points3TWOssigeni->Fill(var);
+                }
+                if(TWChargePoint->at(j) == 8 && Frag==false){
+                    hMSDDE1Points3TWOssigeniNoFrag->Fill(var);
                 }
             }
         }
@@ -297,6 +305,7 @@ void MSD() {
                 for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                     if (TWChargePoint->at(j) == 8) {
                         hGeometryOxigen->Fill(TWDe1Point->at(0));
+                        hMSDDE1Points3TWOssigeniNoFragGeometry->Fill(var);
                         counter++;
                     }
                 }
@@ -409,38 +418,52 @@ void MSD() {
     hMSDDE1Points->SetLineColor(kRed);
     hMSDDE1Points3TW->SetLineColor(kGreen);
     hMSDDE1Points3TWOssigeni->SetLineColor(kBlue);
-    c5->cd(1);
+    hMSDDE1Points3TWOssigeniNoFrag->SetLineColor(kMagenta);
+    hMSDDE1Points3TWOssigeniNoFragGeometry->SetLineColor(kRed);
+    /*c5->cd(1);
     gPad->SetLogy();
     hMSDDE1Points->GetXaxis()->SetTitle("dE/dx");
     hMSDPoints->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points->Draw();
+    hMSDDE1Points->Draw();*/
 
-    c5->cd(2);
+    c5->cd(1);
     gPad->SetLogy();
     hMSDDE1Points3->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3->Draw();
 
-    c5->cd(3);
+    c5->cd(2);
     gPad->SetLogy();
     hMSDDE1Points3TW->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3TW->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3TW->Draw();
 
-    c5->cd(4);
+    c5->cd(3);
     gPad->SetLogy();
     hMSDDE1Points3TWOssigeni->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3TWOssigeni->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3TWOssigeni->Draw();
+    c5->cd(4);
+    gPad->SetLogy();
+     hMSDDE1Points3TWOssigeniNoFrag->GetXaxis()->SetTitle("dE/dx");
+    hMSDDE1Points3TWOssigeniNoFrag->GetYaxis()->SetTitle("Events");
+    hMSDDE1Points3TWOssigeniNoFrag->Draw();
+      c5->cd(5);
+    gPad->SetLogy();
+    hMSDDE1Points3TWOssigeniNoFragGeometry->GetXaxis()->SetTitle("dE/dx");
+    hMSDDE1Points3TWOssigeniNoFragGeometry->GetYaxis()->SetTitle("Events");
+    hMSDDE1Points3TWOssigeniNoFragGeometry->Draw();
 
-    c5->cd(5);
+    c5->cd(6);
     gPad->SetLogy();
     hMSDPoints->GetXaxis()->SetTitle("dE/dx");
     hMSDPoints->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points->Draw();
-    hMSDDE1Points3->Draw("SAME");
+    //hMSDDE1Points->Draw();
+    hMSDDE1Points3->Draw();
     hMSDDE1Points3TW->Draw("SAME");
     hMSDDE1Points3TWOssigeni->Draw("SAME");
+    hMSDDE1Points3TWOssigeniNoFrag->Draw("SAME");
+    hMSDDE1Points3TWOssigeniNoFragGeometry->Draw("SAME");
 
     TCanvas *c8 = new TCanvas("c8", "Pile up= file pile up. Eventi= new Geom");
     c8->Divide(2);
