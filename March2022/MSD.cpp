@@ -109,20 +109,20 @@ void MSD() {
         new TH1F("hMSDDE1Points3TWOssigeniNoFragGeometry",
                  "DE1 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);  
       TH1F *hMSDDE2Points3 =
-        new TH1F("hMSDDE2Points3", "DE2 MSD==3", 1000, 0, 10000);
+        new TH1F("hMSDDE2Points3", "DE2 MSD==3", 1000, 0, 15000);
     TH1F *hMSDDE2Points =
-        new TH1F("hMSDDE2Points", "DE2 MSD", 1000, 0, 10000);
+        new TH1F("hMSDDE2Points", "DE2 MSD", 1000, 0, 15000);
     TH1F *hMSDDE2Points3TW = new TH1F(
-        "hMSDDE2Points3TW", "DE2 MSD==3 e TW=1", 1000, 0, 10000);
+        "hMSDDE2Points3TW", "DE2 MSD==3 e TW=1", 1000, 0, 15000);
     TH1F *hMSDDE2Points3TWOssigeni =
         new TH1F("hMSDDE2Points3TWOssigeni",
-                 "DE2 MSD==3, TW=1, TWCharge=8", 1000, 0, 10000);
+                 "DE2 MSD==3, TW=1, TWCharge=8", 1000, 0, 15000);
      TH1F *hMSDDE2Points3TWOssigeniNoFrag =
         new TH1F("hMSDDE2Points3TWOssigeniNoFrag",
-                 "DE2 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);  
+                 "DE2 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 15000);  
       TH1F *hMSDDE2Points3TWOssigeniNoFragGeometry =
         new TH1F("hMSDDE2Points3TWOssigeniNoFragGeometry",
-                 "DE2 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);                    
+                 "DE2 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 15000);                    
     TH1F *hTWPointDE1NoPileUP =
         new TH1F("hTWPointNoPileUP",
                  " Energia persa vista dal TW senza pile up", 100, 0, 100);
