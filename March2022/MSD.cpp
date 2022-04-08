@@ -92,6 +92,7 @@ void MSD() {
     TH1F *hAirFragMSDTW=new TH1F("hAirFragMSDTW", "hTWDE1MSD3TW1NoFragOxigen-hGeometryOxigen", 100, 0, 100);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     TH1F *hMSDDE1Points3 =
         new TH1F("hMSDDE1Points3", "DE1 MSD==3", 1000, 0, 10000);
     TH1F *hMSDDE1Points =
@@ -106,7 +107,22 @@ void MSD() {
                  "DE1 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);  
       TH1F *hMSDDE1Points3TWOssigeniNoFragGeometry =
         new TH1F("hMSDDE1Points3TWOssigeniNoFragGeometry",
-                 "DE1 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);                     
+                 "DE1 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);  
+      TH1F *hMSDDE2Points3 =
+        new TH1F("hMSDDE2Points3", "DE2 MSD==3", 1000, 0, 10000);
+    TH1F *hMSDDE2Points =
+        new TH1F("hMSDDE2Points", "DE2 MSD", 1000, 0, 10000);
+    TH1F *hMSDDE2Points3TW = new TH1F(
+        "hMSDDE2Points3TW", "DE2 MSD==3 e TW=1", 1000, 0, 10000);
+    TH1F *hMSDDE2Points3TWOssigeni =
+        new TH1F("hMSDDE2Points3TWOssigeni",
+                 "DE2 MSD==3, TW=1, TWCharge=8", 1000, 0, 10000);
+     TH1F *hMSDDE2Points3TWOssigeniNoFrag =
+        new TH1F("hMSDDE2Points3TWOssigeniNoFrag",
+                 "DE2 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);  
+      TH1F *hMSDDE2Points3TWOssigeniNoFragGeometry =
+        new TH1F("hMSDDE2Points3TWOssigeniNoFragGeometry",
+                 "DE2 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);                    
     TH1F *hTWPointDE1NoPileUP =
         new TH1F("hTWPointNoPileUP",
                  " Energia persa vista dal TW senza pile up", 100, 0, 100);
@@ -179,42 +195,38 @@ void MSD() {
         b_Frag->GetEntry(i);
         b_MSDXPoint->GetEntry(i);
         b_MSDYPoint->GetEntry(i);
+         for (UInt_t j = 0; j < MSDPoints->size(); ++j) {
+            ausiliarsum = ausiliarsum + MSDPoints->at(j);
+        }
+        sum.push_back(ausiliarsum);
         //////////////////////////////////////////////////////////
         //////////////////Riempio energia osservata dal TW////////
         //////////////////////////////////////////////////////////
         for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
             { hTWPointDE1->Fill(TWDe1Point->at(j)); }
         }
-        /////////////////////////////////////////////////////////////////
-        /////Riempio energia osservata nel TW dei soli ossigeni//////////
-        ////////////////////////////////////////////////////////////////
+       
+
+        if (sum[i] == 3 && TWPoints == 1) {
+            for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
+                hTWPointDE1Clean->Fill(TWDe1Point->at(j));
+                if(Frag==false){hTWDE1MSD3TW1NoFrag->Fill(TWDe1Point->at(j));}
+                if(TWChargePoint->at(j)==8){hTWDE1MSD3TW1Oxigen->Fill(TWDe1Point->at(j));}
+                if(Frag==false && TWChargePoint->at(j)==8){hTWDE1MSD3TW1NoFragOxigen->Fill(TWDe1Point->at(j));}
+               
+            }
+        }
+
         for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
             if (TWChargePoint->at(j) == 8) {
                 hTWPointDE1o->Fill(TWDe1Point->at(j));
             }
         }
-        /////////////////////////////////////////////////////////
-        //////Conto i punti totali osservati dall'MSD////////////
-        /////////////////////////////////////////////////////////
-        for (UInt_t j = 0; j < MSDPoints->size(); ++j) {
-            ausiliarsum = ausiliarsum + MSDPoints->at(j);
-        }
-        sum.push_back(ausiliarsum);
-
-        /////////////////////////////////////////////////////////
-        ///////Riempio la perdita di energia del MSD/////////////
-        /////////////////////////////////////////////////////////
         double variab = 0;
        /* for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
             variab = variab + MSDDe1Point->at(j);
         }
         hMSDDE1Points->Fill(variab);*/
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////Condizioni di visibilità del
-        /// rivelatore////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         ////////////////////////////////////////////////////////////////
         /// Punti visti da MSD quando TW non vede niente e c' è pile up//
@@ -240,58 +252,39 @@ void MSD() {
             }
         }
 
-        // Energia TW quando TW ed MSD vedono solo un punto che succede/////
-        if (sum[i] == 3 && TWPoints == 1) {
-            for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
-                hTWPointDE1Clean->Fill(TWDe1Point->at(j));
-                if(Frag==false){hTWDE1MSD3TW1NoFrag->Fill(TWDe1Point->at(j));}
-                if(TWChargePoint->at(j)==8){hTWDE1MSD3TW1Oxigen->Fill(TWDe1Point->at(j));}
-                if(Frag==false && TWChargePoint->at(j)==8){hTWDE1MSD3TW1NoFragOxigen->Fill(TWDe1Point->at(j));}
-               
-            }
-        }
 
-
+        double var1 = 0;
+        double var2 =0;
         /// Energia quando l' MSD vede un solo punto//////////////
         if (sum[i] == 3) {
-            double var = 0;
             for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
-                var = var + MSDDe1Point->at(j);
+                var1 = var1 + MSDDe1Point->at(j);
             }
-            hMSDDE1Points3->Fill(var);
+            for (UInt_t j = 0; j < MSDDe2Point->size(); ++j) {
+                var2 = var2 + MSDDe2Point->at(j);
+            }   
         }
-
+        if(sum[i]==3){ hMSDDE1Points3->Fill(var1); hMSDDE2Points3->Fill(var2); }
         ////Energia MSD quando TW ed MSD vedono solo un punto che succede//////
         if (sum[i] == 3 && TWPoints == 1) {
-            double v = 0;
-            for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
-                v = v + MSDDe1Point->at(j);
-            }
-            hMSDDE1Points3TW->Fill(v);
+            hMSDDE1Points3TW->Fill(var1);
+             hMSDDE2Points3TW->Fill(var2);
         }
-        // Energia ossigeni quando TW ed MSD vedono un solo punto///////////////
-        double var = 0;
+     
         if (sum[i] == 3 && TWPoints == 1) {
-            
-            for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
-                var = var + MSDDe1Point->at(j);
-            }
             for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                 if (TWChargePoint->at(j) == 8) {
-                    hMSDDE1Points3TWOssigeni->Fill(var);
+                    hMSDDE1Points3TWOssigeni->Fill(var1);
+                    hMSDDE2Points3TWOssigeni->Fill(var2);
                 }
                 if(TWChargePoint->at(j) == 8 && Frag==false){
-                    hMSDDE1Points3TWOssigeniNoFrag->Fill(var);
+                    hMSDDE1Points3TWOssigeniNoFrag->Fill(var1);
+                    hMSDDE2Points3TWOssigeniNoFrag->Fill(var2);
                 }
             }
         }
-        ausiliarsum = 0;
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////Geometria
-        ///Primari//////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        if (sum[i] == 3 && TWPoints==1 && Frag==false) {
+
+          if (sum[i] == 3 && TWPoints==1 && Frag==false) {
             std::vector<std::vector<Float_t>> coordinates;
             std::vector<Float_t> fillCordinates;
             for (UInt_t j = 0; j < MSDXPoint->size(); ++j) {
@@ -309,12 +302,20 @@ void MSD() {
                 for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                     if (TWChargePoint->at(j) == 8) {
                         hGeometryOxigen->Fill(TWDe1Point->at(0));
-                        hMSDDE1Points3TWOssigeniNoFragGeometry->Fill(var);
+                        hMSDDE1Points3TWOssigeniNoFragGeometry->Fill(var1);
+                        hMSDDE2Points3TWOssigeniNoFragGeometry->Fill(var2);
                         counter++;
                     }
                 }
             }
         }
+        ausiliarsum = 0;
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////Geometria
+        ///Primari//////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+      
     }
     std::cout << counter << std::endl;
     hAirFrag->Add(hTWDE1MSD3TW1Oxigen,hGeometryOxigen,1,-1);
@@ -417,13 +418,19 @@ void MSD() {
 
 
     TCanvas *c5 = new TCanvas("c5", "Pile up= file pile up. Eventi= new Geom");
-    c5->Divide(2,3);
+    c5->Divide(3,4);
     hMSDDE1Points3->SetLineColor(kBlack);
     hMSDDE1Points->SetLineColor(kRed);
     hMSDDE1Points3TW->SetLineColor(kGreen);
     hMSDDE1Points3TWOssigeni->SetLineColor(kBlue);
     hMSDDE1Points3TWOssigeniNoFrag->SetLineColor(kMagenta);
     hMSDDE1Points3TWOssigeniNoFragGeometry->SetLineColor(kRed);
+    hMSDDE2Points3->SetLineColor(kBlack);
+    hMSDDE2Points->SetLineColor(kRed);
+    hMSDDE2Points3TW->SetLineColor(kGreen);
+    hMSDDE2Points3TWOssigeni->SetLineColor(kBlue);
+    hMSDDE2Points3TWOssigeniNoFrag->SetLineColor(kMagenta);
+    hMSDDE2Points3TWOssigeniNoFragGeometry->SetLineColor(kRed);
     /*c5->cd(1);
     gPad->SetLogy();
     hMSDDE1Points->GetXaxis()->SetTitle("dE/dx");
@@ -468,6 +475,43 @@ void MSD() {
     hMSDDE1Points3TWOssigeni->Draw("SAME");
     hMSDDE1Points3TWOssigeniNoFrag->Draw("SAME");
     hMSDDE1Points3TWOssigeniNoFragGeometry->Draw("SAME");
+        c5->cd(7);
+    gPad->SetLogy();
+    hMSDDE2Points3->GetXaxis()->SetTitle("dE/dx");
+    hMSDDE2Points3->GetYaxis()->SetTitle("Events");
+    hMSDDE2Points3->Draw();
+
+    c5->cd(8);
+    gPad->SetLogy();
+    hMSDDE2Points3TW->GetXaxis()->SetTitle("dE/dx");
+    hMSDDE2Points3TW->GetYaxis()->SetTitle("Events");
+    hMSDDE2Points3TW->Draw();
+
+    c5->cd(9);
+    gPad->SetLogy();
+    hMSDDE2Points3TWOssigeni->GetXaxis()->SetTitle("dE/dx");
+    hMSDDE2Points3TWOssigeni->GetYaxis()->SetTitle("Events");
+    hMSDDE2Points3TWOssigeni->Draw();
+    c5->cd(10);
+    gPad->SetLogy();
+     hMSDDE2Points3TWOssigeniNoFrag->GetXaxis()->SetTitle("dE/dx");
+    hMSDDE2Points3TWOssigeniNoFrag->GetYaxis()->SetTitle("Events");
+    hMSDDE2Points3TWOssigeniNoFrag->Draw();
+      c5->cd(11);
+    gPad->SetLogy();
+    hMSDDE2Points3TWOssigeniNoFragGeometry->GetXaxis()->SetTitle("dE/dx");
+    hMSDDE2Points3TWOssigeniNoFragGeometry->GetYaxis()->SetTitle("Events");
+    hMSDDE2Points3TWOssigeniNoFragGeometry->Draw();
+
+    c5->cd(12);
+    gPad->SetLogy();
+    hMSDPoints->GetXaxis()->SetTitle("dE/dx");
+    hMSDPoints->GetYaxis()->SetTitle("Events");
+    hMSDDE2Points3->Draw();
+    hMSDDE2Points3TW->Draw("SAME");
+    hMSDDE2Points3TWOssigeni->Draw("SAME");
+    hMSDDE2Points3TWOssigeniNoFrag->Draw("SAME");
+    hMSDDE2Points3TWOssigeniNoFragGeometry->Draw("SAME");
 
     TCanvas *c8 = new TCanvas("c8", "Pile up= file pile up. Eventi= new Geom");
     c8->Divide(2);
