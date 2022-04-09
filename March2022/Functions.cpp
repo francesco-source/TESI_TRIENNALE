@@ -69,9 +69,9 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
 }ind;
 
 
-    template<typename T>
-    auto GostTW(std::vector<T>* energy1, std::vector<T>* energy2,
-                int sumMSD,std::vector<int> MSDPoints,int TWPoints){
+    template<typename T,typename S>
+    auto FindGostTW(std::vector<T>* energy1, std::vector<T>* energy2,
+                int sumMSD,std::vector<S>* MSDPoints,int TWPoints){
             std::vector<ind> index;
             std::vector<std::vector<T>> sum(energy1->size(),std::vector<T>(energy2->size()));
             std::vector<std::vector<T>> diff(energy1->size(),std::vector<T>(energy2->size()));
@@ -89,7 +89,22 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
         //trovo gli indici delle particelle vere e li metto in index;
         return index;
     }
+ 
 
+
+    template<typename T>
+    auto ClearGostTW(){
+            //da pensare e da riempire
+    }
+
+
+     template<typename T>
+    auto ClearGostMSD(){
+            //da pensare e da riempire
+    }
+
+
+    
     template<typename T>
     void FillingCharge(std::vector<T>* v,
     TH1F* histo,std::vector<int>* charge,int Charge=8,double var=0){
