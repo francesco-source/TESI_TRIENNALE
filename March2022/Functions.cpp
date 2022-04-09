@@ -60,9 +60,14 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
         return false;
     }
    
-}
+};
+    template<typename T>
+    auto GostTW(std::vector<T>* energy1, std::vector<T>* energy2,int sum,std::vector<int> MSDPoints,int TWPoints){
+            std::vector<T> difference;
+            
 
 
+    }
 
     template<typename T>
     void FillingCharge(std::vector<T>* v,
