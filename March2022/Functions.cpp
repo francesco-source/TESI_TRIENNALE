@@ -61,12 +61,33 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     }
    
 };
+
+ typedef struct index{
+    public:
+        int i=0;
+        int j=0;
+}ind;
+
+
     template<typename T>
-    auto GostTW(std::vector<T>* energy1, std::vector<T>* energy2,int sum,std::vector<int> MSDPoints,int TWPoints){
-            std::vector<T> difference;
-            
-
-
+    auto GostTW(std::vector<T>* energy1, std::vector<T>* energy2,
+                int sumMSD,std::vector<int> MSDPoints,int TWPoints){
+            std::vector<ind> index;
+            std::vector<std::vector<T>> sum(energy1->size(),std::vector<T>(energy2->size()));
+            std::vector<std::vector<T>> diff(energy1->size(),std::vector<T>(energy2->size()));
+            for(UInt_t i=0;i<energy1->size();++i){
+                for(UInt_t j=0;j<energy2->size();++j){
+                    sum[i][j]=abs(energy1->at(i) + energy2->at(j));
+                    diff[i][j]=abs(energy1->at(i) - energy2->at(j));
+                }
+        }
+        if(energy1->size()>=energy2->size()){
+            //trovo gli indici delle particelle e li metto in index;
+            return index;
+        }
+        else 
+        //trovo gli indici delle particelle vere e li metto in index;
+        return index;
     }
 
     template<typename T>
