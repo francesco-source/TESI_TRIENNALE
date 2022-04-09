@@ -1,88 +1,12 @@
-#include <TCanvas.h>
-#include <TH2.h>
-#include <TStyle.h>
-#include "TCanvas.h"
-#include "TF1.h"
-#include "TFile.h"
-#include "TFitResult.h"
-#include "TGraph.h"
-#include "TGraphErrors.h"
-#include "TH1F.h"
-#include "TH2F.h"
-#include "TH3F.h"
-#include "THStack.h"
-#include "TLegend.h"
-#include "TMath.h"
-#include "TMatrixD.h"
-#include "TMultiGraph.h"
-#include "TROOT.h"
-#include "TRandom.h"
-#include "TStyle.h"
-#include "TTree.h"
-bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
-                        Float_t xTarget = 2, Float_t yTarget = 2,Float_t errorxyMSd=0.01,Float_t errorZ=0.1) {
-    ///////////////////////////////////////////////////////////////////////////////
-    /////////////Ritorna Falso se la retta prolungata esce dal
-    ///target//////////////
-    ///////////////////////////////////////////////////////////////////////////////
-    Float_t x[3];
-    Float_t y[3];
-    Float_t z[3];
-    for (int i = 0; i < 3; ++i) {
-        x[i] = coordinates[0][i];
-    }
-    for (int i = 0; i < 3; ++i) {
-        y[i] = coordinates[1][i];
-    }
-    for (int i = 0; i < 3; ++i) {
-        z[i] = coordinates[2][i];
-    }
-    Float_t errorxy[3]={errorxyMSd,errorxyMSd,errorxyMSd};
-    Float_t errorZeta[3]={errorZ,errorZ,errorZ};
-    TGraphErrors XZ(3, z, x,errorZeta,errorxy);
-    TGraphErrors YZ(3, z, y,errorZeta,errorxy);
-    TF1 fitXZ("fitXZ", "[0]*x+[1]", 0, 50);
-    TF1 fitYZ("fitYZ", "[0]*x+[1]", 0, 50);
-    fitXZ.SetParameter(0, 0);
-    fitXZ.SetParameter(1, 0);
-    fitYZ.SetParameter(0, 0);
-    fitYZ.SetParameter(1, 0);
-    XZ.Fit("fitXZ", "QN");
-    YZ.Fit("fitYZ", "QN");
-    Float_t absXZ = abs(fitXZ.GetParameter(1)-fitXZ.GetParError(1));
-    Float_t absYZ = abs(fitYZ.GetParameter(1)-fitYZ.GetParError(1));
-    if (absXZ >= xTarget || absYZ >= yTarget) {
-        return false;
-    } else if (absXZ < xTarget && absYZ < yTarget) {
-        return true;
-    } else {
-        return false;
-    }
-   
-}
-    template<typename T>
-    void FillingCharge(std::vector<T>* v,
-    TH1F* histo,std::vector<int>* charge,int Charge=8,double var=0){
-        if(var==0){
-        for(UInt_t l=0;l<v->size();++l){
-            if(charge->at(l)==Charge){
-                histo->Fill(v->at(l));
-            }
-        }
-        }
-        else{
-            for(UInt_t l=0;l<v->size();++l){
-            if(charge->at(l)==Charge){
-                histo->Fill((var));
-            }
-        }
-        }
 
-    };
+#include "Functions.cpp"
+
 void MSD() {
+     
     TFile *fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
     TFile *filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
-    TFile *file = new TFile("MSD.root");
+    TFile* MSDResult = new TFile("MSDResult.root","RECREATE");
+   // TFile *file = new TFile("MSD.root");
     fileGeom->ls();
     filePileUp->ls();
     TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;5");
@@ -91,7 +15,7 @@ void MSD() {
     //////Energia TW//////////////////////////////////////////
       TH1F *hTWPointDE1 =new TH1F("hTWPointDE1", " DE1 TW", 100, 0, 100);
          TH1F *hTWPointDE1o =
-        new TH1F("hTWPoint", " DE1  TWCharge=8",
+        new TH1F("hTWPointDE1o", " DE1  TWCharge=8",
                  100, 0, 100);
     TH1F *hTWPointDE1Clean =
         new TH1F("hTWPointClean", " DE1 persa con MSD==3 e 1 punto nel TW",
@@ -289,212 +213,35 @@ void MSD() {
     }
     hAirFrag->Add(hTWDE1MSD3TW1Oxigen,hGeometryOxigen,1,-1);
     hAirFragMSDTW->Add(hTWDE1MSD3TW1NoFragOxigen,hGeometryOxigen,1,-1);
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////Cosmetica//////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-    hTWPointDE1->SetLineColor(kBlack);
-    hTWPointDE1o->SetLineColor(kBlue);
-    hTWPointDE1Clean->SetLineColor(kRed);
-    hGeometryOxigen->SetLineColor(kGreen);
-    TCanvas *c4 = new TCanvas("c4", "Pile up= file pile up. Eventi= new Geom");
-    c4->Divide(3,4);
-
-    c4->cd(1);
-    gPad->SetLogy();
-    hTWPointDE1->GetXaxis()->SetTitle("dE/dx");
-    hTWPointDE1->GetYaxis()->SetTitle("Events");
-    hTWPointDE1->Draw();
-
-    c4->cd(2);
-    gPad->SetLogy();
-    hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
-    hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
-    hTWPointDE1Clean->Draw();
-
-
-    c4->cd(3);
-    gPad->SetLogy();
-    hTWPointDE1o->GetXaxis()->SetTitle("dE/dx");
-    hTWPointDE1o->GetYaxis()->SetTitle("Events");
-    hTWPointDE1Clean->Draw();
-    hTWPointDE1->Draw("SAME");
-
-
-
-    c4->cd(4);
-     gPad->SetLogy();
-    hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
-    hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
-    hTWPointDE1Clean->Draw();
-
+    //MSDResult->Write();
+    //////////////////////////
+     hMSDPoints->Write();
+     hMSDPoints->Write();
+     hTWPointDE1->Write();
+     hTWPointDE1o ->Write();
+     hTWPointDE1Clean ->Write();
+     hTWDE1MSD3TW1NoFrag->Write();
+     hTWDE1MSD3TW1NoFragOxigen->Write();
+     hTWDE1MSD3TW1Oxigen->Write();
+     hGeometryOxigen ->Write();
+     hAirFrag->Write();
+     hAirFragMSDTW->Write();
+     hMSDDE1Points3 ->Write();
+     hMSDDE1Points ->Write();
+     hMSDDE1Points3TW ->Write();
+     hMSDDE1Points3TWOssigeni ->Write();
+     hMSDDE1Points3TWOssigeniNoFrag ->Write();
+     hMSDDE1Points3TWOssigeniNoFragGeometry ->Write();
+     hMSDDE2Points3 ->Write();
+     hMSDDE2Points ->Write();
+     hMSDDE2Points3TW ->Write(); 
+     hMSDDE2Points3TWOssigeni ->Write();
+     hMSDDE2Points3TWOssigeniNoFrag ->Write(); 
+     hMSDDE2Points3TWOssigeniNoFragGeometry ->Write();                    
+     hTWPointDE1NoPileUP ->Write();
+     hPointsMSDSawTWNo ->Write();
+     hEnergyMSDSawTWNo ->Write(); 
+     hPointsMSDSawFrag ->Write();
+     MSDResult->Close();
    
-    c4->cd(5);
-    gPad->SetLogy();
-    hTWDE1MSD3TW1NoFrag->GetXaxis()->SetTitle("dE/dx");
-    hTWDE1MSD3TW1NoFrag->GetYaxis()->SetTitle("Events");
-    hTWDE1MSD3TW1NoFrag->Draw();
-
-    c4->cd(6);
-    gPad->SetLogy();
-    hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
-    hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
-    hTWPointDE1Clean->Draw();
-    hTWDE1MSD3TW1NoFrag->Draw("SAME");
-
-    c4->cd(7);
-     gPad->SetLogy();
-     hTWDE1MSD3TW1Oxigen->GetXaxis()->SetTitle("dE/dx");
-    hTWDE1MSD3TW1Oxigen->GetYaxis()->SetTitle("Events");
-    hTWDE1MSD3TW1Oxigen->Draw();
-
-    c4->cd(8);
-     gPad->SetLogy();
-     hTWDE1MSD3TW1NoFragOxigen->GetXaxis()->SetTitle("dE/dx");
-    hTWDE1MSD3TW1NoFragOxigen->GetYaxis()->SetTitle("Events");
-    hTWDE1MSD3TW1NoFragOxigen->Draw();
-    
-    c4->cd(9);
-    gPad->SetLogy();
-     hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
-    hGeometryOxigen->GetYaxis()->SetTitle("Events");
-    hGeometryOxigen->Draw();
-
-    c4->cd(10);
-     gPad->SetLogy();
-     hTWDE1MSD3TW1Oxigen->GetXaxis()->SetTitle("dE/dx");
-    hTWDE1MSD3TW1Oxigen->GetYaxis()->SetTitle("Events");
-    hTWDE1MSD3TW1Oxigen->Draw();
-     hTWDE1MSD3TW1NoFragOxigen->Draw("SAME");
-      hGeometryOxigen->Draw("SAME");
-
-     c4->cd(11);
-    gPad->SetLogy();
-    hAirFrag->GetXaxis()->SetTitle("dE/dx");
-    hAirFrag->GetYaxis()->SetTitle("Events");
-    hAirFrag->Draw();
-
-
-    c4->cd(12);
-    gPad->SetLogy();
-    hAirFragMSDTW->GetXaxis()->SetTitle("dE/dx");
-    hAirFragMSDTW->GetYaxis()->SetTitle("Events");
-    hAirFragMSDTW->Draw();
-
-
-    TCanvas *c5 = new TCanvas("c5", "Pile up= file pile up. Eventi= new Geom");
-    c5->Divide(3,4);
-    hMSDDE1Points3->SetLineColor(kBlack);
-    hMSDDE1Points->SetLineColor(kRed);
-    hMSDDE1Points3TW->SetLineColor(kGreen);
-    hMSDDE1Points3TWOssigeni->SetLineColor(kBlue);
-    hMSDDE1Points3TWOssigeniNoFrag->SetLineColor(kMagenta);
-    hMSDDE1Points3TWOssigeniNoFragGeometry->SetLineColor(kRed);
-    hMSDDE2Points3->SetLineColor(kBlack);
-    hMSDDE2Points->SetLineColor(kRed);
-    hMSDDE2Points3TW->SetLineColor(kGreen);
-    hMSDDE2Points3TWOssigeni->SetLineColor(kBlue);
-    hMSDDE2Points3TWOssigeniNoFrag->SetLineColor(kMagenta);
-    hMSDDE2Points3TWOssigeniNoFragGeometry->SetLineColor(kRed);
-    /*c5->cd(1);
-    gPad->SetLogy();
-    hMSDDE1Points->GetXaxis()->SetTitle("dE/dx");
-    hMSDPoints->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points->Draw();*/
-
-    c5->cd(1);
-    gPad->SetLogy();
-    hMSDDE1Points3->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE1Points3->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points3->Draw();
-
-    c5->cd(2);
-    gPad->SetLogy();
-    hMSDDE1Points3TW->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE1Points3TW->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points3TW->Draw();
-
-    c5->cd(3);
-    gPad->SetLogy();
-    hMSDDE1Points3TWOssigeni->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE1Points3TWOssigeni->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points3TWOssigeni->Draw();
-    c5->cd(4);
-    gPad->SetLogy();
-     hMSDDE1Points3TWOssigeniNoFrag->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE1Points3TWOssigeniNoFrag->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points3TWOssigeniNoFrag->Draw();
-      c5->cd(5);
-    gPad->SetLogy();
-    hMSDDE1Points3TWOssigeniNoFragGeometry->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE1Points3TWOssigeniNoFragGeometry->GetYaxis()->SetTitle("Events");
-    hMSDDE1Points3TWOssigeniNoFragGeometry->Draw();
-
-    c5->cd(6);
-    gPad->SetLogy();
-    hMSDPoints->GetXaxis()->SetTitle("dE/dx");
-    hMSDPoints->GetYaxis()->SetTitle("Events");
-    //hMSDDE1Points->Draw();
-    hMSDDE1Points3->Draw();
-    hMSDDE1Points3TW->Draw("SAME");
-    hMSDDE1Points3TWOssigeni->Draw("SAME");
-    hMSDDE1Points3TWOssigeniNoFrag->Draw("SAME");
-    hMSDDE1Points3TWOssigeniNoFragGeometry->Draw("SAME");
-        c5->cd(7);
-    gPad->SetLogy();
-    hMSDDE2Points3->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE2Points3->GetYaxis()->SetTitle("Events");
-    hMSDDE2Points3->Draw();
-
-    c5->cd(8);
-    gPad->SetLogy();
-    hMSDDE2Points3TW->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE2Points3TW->GetYaxis()->SetTitle("Events");
-    hMSDDE2Points3TW->Draw();
-
-    c5->cd(9);
-    gPad->SetLogy();
-    hMSDDE2Points3TWOssigeni->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE2Points3TWOssigeni->GetYaxis()->SetTitle("Events");
-    hMSDDE2Points3TWOssigeni->Draw();
-    c5->cd(10);
-    gPad->SetLogy();
-     hMSDDE2Points3TWOssigeniNoFrag->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE2Points3TWOssigeniNoFrag->GetYaxis()->SetTitle("Events");
-    hMSDDE2Points3TWOssigeniNoFrag->Draw();
-      c5->cd(11);
-    gPad->SetLogy();
-    hMSDDE2Points3TWOssigeniNoFragGeometry->GetXaxis()->SetTitle("dE/dx");
-    hMSDDE2Points3TWOssigeniNoFragGeometry->GetYaxis()->SetTitle("Events");
-    hMSDDE2Points3TWOssigeniNoFragGeometry->Draw();
-
-    c5->cd(12);
-    gPad->SetLogy();
-    hMSDPoints->GetXaxis()->SetTitle("dE/dx");
-    hMSDPoints->GetYaxis()->SetTitle("Events");
-    hMSDDE2Points3->Draw();
-    hMSDDE2Points3TW->Draw("SAME");
-    hMSDDE2Points3TWOssigeni->Draw("SAME");
-    hMSDDE2Points3TWOssigeniNoFrag->Draw("SAME");
-    hMSDDE2Points3TWOssigeniNoFragGeometry->Draw("SAME");
-
-    TCanvas *c8 = new TCanvas("c8", "Pile up= file pile up. Eventi= new Geom");
-    c8->Divide(2);
-    c8->cd(1);
-    hPointsMSDSawTWNo->GetXaxis()->SetTitle("Points");
-    hPointsMSDSawTWNo->GetYaxis()->SetTitle("Events");
-    hPointsMSDSawTWNo->Draw();
-   c8->cd(2);
-    hPointsMSDSawFrag->GetXaxis()->SetTitle("Points");
-    hPointsMSDSawFrag->GetYaxis()->SetTitle("Events");
-    hPointsMSDSawFrag->Draw();
-
-    c4->Print("Grafici/TwLostEnergy.pdf");
-    c5->Print("Grafici/MSDLostEnergy.pdf");
-    c8->Print(
-        "Grafici/MSD-Points-Seen.pdf");
 }
