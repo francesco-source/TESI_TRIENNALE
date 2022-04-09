@@ -86,7 +86,7 @@
          
         //int counter=1;;
         if(SCPileup==true){         
-           for(int j=0;j<TWDe1Point->size();j++){hTWDe1PointPileUp->Fill(TWDe1Point->at(j));
+           for(UInt_t j=0;j<TWDe1Point->size();j++){hTWDe1PointPileUp->Fill(TWDe1Point->at(j));
            var=var+1;
            std::cout<<var<<" ";
         
@@ -116,104 +116,5 @@
     hTWDe1PointNoPileUp->Write();
     hTWDe1PointPileUp->Write();
     hTWPoints->Write();
-    file2->Close();
-   /* TCanvas *c= new TCanvas("c","Pile up= file pile up. Eventi= new Geom");
-    hSCTimePileUp->SetLineColor(kGreen);
-    hSCTimeNoPileUp->SetLineColor(kBlue);
-    hSCChargePileUp->SetLineColor(kBlack);
-    hSCChargeNoPileUp->SetLineColor(kRed);
-    hTWDe1Point->SetLineColor(kBlue);
-       hTWDe1PointNoPileUp->SetLineColor(kRed);
-       hTWChargeNoPointPileUp->SetLineColor(kBlue);
-       hTWChargePointPileUp->SetLineColor(kRed);
-    c->Divide(3,5);
-       c->cd(1);
-    gPad->SetLogy();
-     hSCTimePileUp->GetXaxis()->SetTitle("Time");
-     hSCTimePileUp->GetYaxis()->SetTitle("Events");
-     hSCTimePileUp->Draw();
-      c->cd(2);
-    gPad->SetLogy();
-    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
-      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
-    hSCTimeNoPileUp->Draw();
-    c->cd(3);
-     gPad->SetLogy();
-    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
-      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
-    hSCTimeNoPileUp->Draw();
-     hSCTimePileUp->Draw("SAME");
-     c->cd(4);
-    gPad->SetLogy();
-    hSCChargePileUp->GetXaxis()->SetTitle("Charge");
-     hSCChargePileUp->GetYaxis()->SetTitle("Events");
-    hSCChargePileUp->Draw();
-    c->cd(5);
-    gPad->SetLogy();
-    hSCChargeNoPileUp->GetXaxis()->SetTitle("Charge");
-     hSCChargeNoPileUp->GetYaxis()->SetTitle("Events");
-      hSCChargeNoPileUp->Draw();
-      c->cd(6);
-       gPad->SetLogy();
-    hSCChargePileUp->GetXaxis()->SetTitle("Charge");
-     hSCChargePileUp->GetYaxis()->SetTitle("Events");
-    hSCChargePileUp->Draw();
-    hSCChargeNoPileUp->Draw("SAME");
-      c->cd(7);
-       gPad->SetLogy();
-       hTWChargePointPileUp->GetXaxis()->SetTitle("Charge");
-      hTWChargePointPileUp->GetYaxis()->SetTitle("Events");
-       hTWChargePointPileUp->Draw();
-      c->cd(8);
-       gPad->SetLogy();
-       hTWChargeNoPointPileUp->Draw();
-      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
-      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
-      c->cd(9);
-       gPad->SetLogy();
-       hTWChargeNoPointPileUp->Draw();
-        hTWChargePointPileUp->Draw("SAME");
-      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
-      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
-     
-
-      c->cd(10);
-      gPad->SetLogy();
-      hTWDe1PointNoPileUp->GetXaxis()->SetTitle("dE/dx");
-      hTWDe1PointNoPileUp->GetYaxis()->SetTitle("Events");
-      hTWDe1PointNoPileUp->Draw();
-      c->cd(11);
-      gPad->SetLogy();
-       hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
-      hTWDe1Point->GetYaxis()->SetTitle("Events");
-      hTWDe1Point->Draw();
-      c->cd(12);
-       gPad->SetLogy();
-       hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
-      hTWDe1Point->GetYaxis()->SetTitle("Events");
-      hTWDe1Point->Draw();
-      hTWDe1PointNoPileUp->Draw("SAME");
-    
-      c->cd(13);
-      gPad->SetLogy();
-      hTWDe1Point->Draw();
-      
-       c->cd(14);
-        gPad->SetLogy();
-       hTWDe1PointPileUp->Draw();
-
-       c->cd(15);
-      gPad->SetLogy();
-      hTWDe1Point->Draw();
-      hTWDe1PointPileUp->Draw("SAME");
-
-
-      TCanvas *c3=new TCanvas("c3","Pile up= file pile up. Eventi= new Geom");
-      hTWPoints->Draw();
-      hTWPoints->GetXaxis()->SetTitle("Points");
-      hTWPoints->GetYaxis()->SetTitle("Events");
-
-      c->Print("Grafici/Pile_up.pdf");
-      c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");*/
-      
+    file2->Close();     
  }
