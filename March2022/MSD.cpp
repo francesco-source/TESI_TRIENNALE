@@ -60,7 +60,25 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     }
    
 }
+    template<typename T>
+    void FillingCharge(std::vector<T>* v,
+    TH1F* histo,std::vector<int>* charge,int Charge=8,double var=0){
+        if(var==0){
+        for(UInt_t l=0;l<v->size();++l){
+            if(charge->at(l)==Charge){
+                histo->Fill(v->at(l));
+            }
+        }
+        }
+        else{
+            for(UInt_t l=0;l<v->size();++l){
+            if(charge->at(l)==Charge){
+                histo->Fill((var));
+            }
+        }
+        }
 
+    };
 void MSD() {
     TFile *fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
     TFile *filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
@@ -71,7 +89,7 @@ void MSD() {
     TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
     TH1F *hMSDPoints = new TH1F("hMSDPoints", " Punti nel MSD", 10, 0, 10);
     //////Energia TW//////////////////////////////////////////
-      TH1F *hTWPointDE1 =new TH1F("hTWPoint", " DE1 TW", 100, 0, 100);
+      TH1F *hTWPointDE1 =new TH1F("hTWPointDE1", " DE1 TW", 100, 0, 100);
          TH1F *hTWPointDE1o =
         new TH1F("hTWPoint", " DE1  TWCharge=8",
                  100, 0, 100);
@@ -166,6 +184,9 @@ void MSD() {
     Long64_t tPileUpEntry = 0;
     UInt_t nentriesGeom = TGeomOut->GetEntries();
     int counter = 0;
+    auto Filling=[](std::vector<double>* v,TH1F* histo){
+        for(UInt_t l=0;l<v->size();++l){histo->Fill(v->at(l));}
+    };
     std::vector<int> sum;
     int ausiliarsum = 0;
     TGeomOut->SetBranchAddress("MSDPoints", &MSDPoints, &b_MSDPoints);
@@ -195,6 +216,7 @@ void MSD() {
         b_Frag->GetEntry(i);
         b_MSDXPoint->GetEntry(i);
         b_MSDYPoint->GetEntry(i);
+         ausiliarsum = 0;
          for (UInt_t j = 0; j < MSDPoints->size(); ++j) {
             ausiliarsum = ausiliarsum + MSDPoints->at(j);
         }
@@ -202,60 +224,24 @@ void MSD() {
         //////////////////////////////////////////////////////////
         //////////////////Riempio energia osservata dal TW////////
         //////////////////////////////////////////////////////////
-        for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
-            { hTWPointDE1->Fill(TWDe1Point->at(j)); }
-        }
-       
-
+        Filling(TWDe1Point,hTWPointDE1);
+        FillingCharge(TWDe1Point,hTWPointDE1o,TWChargePoint,8);
         if (sum[i] == 3 && TWPoints == 1) {
-            for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
-                hTWPointDE1Clean->Fill(TWDe1Point->at(j));
-                if(Frag==false){hTWDE1MSD3TW1NoFrag->Fill(TWDe1Point->at(j));}
-                if(TWChargePoint->at(j)==8){hTWDE1MSD3TW1Oxigen->Fill(TWDe1Point->at(j));}
-                if(Frag==false && TWChargePoint->at(j)==8){hTWDE1MSD3TW1NoFragOxigen->Fill(TWDe1Point->at(j));}
-               
-            }
+        Filling(TWDe1Point,hTWPointDE1Clean);
+        FillingCharge(TWDe1Point,hTWDE1MSD3TW1Oxigen,TWChargePoint,8);
+        if(Frag==false){
+        Filling(TWDe1Point,hTWDE1MSD3TW1NoFrag);
+        FillingCharge(TWDe1Point,hTWDE1MSD3TW1NoFragOxigen,TWChargePoint,8);
         }
-
-        for (UInt_t j = 0; j < TWDe1Point->size(); ++j) {
-            if (TWChargePoint->at(j) == 8) {
-                hTWPointDE1o->Fill(TWDe1Point->at(j));
-            }
         }
-        double variab = 0;
-       /* for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
-            variab = variab + MSDDe1Point->at(j);
-        }
-        hMSDDE1Points->Fill(variab);*/
-
-        ////////////////////////////////////////////////////////////////
-        /// Punti visti da MSD quando TW non vede niente e c' è pile up//
-        ////////////////////////////////////////////////////////////////
         if (TWPoints == 0 && SCPileup == true) {
             hPointsMSDSawTWNo->Fill(sum[i]);
         }
-
-        ////////////////////////////////////////////////////////////////
-        ////Quanti punti vede l' MSD quando il fascio frammenta?///////////////
-        ///////////////////////////////////////////////////////////////
         if (Frag == true) {
             hPointsMSDSawFrag->Fill(sum[i]);
         }
-        //////////////////////////////////////////////////////////////
-        // Energia persa in MSD quando TW non vede nulla con Pile UP///
-        //////////////////////////////////////////////////////////////
-        if (TWPoints == 0 && SCPileup == true) {
-            // Riempilo con il grafico metto uno zero ora di default devo finire
-            std::vector<int> same_charge;
-            for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
-                hEnergyMSDSawTWNo->Fill(0);
-            }
-        }
-
-
         double var1 = 0;
         double var2 =0;
-        /// Energia quando l' MSD vede un solo punto//////////////
         if (sum[i] == 3) {
             for (UInt_t j = 0; j < MSDDe1Point->size(); ++j) {
                 var1 = var1 + MSDDe1Point->at(j);
@@ -264,24 +250,20 @@ void MSD() {
                 var2 = var2 + MSDDe2Point->at(j);
             }   
         }
-        if(sum[i]==3){ hMSDDE1Points3->Fill(var1); hMSDDE2Points3->Fill(var2); }
-        ////Energia MSD quando TW ed MSD vedono solo un punto che succede//////
+        if(sum[i]==3)
+        { hMSDDE1Points3->Fill(var1); hMSDDE2Points3->Fill(var2); }
         if (sum[i] == 3 && TWPoints == 1) {
             hMSDDE1Points3TW->Fill(var1);
              hMSDDE2Points3TW->Fill(var2);
         }
      
         if (sum[i] == 3 && TWPoints == 1) {
-            for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
-                if (TWChargePoint->at(j) == 8) {
-                    hMSDDE1Points3TWOssigeni->Fill(var1);
-                    hMSDDE2Points3TWOssigeni->Fill(var2);
-                }
-                if(TWChargePoint->at(j) == 8 && Frag==false){
-                    hMSDDE1Points3TWOssigeniNoFrag->Fill(var1);
-                    hMSDDE2Points3TWOssigeniNoFrag->Fill(var2);
-                }
-            }
+            FillingCharge(TWChargePoint,hMSDDE1Points3TWOssigeni,TWChargePoint,8,var1);
+            FillingCharge(TWChargePoint,hMSDDE2Points3TWOssigeni,TWChargePoint,8,var2);
+        if(Frag==false){
+            FillingCharge(TWChargePoint,hMSDDE1Points3TWOssigeniNoFrag,TWChargePoint,8,var1);
+            FillingCharge(TWChargePoint,hMSDDE2Points3TWOssigeniNoFrag,TWChargePoint,8,var2);
+        }
         }
 
           if (sum[i] == 3 && TWPoints==1 && Frag==false) {
@@ -299,25 +281,12 @@ void MSD() {
             fillCordinates.clear();
             coordinates.push_back(MSDZ);
             if (GeometryMSDTGLine(coordinates) == true) {
-                for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
-                    if (TWChargePoint->at(j) == 8) {
-                        hGeometryOxigen->Fill(TWDe1Point->at(0));
-                        hMSDDE1Points3TWOssigeniNoFragGeometry->Fill(var1);
-                        hMSDDE2Points3TWOssigeniNoFragGeometry->Fill(var2);
-                        counter++;
-                    }
-                }
+                FillingCharge(TWChargePoint,hGeometryOxigen,TWChargePoint,8,TWDe1Point->at(0));
+                FillingCharge(TWChargePoint,hMSDDE1Points3TWOssigeniNoFragGeometry,TWChargePoint,8,var1);
+                FillingCharge(TWChargePoint,hMSDDE2Points3TWOssigeniNoFragGeometry,TWChargePoint,8,var2);
             }
-        }
-        ausiliarsum = 0;
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////Geometria
-        ///Primari//////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-      
+          }
     }
-    std::cout << counter << std::endl;
     hAirFrag->Add(hTWDE1MSD3TW1Oxigen,hGeometryOxigen,1,-1);
     hAirFragMSDTW->Add(hTWDE1MSD3TW1NoFragOxigen,hGeometryOxigen,1,-1);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
