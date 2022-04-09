@@ -23,6 +23,7 @@
  void macro(){
      TFile* fileGeom= new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
      TFile* filePileUp= new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
+     TFile *file2 = new TFile("PileUpResult.root","RECREATE");
      fileGeom->ls();
      filePileUp->ls();
      TTree* TGeomOut=(TTree*)fileGeom->Get("Tree;5");
@@ -105,8 +106,18 @@
         for(UInt_t j=0;j<TWDe1Point->size();++j){hTWDe1Point->Fill(TWDe1Point->at(j));}
     }
 
-
-    TCanvas *c= new TCanvas("c","Pile up= file pile up. Eventi= new Geom");
+    hSCTimeNoPileUp->Write();
+    hSCTimePileUp->Write(); 
+    hSCChargePileUp->Write();  
+    hSCChargeNoPileUp->Write();
+    hTWChargePointPileUp ->Write();
+    hTWChargeNoPointPileUp ->Write();
+    hTWDe1Point->Write();
+    hTWDe1PointNoPileUp->Write();
+    hTWDe1PointPileUp->Write();
+    hTWPoints->Write();
+    file2->Close();
+   /* TCanvas *c= new TCanvas("c","Pile up= file pile up. Eventi= new Geom");
     hSCTimePileUp->SetLineColor(kGreen);
     hSCTimeNoPileUp->SetLineColor(kBlue);
     hSCChargePileUp->SetLineColor(kBlack);
@@ -203,6 +214,6 @@
       hTWPoints->GetYaxis()->SetTitle("Events");
 
       c->Print("Grafici/Pile_up.pdf");
-      c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");
+      c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");*/
       
  }

@@ -24,6 +24,8 @@
 
 void Draw_MSD_PileUP(){
     TFile *file = new TFile("MSDResult.root");
+    TFile *file2 = new TFile("PileUpResult.root");
+
     TH1F *hMSDPoints = (TH1F*)file->Get("hMSDPoints"); 
     TH1F *hTWPointDE1 =(TH1F*)file->Get("hTWPointDE1"); 
     TH1F *hTWPointDE1o =(TH1F*)file->Get("hTWPointDE1o");
@@ -52,6 +54,18 @@ void Draw_MSD_PileUP(){
     TH1F *hPointsMSDSawTWNo =(TH1F*)file->Get("hPointsMSDSawTWNo");
     TH1F *hEnergyMSDSawTWNo = (TH1F*)file->Get("hEnergyMSDSawTWNo");
     TH1F *hPointsMSDSawFrag =(TH1F*)file->Get("hPointsMSDSawFrag");
+
+    TH1F *hSCTimeNoPileUp= (TH1F*)file2->Get("SCTimeNoPileUp");       
+    TH1F *hSCTimePileUp=  (TH1F*)file2->Get("SCTimePileUp"); 
+    TH1F *hSCChargePileUp=   (TH1F*)file2->Get("SCCharge");   
+    TH1F *hSCChargeNoPileUp= (TH1F*)file2->Get("SCChargeNoPileUP");    
+    TH1F *hTWChargePointPileUp=   (TH1F*)file2->Get("TWPileup");    
+    TH1F *hTWChargeNoPointPileUp=  (TH1F*)file2->Get("TWNoPileup");      
+    TH1F *hTWDe1Point= (TH1F*)file2->Get("TWDe1Point");
+    TH1F *hTWDe1PointNoPileUp=(TH1F*)file2->Get("TWDe1PointNoPileUP");
+    TH1F *hTWDe1PointPileUp= (TH1F*)file2->Get("TWDe1PointPileUP");
+    TH1F *hTWPoints=(TH1F*)file2->Get("hTWPoints");
+
     hTWPointDE1->SetLineColor(kBlack);
     hTWPointDE1o->SetLineColor(kBlue);
     hTWPointDE1Clean->SetLineColor(kRed);
@@ -243,9 +257,109 @@ void Draw_MSD_PileUP(){
     hPointsMSDSawFrag->GetYaxis()->SetTitle("Events");
     hPointsMSDSawFrag->Draw();
 
-    c4->Print("Grafici/TwLostEnergy.pdf");
-    c5->Print("Grafici/MSDLostEnergy.pdf");
-    c8->Print(
-        "Grafici/MSD-Points-Seen.pdf");
+    //Pile UP//////////////////////////////////////////////
+
+
+    TCanvas *c= new TCanvas("c","Pile up= file pile up. Eventi= new Geom");
+    hSCTimePileUp->SetLineColor(kGreen);
+    hSCTimeNoPileUp->SetLineColor(kBlue);
+    hSCChargePileUp->SetLineColor(kBlack);
+    hSCChargeNoPileUp->SetLineColor(kRed);
+    hTWDe1Point->SetLineColor(kBlue);
+       hTWDe1PointNoPileUp->SetLineColor(kRed);
+       hTWChargeNoPointPileUp->SetLineColor(kBlue);
+       hTWChargePointPileUp->SetLineColor(kRed);
+    c->Divide(3,5);
+       c->cd(1);
+    gPad->SetLogy();
+     hSCTimePileUp->GetXaxis()->SetTitle("Time");
+     hSCTimePileUp->GetYaxis()->SetTitle("Events");
+     hSCTimePileUp->Draw();
+      c->cd(2);
+    gPad->SetLogy();
+    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
+      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
+    hSCTimeNoPileUp->Draw();
+    c->cd(3);
+     gPad->SetLogy();
+    hSCTimeNoPileUp->GetXaxis()->SetTitle("Time");
+      hSCTimeNoPileUp->GetYaxis()->SetTitle("Events");
+    hSCTimeNoPileUp->Draw();
+     hSCTimePileUp->Draw("SAME");
+     c->cd(4);
+    gPad->SetLogy();
+    hSCChargePileUp->GetXaxis()->SetTitle("Charge");
+     hSCChargePileUp->GetYaxis()->SetTitle("Events");
+    hSCChargePileUp->Draw();
+    c->cd(5);
+    gPad->SetLogy();
+    hSCChargeNoPileUp->GetXaxis()->SetTitle("Charge");
+     hSCChargeNoPileUp->GetYaxis()->SetTitle("Events");
+      hSCChargeNoPileUp->Draw();
+      c->cd(6);
+       gPad->SetLogy();
+    hSCChargePileUp->GetXaxis()->SetTitle("Charge");
+     hSCChargePileUp->GetYaxis()->SetTitle("Events");
+    hSCChargePileUp->Draw();
+    hSCChargeNoPileUp->Draw("SAME");
+      c->cd(7);
+       gPad->SetLogy();
+       hTWChargePointPileUp->GetXaxis()->SetTitle("Charge");
+      hTWChargePointPileUp->GetYaxis()->SetTitle("Events");
+       hTWChargePointPileUp->Draw();
+      c->cd(8);
+       gPad->SetLogy();
+       hTWChargeNoPointPileUp->Draw();
+      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
+      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
+      c->cd(9);
+       gPad->SetLogy();
+       hTWChargeNoPointPileUp->Draw();
+        hTWChargePointPileUp->Draw("SAME");
+      hTWChargeNoPointPileUp->GetXaxis()->SetTitle("Charge");
+      hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
+     
+
+      c->cd(10);
+      gPad->SetLogy();
+      hTWDe1PointNoPileUp->GetXaxis()->SetTitle("dE/dx");
+      hTWDe1PointNoPileUp->GetYaxis()->SetTitle("Events");
+      hTWDe1PointNoPileUp->Draw();
+      c->cd(11);
+      gPad->SetLogy();
+       hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
+      hTWDe1Point->GetYaxis()->SetTitle("Events");
+      hTWDe1Point->Draw();
+      c->cd(12);
+       gPad->SetLogy();
+       hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
+      hTWDe1Point->GetYaxis()->SetTitle("Events");
+      hTWDe1Point->Draw();
+      hTWDe1PointNoPileUp->Draw("SAME");
+    
+      c->cd(13);
+      gPad->SetLogy();
+      hTWDe1Point->Draw();
+      
+       c->cd(14);
+        gPad->SetLogy();
+       hTWDe1PointPileUp->Draw();
+
+       c->cd(15);
+      gPad->SetLogy();
+      hTWDe1Point->Draw();
+      hTWDe1PointPileUp->Draw("SAME");
+
+
+      TCanvas *c3=new TCanvas("c3","Pile up= file pile up. Eventi= new Geom");
+      hTWPoints->Draw();
+      hTWPoints->GetXaxis()->SetTitle("Points");
+      hTWPoints->GetYaxis()->SetTitle("Events");
+
+         c->Print("Grafici/Pile_up.pdf");
+        c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");
+        c4->Print("Grafici/TwLostEnergy.pdf");
+        c5->Print("Grafici/MSDLostEnergy.pdf");
+        c8->Print("Grafici/MSD-Points-Seen.pdf");
 }
 
