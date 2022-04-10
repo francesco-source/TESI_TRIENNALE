@@ -84,6 +84,7 @@ void MSD() {
 
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
+    std::vector<double> *TWDe2Point = 0;
     std::vector<int> *TWChargePoint = 0;
     std::vector<double> *MSDDe1Point = 0;
     std::vector<double> *MSDDe2Point = 0;
@@ -95,6 +96,7 @@ void MSD() {
     TBranch *b_MSDPoints = 0;
     TBranch *b_TWPoints = 0;
     TBranch *b_TWDe1Point = 0;
+    TBranch *b_TWDe2Point = 0;
     TBranch *b_TWChargePoint = 0;
     TBranch *b_MSDDe1Point = 0;
     TBranch *b_MSDDe2Point = 0;
@@ -110,6 +112,7 @@ void MSD() {
     Long64_t tPileUpEntry = 0;
     UInt_t nentriesGeom = TGeomOut->GetEntries();
     int counter = 0;
+    int howmanygost=0;
     auto Filling = [](std::vector<double> *v, TH1F *histo) {
         for (UInt_t l = 0; l < v->size(); ++l) {
             histo->Fill(v->at(l));
@@ -120,6 +123,7 @@ void MSD() {
     TGeomOut->SetBranchAddress("MSDPoints", &MSDPoints, &b_MSDPoints);
     TGeomOut->SetBranchAddress("TWPoints", &TWPoints, &b_TWPoints);
     TGeomOut->SetBranchAddress("TWDe1Point", &TWDe1Point, &b_TWDe1Point);
+    TGeomOut->SetBranchAddress("TWDe2Point", &TWDe2Point, &b_TWDe2Point);
     TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint,
                                &b_TWChargePoint);
     TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
@@ -137,6 +141,7 @@ void MSD() {
         b_MSDPoints->GetEntry(i);
         b_TWPoints->GetEntry(i);
         b_TWDe1Point->GetEntry(i);
+        b_TWDe2Point->GetEntry(i);
         b_TWChargePoint->GetEntry(i);
         b_MSDDe1Point->GetEntry(i);
         b_MSDDe2Point->GetEntry(i);
@@ -201,6 +206,10 @@ void MSD() {
             }
         }
 
+       /* if( TWPoints>=2 && sum[i]>=12){
+       howmanygost=howmanygost+ (TWPoints -FindTrueTW(TWDe1Point,TWDe2Point,MSDPoints,TWPoints).size());}
+       if(FindTrueTW(TWDe1Point,TWDe2Point,MSDPoints,TWPoints).size()!=TWPoints )
+        {std::cout<<TWPoints<<" "<<FindTrueTW(TWDe1Point,TWDe2Point,MSDPoints,TWPoints).size()<<"\n";}}*/
         if (sum[i] == 3 && TWPoints == 1 && Frag == false) {
             std::vector<std::vector<Float_t>> coordinates;
             std::vector<Float_t> fillCordinates;
@@ -229,7 +238,7 @@ void MSD() {
     }
     hAirFrag->Add(hTWDE1MSD3TW1Oxigen, hGeometryOxigen, 1, -1);
     hAirFragMSDTW->Add(hTWDE1MSD3TW1NoFragOxigen, hGeometryOxigen, 1, -1);
-
+    std::cout<<howmanygost<<std::endl;
     //////////////////////////
     hMSDPoints->Write();
     hMSDPoints->Write();
