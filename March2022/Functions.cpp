@@ -19,6 +19,11 @@
 #include "TRandom.h"
 #include "TStyle.h"
 #include "TTree.h"
+typedef struct index{
+        int i=0;
+        int j=0;
+}ind;
+
 bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
                         Float_t xTarget = 2, Float_t yTarget = 2,
                         Float_t errorxyMSd=0.01,Float_t errorZ=0.1) {
@@ -62,44 +67,47 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
    
 };
 
- typedef struct index{
-    public:
-        int i=0;
-        int j=0;
-}ind;
-
-
     template<typename T,typename S>
-    auto FindGostTW(std::vector<T>* energy1, std::vector<T>* energy2,
-                int sumMSD,std::vector<S>* MSDPoints,int TWPoints){
+    std::vector<ind> FindGostTW(std::vector<T>* energy1, std::vector<T>* energy2
+    ,std::vector<S>* MSDPoints,int TWPoints){
             std::vector<ind> index;
             std::vector<std::vector<T>> sum(energy1->size(),std::vector<T>(energy2->size()));
             std::vector<std::vector<T>> diff(energy1->size(),std::vector<T>(energy2->size()));
+            ind indice;
             for(UInt_t i=0;i<energy1->size();++i){
                 for(UInt_t j=0;j<energy2->size();++j){
                     sum[i][j]=abs(energy1->at(i) + energy2->at(j));
                     diff[i][j]=abs(energy1->at(i) - energy2->at(j));
                 }
         }
-        if(energy1->size()>=energy2->size()){
-            //trovo gli indici delle particelle e li metto in index;
-            return index;
-        }
-        else 
-        //trovo gli indici delle particelle vere e li metto in index;
-        return index;
-    }
- 
+            for(UInt_t i=0;i<energy1->size();++i){
+                double difference=diff[i][0];  
+                for(UInt_t j=0; energy2->size();++j){
+                    if(difference>diff[i][j]){
+                        difference=diff[i][j];
+                        indice.i=i;
+                        indice.j=j;
+                    }
+                index[i].i=indice.i;
+                index[i].j=indice.j;
+                }
+            }
 
+            return index;
+    }
 
     template<typename T>
-    auto ClearGostTW(){
-            //da pensare e da riempire
+    bool ClearGostTW(){
+
+
+
+        return true;
     }
 
 
      template<typename T>
-    auto ClearGostMSD(){
+    bool ClearGostMSD(){
+        return true;
             //da pensare e da riempire
     }
 
