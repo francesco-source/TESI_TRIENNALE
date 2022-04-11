@@ -4,7 +4,7 @@
 
 
 
-bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
+bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
                         Float_t xTarget = 2, Float_t yTarget = 2,
                         Float_t errorxyMSd=0.01,Float_t errorZ=0.1) {
     ///////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
 
 
     template<typename T,typename S>
-    std::vector<ind> FindTrueTW(std::vector<T>* energy1, std::vector<T>* energy2
+    std::vector<foot::ind> foot::FindTrueTW(std::vector<T>* energy1, std::vector<T>* energy2
     ,std::vector<S>* MSDPoints,int TWPoints){
             std::vector<ind> index;
             std::vector<std::vector<Float_t>> diff(energy1->size(),std::vector<T>(energy2->size()));
@@ -89,15 +89,17 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
             }
             return index;
     }
-    bool GeometryMSD(){
 
+    /////////////////////////////////////////////////////////////////////////////////////////
+    template<typename T>
+    bool foot::GeometryMSD(){
         return true;
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
     
     template<typename T>
-    void FillingCharge(std::vector<T>* v,
+    void foot::Fill(std::vector<T>* v,
     TH1F* histo,std::vector<int>* charge,int Charge,double var){
         if(var==0){
         for(UInt_t l=0;l<v->size();++l){

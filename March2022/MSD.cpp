@@ -158,13 +158,13 @@ void MSD() {
         //////////////////Riempio energia osservata dal TW////////
         //////////////////////////////////////////////////////////
         Filling(TWDe1Point, hTWPointDE1);
-        FillingCharge(TWDe1Point, hTWPointDE1o, TWChargePoint, 8,0);
+        foot::Fill(TWDe1Point, hTWPointDE1o, TWChargePoint, 8,0);
         if (sum[i] == 3 && TWPoints == 1) {
             Filling(TWDe1Point, hTWPointDE1Clean);
-            FillingCharge(TWDe1Point, hTWDE1MSD3TW1Oxigen, TWChargePoint, 8,0);
+            foot::Fill(TWDe1Point, hTWDE1MSD3TW1Oxigen, TWChargePoint, 8,0);
             if (Frag == false) {
                 Filling(TWDe1Point, hTWDE1MSD3TW1NoFrag);
-                FillingCharge(TWDe1Point, hTWDE1MSD3TW1NoFragOxigen,
+                foot::Fill(TWDe1Point, hTWDE1MSD3TW1NoFragOxigen,
                               TWChargePoint, 8,0);
             }
         }
@@ -194,14 +194,14 @@ void MSD() {
         }
 
         if (sum[i] == 3 && TWPoints == 1) {
-            FillingCharge(TWChargePoint, hMSDDE1Points3TWOssigeni,
+            foot::Fill(TWChargePoint, hMSDDE1Points3TWOssigeni,
                           TWChargePoint, 8, var1);
-            FillingCharge(TWChargePoint, hMSDDE2Points3TWOssigeni,
+            foot::Fill(TWChargePoint, hMSDDE2Points3TWOssigeni,
                           TWChargePoint, 8, var2);
             if (Frag == false) {
-                FillingCharge(TWChargePoint, hMSDDE1Points3TWOssigeniNoFrag,
+                foot::Fill(TWChargePoint, hMSDDE1Points3TWOssigeniNoFrag,
                               TWChargePoint, 8, var1);
-                FillingCharge(TWChargePoint, hMSDDE2Points3TWOssigeniNoFrag,
+                foot::Fill(TWChargePoint, hMSDDE2Points3TWOssigeniNoFrag,
                               TWChargePoint, 8, var2);
             }
         }
@@ -233,13 +233,13 @@ void MSD() {
             coordinates.push_back(fillCordinates);
             fillCordinates.clear();
             coordinates.push_back(MSDZ);
-            if (GeometryMSDTGLine(coordinates) == true) {
-                FillingCharge(TWChargePoint, hGeometryOxigen, TWChargePoint, 8,
+            if (foot::GeometryMSDTGLine(coordinates) == true) {
+                foot::Fill(TWChargePoint, hGeometryOxigen, TWChargePoint, 8,
                               TWDe1Point->at(0));
-                FillingCharge(TWChargePoint,
+                foot::Fill(TWChargePoint,
                               hMSDDE1Points3TWOssigeniNoFragGeometry,
                               TWChargePoint, 8, var1);
-                FillingCharge(TWChargePoint,
+                foot::Fill(TWChargePoint,
                               hMSDDE2Points3TWOssigeniNoFragGeometry,
                               TWChargePoint, 8, var2);
             }

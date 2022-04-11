@@ -18,6 +18,9 @@
 #include "TStyle.h"
 #include "TTree.h"
 
+namespace foot{
+
+//////////////////////////////////////////////////////////////////////////////
 bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
                         Float_t xTarget, Float_t yTarget,
                         Float_t errorxyMSd,Float_t errorZ);
@@ -28,18 +31,15 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
   }ind;
 //////////////////////////////////////////////////////////////////////////////
  template<typename T,typename S>
-   std::vector<ind> FindGostTW(std::vector<T>* energy1, std::vector<T>* energy2,
-                int sumMSD,std::vector<S>* MSDPoints,int TWPoints);
+   std::vector<ind> FindTrueTW(std::vector<T>* energy1, std::vector<T>* energy2
+    ,std::vector<S>* MSDPoints,int TWPoints);
 //////////////////////////////////////////////////////////////////////////////
    template<typename T>
-    bool ClearGostMSD();
-//////////////////////////////////////////////////////////////////////////////
-template<typename T>
-    bool ClearGostTW();
+    bool GeometryMSD();
 ////////////////////////////////////////////////////////////////////////////////
     template<typename T>
-    void FillingCharge(std::vector<T>* v,
+    void Fill(std::vector<T>* v,
     TH1F* histo,std::vector<int>* charge,int Charge,double var);
-///////////////////////////////////////////////////////////////////////////////
-
+/////////////////////////////////////////////////////////////////////////////
+};
 #endif
