@@ -1,6 +1,6 @@
 
+#include "Functions.hpp"
 #include "Functions.cpp"
-
 void MSD() {
     TFile *fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
     TFile *filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
@@ -158,17 +158,17 @@ void MSD() {
         //////////////////Riempio energia osservata dal TW////////
         //////////////////////////////////////////////////////////
         Filling(TWDe1Point, hTWPointDE1);
-        FillingCharge(TWDe1Point, hTWPointDE1o, TWChargePoint, 8);
+        FillingCharge(TWDe1Point, hTWPointDE1o, TWChargePoint, 8,0);
         if (sum[i] == 3 && TWPoints == 1) {
             Filling(TWDe1Point, hTWPointDE1Clean);
-            FillingCharge(TWDe1Point, hTWDE1MSD3TW1Oxigen, TWChargePoint, 8);
+            FillingCharge(TWDe1Point, hTWDE1MSD3TW1Oxigen, TWChargePoint, 8,0);
             if (Frag == false) {
                 Filling(TWDe1Point, hTWDE1MSD3TW1NoFrag);
                 FillingCharge(TWDe1Point, hTWDE1MSD3TW1NoFragOxigen,
-                              TWChargePoint, 8);
+                              TWChargePoint, 8,0);
             }
         }
-        if (TWPoints == 0 && SCPileup == true) {
+        if (TWPoints <=0 && SCPileup == true) {
             hPointsMSDSawTWNo->Fill(sum[i]);
         }
         if (Frag == true) {
@@ -205,12 +205,21 @@ void MSD() {
                               TWChargePoint, 8, var2);
             }
         }
+        if(sum[i]==3 && counter<20 && TWPoints==1){
+            print(MSDPoints);
+            std::cout<<"\n";
 
-       /* if( TWPoints>=2 && sum[i]>=12){
-       howmanygost=howmanygost+ (TWPoints -FindTrueTW(TWDe1Point,TWDe2Point,MSDPoints,TWPoints).size());}
-       if(FindTrueTW(TWDe1Point,TWDe2Point,MSDPoints,TWPoints).size()!=TWPoints )
-        {std::cout<<TWPoints<<" "<<FindTrueTW(TWDe1Point,TWDe2Point,MSDPoints,TWPoints).size()<<"\n";}}*/
-        if (sum[i] == 3 && TWPoints == 1 && Frag == false) {
+            print(MSDXPoint);
+            std::cout<<"\n";
+            print(MSDYPoint);
+            std::cout<<"\n";
+            print(MSDDe1Point);
+            std::cout<<"\n";
+            print(MSDDe2Point);
+            std::cout<<"\n";
+            counter++;
+        }
+        if (sum[i]==3 && TWPoints == 1 && Frag == false) {
             std::vector<std::vector<Float_t>> coordinates;
             std::vector<Float_t> fillCordinates;
             for (UInt_t j = 0; j < MSDXPoint->size(); ++j) {

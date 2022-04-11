@@ -1,28 +1,8 @@
-#include <TCanvas.h>
-#include <TH2.h>
-#include <TStyle.h>
-#include "TCanvas.h"
-#include "TF1.h"
-#include "TFile.h"
-#include "TFitResult.h"
-#include "TGraph.h"
-#include "TGraphErrors.h"
-#include "TH1F.h"
-#include "TH2F.h"
-#include "TH3F.h"
-#include "THStack.h"
-#include "TLegend.h"
-#include "TMath.h"
-#include "TMatrixD.h"
-#include "TMultiGraph.h"
-#include "TROOT.h"
-#include "TRandom.h"
-#include "TStyle.h"
-#include "TTree.h"
-typedef struct index{
-        double x=0;
-        double  y=0;
-}ind;
+
+#include "Functions.hpp"
+
+
+
 
 bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
                         Float_t xTarget = 2, Float_t yTarget = 2,
@@ -67,11 +47,25 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
    
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+    template<typename T>
+    void print(std::vector<T>* v){
+        for(int i=0;i<v->size();++i){
+            std::cout<<" "<<v->at(i)<<" ";
+        }
+        std::cout<<"            ";
+    }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
     template<typename T,typename S>
     std::vector<ind> FindTrueTW(std::vector<T>* energy1, std::vector<T>* energy2
     ,std::vector<S>* MSDPoints,int TWPoints){
             std::vector<ind> index;
-            std::vector<std::vector<T>> diff(energy1->size(),std::vector<T>(energy2->size()));
+            std::vector<std::vector<Float_t>> diff(energy1->size(),std::vector<T>(energy2->size()));
             ind indice;
             double difference=0;
             for(UInt_t i=0;i<energy1->size();++i){
@@ -87,32 +81,24 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
                         difference=diff[i][j];
                         indice.y=energy2->at(j);
                     }
+                    else{
+                        indice.y=energy2->at(j);
+                    }
                 }
                index.push_back(indice);
             }
             return index;
     }
-
-    template<typename T>
-    bool ClearGostTW(){
-
-
+    bool GeometryMSD(){
 
         return true;
     }
 
-
-     template<typename T>
-    bool ClearGostMSD(){
-        return true;
-            //da pensare e da riempire
-    }
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////
     
     template<typename T>
     void FillingCharge(std::vector<T>* v,
-    TH1F* histo,std::vector<int>* charge,int Charge=8,double var=0){
+    TH1F* histo,std::vector<int>* charge,int Charge,double var){
         if(var==0){
         for(UInt_t l=0;l<v->size();++l){
             if(charge->at(l)==Charge){
@@ -127,4 +113,6 @@ bool GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
             }
         }
         }
-    };
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
