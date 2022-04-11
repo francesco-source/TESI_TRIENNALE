@@ -5,7 +5,6 @@ void MSD() {
     TFile *fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
     TFile *filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
     TFile *MSDResult = new TFile("MSDResult.root", "RECREATE");
-    // TFile *file = new TFile("MSD.root");
     fileGeom->ls();
     filePileUp->ls();
     TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;5");
