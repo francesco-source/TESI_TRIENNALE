@@ -51,7 +51,7 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
 
     template<typename T>
     void print(std::vector<T>* v){
-        for(int i=0;i<v->size();++i){
+        for(UInt_t i=0;i<v->size();++i){
             std::cout<<" "<<v->at(i)<<" ";
         }
         std::cout<<"            ";
