@@ -1,90 +1,80 @@
 
 #include "Functions.cpp"
 #include "Functions.hpp"
-void MSD() {
-   // TFile *fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
-   // TFile *filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
-    TFile *fileGeom = new TFile("ROOT-FILES/tree4313_newgeom_MAR2022.root");
-    TFile *filePileUp = new TFile("ROOT-FILES/tree4313_pileup_MAR2022.root");
-    TFile *MSDResult = new TFile("MSDResult.root", "RECREATE");
+void MSD(int choosefile=4306) {
+    TFile *fileGeom ;
+    TFile *filePileUp ;
+    TFile *MSDResult;
+    TTree *TGeomOut ;
+     TTree *TPileUpOut;
+    if(choosefile==4313){
+     fileGeom = new TFile("ROOT-FILES/tree4313_newgeom_MAR2022.root");
+    filePileUp = new TFile("ROOT-FILES/tree4313_pileup_MAR2022.root");   
+    MSDResult = new TFile("MSDResult4313.root", "RECREATE");
+    TGeomOut = (TTree *)fileGeom->Get("Tree;1");
+    TPileUpOut = (TTree *)filePileUp->Get("Tree;1");
+    }
+    else {
+    fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
+    filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
+    MSDResult = new TFile("MSDResult4306.root", "RECREATE");
+    TGeomOut = (TTree *)fileGeom->Get("Tree;5");
+    TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
+    }
     fileGeom->ls();
     filePileUp->ls();
-   // TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;5");
-    //TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
-    TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;1");
-    TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;1");
-    TH1F *hMSDPoints = new TH1F("hMSDPoints", " Punti nel MSD", 10, 0, 10);
-    //////Energia TW//////////////////////////////////////////
-    TH1F *hTWPointDE1 = new TH1F("hTWPointDE1", " DE1 TW", 100, 0, 100);
-    TH1F *hTWPointDE1o =
-        new TH1F("hTWPointDE1o", " DE1  TWCharge=8", 100, 0, 100);
-    TH1F *hTWPointDE1Clean = new TH1F(
-        "hTWPointClean", " DE1 persa con MSD==3 e 1 punto nel TW", 100, 0, 100);
-    TH1F *hTWDE1MSD3TW1NoFrag = new TH1F(
-        "hTWDE1MSD3TW1NoFrag", " DE1 TW MSD=3,TW=1,Frag=false", 100, 0, 100);
-    TH1F *hTWDE1MSD3TW1NoFragOxigen =
-        new TH1F("hTWDE1MSD3TW1NoFragOxigen",
-                 " DE1 TW MSD=3,TW=1,Frag=false,TWCharge=8", 100, 0, 100);
-    TH1F *hTWDE1MSD3TW1Oxigen =
-        new TH1F("hTWDE1MSD3TW1FragOxigen", " DE1 TW MSD=3,TW=1,TWCharge=8",
-                 100, 0, 100);
-    TH1F *hGeometryOxigen =
+    std::vector<TH1F *> h(26);
+    h[0] = new TH1F("hMSDPoints", " Punti nel MSD", 10, 0, 10);
+    h[1] = new TH1F("hTWPointDE1", " DE1 TW", 100, 0, 100);
+    h[2] = new TH1F("hTWPointDE1o", " DE1  TWCharge=8", 100, 0, 100);
+    h[3] = new TH1F("hTWPointClean", " DE1 persa con MSD==3 e 1 punto nel TW",
+                    100, 0, 100);
+    h[4] = new TH1F("hTWDE1MSD3TW1NoFrag", " DE1 TW MSD=3,TW=1,Frag=false", 100,
+                    0, 100);
+    h[5] = new TH1F("hTWDE1MSD3TW1NoFragOxigen",
+                    " DE1 TW MSD=3,TW=1,Frag=false,TWCharge=8", 100, 0, 100);
+    h[6] = new TH1F("hTWDE1MSD3TW1FragOxigen", " DE1 TW MSD=3,TW=1,TWCharge=8",
+                    100, 0, 100);
+    h[7] =
         new TH1F("hGeometryOxigen",
                  "DE1 TW MSD=3,Frag=0,TW=1,TWCharge=8,geometria", 100, 0, 100);
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////Grafici confronto con cui faccio la
-    /// sottrazione///////////////////////////////////
-    TH1F *hAirFrag = new TH1F("hAirFrag", "hTWDE1MSD3TW1Oxigen-hGeometryOxigen",
-                              100, 0, 100);
-    TH1F *hAirFragMSDTW =
-        new TH1F("hAirFragMSDTW", "hTWDE1MSD3TW1NoFragOxigen-hGeometryOxigen",
-                 100, 0, 100);
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    TH1F *hMSDDE1Points3 =
-        new TH1F("hMSDDE1Points3", "DE1 MSD==3", 1000, 0, 10000);
-    TH1F *hMSDDE1Points = new TH1F("hMSDDE1Points", "DE1 MSD", 1000, 0, 10000);
-    TH1F *hMSDDE1Points3TW =
-        new TH1F("hMSDDE1Points3TW", "DE1 MSD==3 e TW=1", 1000, 0, 10000);
-    TH1F *hMSDDE1Points3TWOssigeni =
-        new TH1F("hMSDDE1Points3TWOssigeni", "DE1 MSD==3, TW=1, TWCharge=8",
-                 1000, 0, 10000);
-    TH1F *hMSDDE1Points3TWOssigeniNoFrag =
-        new TH1F("hMSDDE1Points3TWOssigeniNoFrag",
-                 "DE1 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);
-    TH1F *hMSDDE1Points3TWOssigeniNoFragGeometry = new TH1F(
-        "hMSDDE1Points3TWOssigeniNoFragGeometry",
-        "DE1 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 10000);
-    TH1F *hMSDDE2Points3 =
-        new TH1F("hMSDDE2Points3", "DE2 MSD==3", 1000, 0, 15000);
-    TH1F *hMSDDE2Points = new TH1F("hMSDDE2Points", "DE2 MSD", 1000, 0, 15000);
-    TH1F *hMSDDE2Points3TW =
-        new TH1F("hMSDDE2Points3TW", "DE2 MSD==3 e TW=1", 1000, 0, 15000);
-    TH1F *hMSDDE2Points3TWOssigeni =
-        new TH1F("hMSDDE2Points3TWOssigeni", "DE2 MSD==3, TW=1, TWCharge=8",
-                 1000, 0, 15000);
-    TH1F *hMSDDE2Points3TWOssigeniNoFrag =
-        new TH1F("hMSDDE2Points3TWOssigeniNoFrag",
-                 "DE2 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 15000);
-    TH1F *hMSDDE2Points3TWOssigeniNoFragGeometry = new TH1F(
-        "hMSDDE2Points3TWOssigeniNoFragGeometry",
-        "DE2 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000, 0, 15000);
-    TH1F *hTWPointDE1NoPileUP =
-        new TH1F("hTWPointNoPileUP",
-                 " Energia persa vista dal TW senza pile up", 100, 0, 100);
-    TH1F *hPointsMSDSawTWNo = new TH1F(
-        "hPointsMSDSawTWNo",
-        "Quanti punti vede l'MSD quando il TW non vede nulla?", 20, 0, 20);
-    TH1F *hEnergyMSDSawTWNo = new TH1F(
+    h[8] = new TH1F("hAirFrag", "hTWDE1MSD3TW1Oxigen-hGeometryOxigen", 100, 0,
+                    100);
+    h[9] = new TH1F("hAirFragMSDTW",
+                    "hTWDE1MSD3TW1NoFragOxigen-hGeometryOxigen", 100, 0, 100);
+    h[10] = new TH1F("hMSDDE1Points3", "DE1 MSD==3", 1000, 0, 10000);
+    h[11] = new TH1F("hMSDDE1Points", "DE1 MSD", 1000, 0, 10000);
+    h[12] = new TH1F("hMSDDE1Points3TW", "DE1 MSD==3 e TW=1", 1000, 0, 10000);
+    h[13] = new TH1F("hMSDDE1Points3TWOssigeni", "DE1 MSD==3, TW=1, TWCharge=8",
+                     1000, 0, 10000);
+    h[14] = new TH1F("hMSDDE1Points3TWOssigeniNoFrag",
+                     "DE1 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 10000);
+    h[15] = new TH1F("hMSDDE1Points3TWOssigeniNoFragGeometry",
+                     "DE1 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000,
+                     0, 10000);
+    h[16] = new TH1F("hMSDDE2Points3", "DE2 MSD==3", 1000, 0, 15000);
+    h[17] = new TH1F("hMSDDE2Points", "DE2 MSD", 1000, 0, 15000);
+    h[18] = new TH1F("hMSDDE2Points3TW", "DE2 MSD==3 e TW=1", 1000, 0, 15000);
+    h[19] = new TH1F("hMSDDE2Points3TWOssigeni", "DE2 MSD==3, TW=1, TWCharge=8",
+                     1000, 0, 15000);
+    h[20] = new TH1F("hMSDDE2Points3TWOssigeniNoFrag",
+                     "DE2 MSD==3, TW=1,TWCharge=8,Frag=false", 1000, 0, 15000);
+    h[21] = new TH1F("hMSDDE2Points3TWOssigeniNoFragGeometry",
+                     "DE2 MSD==3, TW=1,TWCharge=8,Frag=false, Geometry", 1000,
+                     0, 15000);
+    h[22] = new TH1F("hTWPointNoPileUP",
+                     " Energia persa vista dal TW senza pile up", 100, 0, 100);
+    h[23] = new TH1F("hPointsMSDSawTWNo",
+                     "Quanti punti vede l'MSD quando il TW non vede nulla?", 20,
+                     0, 20);
+    h[24] = new TH1F(
         "hEnergyMSDSawTWNo",
         "Che energia vede l'MSD quando il TW non vede nulla con Pile up?", 100,
         0, 100);
-    TH1F *hPointsMSDSawFrag =
+    h[25] =
         new TH1F("hPointsMSDSawFrag",
                  "Quanti punti vede l'MSD quando il fascio primario frammenta",
                  20, 0, 20);
-
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
     std::vector<double> *TWDe2Point = 0;
@@ -159,22 +149,21 @@ void MSD() {
         //////////////////////////////////////////////////////////
         //////////////////Riempio energia osservata dal TW////////
         //////////////////////////////////////////////////////////
-        Filling(TWDe1Point, hTWPointDE1);
-        foot::Fill(TWDe1Point, hTWPointDE1o, TWChargePoint, 8, 0);
+        Filling(TWDe1Point, h[1]);
+        foot::Fill(TWDe1Point, h[2], TWChargePoint, 8);
         if (sum[i] == 3 && TWPoints == 1) {
-            Filling(TWDe1Point, hTWPointDE1Clean);
-            foot::Fill(TWDe1Point, hTWDE1MSD3TW1Oxigen, TWChargePoint, 8, 0);
+            Filling(TWDe1Point, h[3]);
+            foot::Fill(TWDe1Point, h[6], TWChargePoint, 8);
             if (Frag == false) {
-                Filling(TWDe1Point, hTWDE1MSD3TW1NoFrag);
-                foot::Fill(TWDe1Point, hTWDE1MSD3TW1NoFragOxigen, TWChargePoint,
-                           8, 0);
+                Filling(TWDe1Point, h[4]);
+                foot::Fill(TWDe1Point, h[5], TWChargePoint, 8);
             }
         }
         if (TWPoints <= 0 && SCPileup == true) {
-            hPointsMSDSawTWNo->Fill(sum[i]);
+            h[23]->Fill(sum[i]);
         }
         if (Frag == true) {
-            hPointsMSDSawFrag->Fill(sum[i]);
+            h[25]->Fill(sum[i]);
         }
         double var1 = 0;
         double var2 = 0;
@@ -187,24 +176,20 @@ void MSD() {
             }
         }
         if (sum[i] == 3) {
-            hMSDDE1Points3->Fill(var1);
-            hMSDDE2Points3->Fill(var2);
+            h[10]->Fill(var1);
+            h[16]->Fill(var2);
         }
         if (sum[i] == 3 && TWPoints == 1) {
-            hMSDDE1Points3TW->Fill(var1);
-            hMSDDE2Points3TW->Fill(var2);
+            h[12]->Fill(var1);
+            h[18]->Fill(var2);
         }
 
         if (sum[i] == 3 && TWPoints == 1) {
-            foot::Fill(TWChargePoint, hMSDDE1Points3TWOssigeni, TWChargePoint,
-                       8, var1);
-            foot::Fill(TWChargePoint, hMSDDE2Points3TWOssigeni, TWChargePoint,
-                       8, var2);
+            foot::Fill(TWChargePoint, h[13], TWChargePoint, 8, var1);
+            foot::Fill(TWChargePoint, h[19], TWChargePoint, 8, var2);
             if (Frag == false) {
-                foot::Fill(TWChargePoint, hMSDDE1Points3TWOssigeniNoFrag,
-                           TWChargePoint, 8, var1);
-                foot::Fill(TWChargePoint, hMSDDE2Points3TWOssigeniNoFrag,
-                           TWChargePoint, 8, var2);
+                foot::Fill(TWChargePoint, h[14], TWChargePoint, 8, var1);
+                foot::Fill(TWChargePoint, h[20], TWChargePoint, 8, var2);
             }
         }
         if (sum[i] == 3 && counter < 20 && TWPoints == 1) {
@@ -237,47 +222,19 @@ void MSD() {
                 fillCordinates.clear();
                 coordinates.push_back(MSDZ);
                 if (foot::GeometryMSDTGLine(coordinates) == true) {
-                    foot::Fill(TWChargePoint, hGeometryOxigen, TWChargePoint, 8,
+                    foot::Fill(TWChargePoint, h[7], TWChargePoint, 8,
                                TWDe1Point->at(0));
-                    foot::Fill(TWChargePoint,
-                               hMSDDE1Points3TWOssigeniNoFragGeometry,
-                               TWChargePoint, 8, var1);
-                    foot::Fill(TWChargePoint,
-                               hMSDDE2Points3TWOssigeniNoFragGeometry,
-                               TWChargePoint, 8, var2);
+                    foot::Fill(TWChargePoint, h[15], TWChargePoint, 8, var1);
+                    foot::Fill(TWChargePoint, h[21], TWChargePoint, 8, var2);
                 }
             }
         }
     }
-    hAirFrag->Add(hTWDE1MSD3TW1Oxigen, hGeometryOxigen, 1, -1);
-    hAirFragMSDTW->Add(hTWDE1MSD3TW1NoFragOxigen, hGeometryOxigen, 1, -1);
+    h[8]->Add(h[6], h[7], 1, -1);
+    h[9]->Add(h[5], h[7], 1, -1);
     //////////////////////////
-    hMSDPoints->Write();
-    hMSDPoints->Write();
-    hTWPointDE1->Write();
-    hTWPointDE1o->Write();
-    hTWPointDE1Clean->Write();
-    hTWDE1MSD3TW1NoFrag->Write();
-    hTWDE1MSD3TW1NoFragOxigen->Write();
-    hTWDE1MSD3TW1Oxigen->Write();
-    hGeometryOxigen->Write();
-    hAirFrag->Write();
-    hAirFragMSDTW->Write();
-    hMSDDE1Points3->Write();
-    hMSDDE1Points->Write();
-    hMSDDE1Points3TW->Write();
-    hMSDDE1Points3TWOssigeni->Write();
-    hMSDDE1Points3TWOssigeniNoFrag->Write();
-    hMSDDE1Points3TWOssigeniNoFragGeometry->Write();
-    hMSDDE2Points3->Write();
-    hMSDDE2Points->Write();
-    hMSDDE2Points3TW->Write();
-    hMSDDE2Points3TWOssigeni->Write();
-    hMSDDE2Points3TWOssigeniNoFrag->Write();
-    hMSDDE2Points3TWOssigeniNoFragGeometry->Write();
-    hTWPointDE1NoPileUP->Write();
-    hPointsMSDSawTWNo->Write();
-    hEnergyMSDSawTWNo->Write();
-    hPointsMSDSawFrag->Write();
+    for (UInt_t j = 0; j < h.size(); ++j) {
+        h[j]->Write();
+    }
     MSDResult->Close();
 }

@@ -22,9 +22,15 @@
 
 
 
-void Draw_MSD_PileUP(){
-    TFile *file = new TFile("MSDResult.root");
-    TFile *file2 = new TFile("PileUpResult.root");
+void Draw_MSD_PileUP(int filechoose=4306){
+   TFile *file;
+     TFile *file2 = new TFile("PileUpResult.root");
+    if(filechoose==4313){
+      file = new TFile("MSDResult4313.root");
+    }
+    else{
+      file = new TFile("MSDResult4306.root");
+    }
 
     TH1F *hMSDPoints = (TH1F*)file->Get("hMSDPoints"); 
     TH1F *hTWPointDE1 =(TH1F*)file->Get("hTWPointDE1"); 
