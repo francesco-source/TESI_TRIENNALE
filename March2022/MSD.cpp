@@ -1,14 +1,18 @@
 
-#include "Functions.hpp"
 #include "Functions.cpp"
+#include "Functions.hpp"
 void MSD() {
-    TFile *fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
-    TFile *filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
+   // TFile *fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
+   // TFile *filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
+    TFile *fileGeom = new TFile("ROOT-FILES/tree4313_newgeom_MAR2022.root");
+    TFile *filePileUp = new TFile("ROOT-FILES/tree4313_pileup_MAR2022.root");
     TFile *MSDResult = new TFile("MSDResult.root", "RECREATE");
     fileGeom->ls();
     filePileUp->ls();
-    TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;5");
-    TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
+   // TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;5");
+    //TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
+    TTree *TGeomOut = (TTree *)fileGeom->Get("Tree;1");
+    TTree *TPileUpOut = (TTree *)filePileUp->Get("Tree;1");
     TH1F *hMSDPoints = new TH1F("hMSDPoints", " Punti nel MSD", 10, 0, 10);
     //////Energia TW//////////////////////////////////////////
     TH1F *hTWPointDE1 = new TH1F("hTWPointDE1", " DE1 TW", 100, 0, 100);
@@ -29,7 +33,7 @@ void MSD() {
                  "DE1 TW MSD=3,Frag=0,TW=1,TWCharge=8,geometria", 100, 0, 100);
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////Grafici confronto con cui faccio la
-    ///sottrazione///////////////////////////////////
+    /// sottrazione///////////////////////////////////
     TH1F *hAirFrag = new TH1F("hAirFrag", "hTWDE1MSD3TW1Oxigen-hGeometryOxigen",
                               100, 0, 100);
     TH1F *hAirFragMSDTW =
@@ -111,7 +115,6 @@ void MSD() {
     Long64_t tPileUpEntry = 0;
     UInt_t nentriesGeom = TGeomOut->GetEntries();
     int counter = 0;
-    int howmanygost=0;
     auto Filling = [](std::vector<double> *v, TH1F *histo) {
         for (UInt_t l = 0; l < v->size(); ++l) {
             histo->Fill(v->at(l));
@@ -157,17 +160,17 @@ void MSD() {
         //////////////////Riempio energia osservata dal TW////////
         //////////////////////////////////////////////////////////
         Filling(TWDe1Point, hTWPointDE1);
-        foot::Fill(TWDe1Point, hTWPointDE1o, TWChargePoint, 8,0);
+        foot::Fill(TWDe1Point, hTWPointDE1o, TWChargePoint, 8, 0);
         if (sum[i] == 3 && TWPoints == 1) {
             Filling(TWDe1Point, hTWPointDE1Clean);
-            foot::Fill(TWDe1Point, hTWDE1MSD3TW1Oxigen, TWChargePoint, 8,0);
+            foot::Fill(TWDe1Point, hTWDE1MSD3TW1Oxigen, TWChargePoint, 8, 0);
             if (Frag == false) {
                 Filling(TWDe1Point, hTWDE1MSD3TW1NoFrag);
-                foot::Fill(TWDe1Point, hTWDE1MSD3TW1NoFragOxigen,
-                              TWChargePoint, 8,0);
+                foot::Fill(TWDe1Point, hTWDE1MSD3TW1NoFragOxigen, TWChargePoint,
+                           8, 0);
             }
         }
-        if (TWPoints <=0 && SCPileup == true) {
+        if (TWPoints <= 0 && SCPileup == true) {
             hPointsMSDSawTWNo->Fill(sum[i]);
         }
         if (Frag == true) {
@@ -193,64 +196,61 @@ void MSD() {
         }
 
         if (sum[i] == 3 && TWPoints == 1) {
-            foot::Fill(TWChargePoint, hMSDDE1Points3TWOssigeni,
-                          TWChargePoint, 8, var1);
-            foot::Fill(TWChargePoint, hMSDDE2Points3TWOssigeni,
-                          TWChargePoint, 8, var2);
+            foot::Fill(TWChargePoint, hMSDDE1Points3TWOssigeni, TWChargePoint,
+                       8, var1);
+            foot::Fill(TWChargePoint, hMSDDE2Points3TWOssigeni, TWChargePoint,
+                       8, var2);
             if (Frag == false) {
                 foot::Fill(TWChargePoint, hMSDDE1Points3TWOssigeniNoFrag,
-                              TWChargePoint, 8, var1);
+                           TWChargePoint, 8, var1);
                 foot::Fill(TWChargePoint, hMSDDE2Points3TWOssigeniNoFrag,
-                              TWChargePoint, 8, var2);
+                           TWChargePoint, 8, var2);
             }
         }
-        if(sum[i]==3  && counter<20 && TWPoints==1){
+        if (sum[i] == 3 && counter < 20 && TWPoints == 1) {
             print(MSDPoints);
-            std::cout<<"\n";
-           
+            std::cout << "\n";
             print(MSDXPoint);
-            std::cout<<"\n";
+            std::cout << "\n";
             print(MSDYPoint);
-            std::cout<<"\n";
+            std::cout << "\n";
             print(MSDDe1Point);
-            std::cout<<"\n";
+            std::cout << "\n";
             print(MSDDe2Point);
-            std::cout<<"\n";
+            std::cout << "\n";
             counter++;
         }
-      // if ((MSDPoints->at(0)==1) && (MSDPoints->at(1)==1) && (MSDPoints->at(2)==1) && TWPoints == 1 && Frag == false) {
-            if ( TWPoints == 1 && Frag == false){
-                if((MSDPoints->at(0)==1) && (MSDPoints->at(1)==1) && (MSDPoints->at(2)==1)){
-            std::vector<std::vector<Float_t>> coordinates;
-            std::vector<Float_t> fillCordinates;
-            for (UInt_t j = 0; j < MSDXPoint->size(); ++j) {
-                fillCordinates.push_back(MSDXPoint->at(j));
-            }
-            coordinates.push_back(fillCordinates);
-            fillCordinates.clear();
-            for (UInt_t j = 0; j < MSDYPoint->size(); ++j) {
-                fillCordinates.push_back(MSDYPoint->at(j));
-            }
-            coordinates.push_back(fillCordinates);
-            fillCordinates.clear();
-            coordinates.push_back(MSDZ);
-            if (foot::GeometryMSDTGLine(coordinates) == true) {
-                foot::Fill(TWChargePoint, hGeometryOxigen, TWChargePoint, 8,
-                              TWDe1Point->at(0));
-                foot::Fill(TWChargePoint,
-                              hMSDDE1Points3TWOssigeniNoFragGeometry,
-                              TWChargePoint, 8, var1);
-                foot::Fill(TWChargePoint,
-                              hMSDDE2Points3TWOssigeniNoFragGeometry,
-                              TWChargePoint, 8, var2);
+        if (TWPoints == 1 && Frag == false) {
+            if ((MSDPoints->at(0) == 1) && (MSDPoints->at(1) == 1) &&
+                (MSDPoints->at(2) == 1)) {
+                std::vector<std::vector<Float_t>> coordinates;
+                std::vector<Float_t> fillCordinates;
+                for (UInt_t j = 0; j < MSDXPoint->size(); ++j) {
+                    fillCordinates.push_back(MSDXPoint->at(j));
+                }
+                coordinates.push_back(fillCordinates);
+                fillCordinates.clear();
+                for (UInt_t j = 0; j < MSDYPoint->size(); ++j) {
+                    fillCordinates.push_back(MSDYPoint->at(j));
+                }
+                coordinates.push_back(fillCordinates);
+                fillCordinates.clear();
+                coordinates.push_back(MSDZ);
+                if (foot::GeometryMSDTGLine(coordinates) == true) {
+                    foot::Fill(TWChargePoint, hGeometryOxigen, TWChargePoint, 8,
+                               TWDe1Point->at(0));
+                    foot::Fill(TWChargePoint,
+                               hMSDDE1Points3TWOssigeniNoFragGeometry,
+                               TWChargePoint, 8, var1);
+                    foot::Fill(TWChargePoint,
+                               hMSDDE2Points3TWOssigeniNoFragGeometry,
+                               TWChargePoint, 8, var2);
+                }
             }
         }
-            }
-    
     }
     hAirFrag->Add(hTWDE1MSD3TW1Oxigen, hGeometryOxigen, 1, -1);
     hAirFragMSDTW->Add(hTWDE1MSD3TW1NoFragOxigen, hGeometryOxigen, 1, -1);
-    std::cout<<howmanygost<<std::endl;
     //////////////////////////
     hMSDPoints->Write();
     hMSDPoints->Write();
