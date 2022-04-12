@@ -204,10 +204,10 @@ void MSD() {
                               TWChargePoint, 8, var2);
             }
         }
-        if(sum[i]==3 && counter<20 && TWPoints==1){
+        if(sum[i]==3  && counter<20 && TWPoints==1){
             print(MSDPoints);
             std::cout<<"\n";
-
+           
             print(MSDXPoint);
             std::cout<<"\n";
             print(MSDYPoint);
@@ -218,7 +218,9 @@ void MSD() {
             std::cout<<"\n";
             counter++;
         }
-        if (sum[i]==3 && TWPoints == 1 && Frag == false) {
+      // if ((MSDPoints->at(0)==1) && (MSDPoints->at(1)==1) && (MSDPoints->at(2)==1) && TWPoints == 1 && Frag == false) {
+            if ( TWPoints == 1 && Frag == false){
+                if((MSDPoints->at(0)==1) && (MSDPoints->at(1)==1) && (MSDPoints->at(2)==1)){
             std::vector<std::vector<Float_t>> coordinates;
             std::vector<Float_t> fillCordinates;
             for (UInt_t j = 0; j < MSDXPoint->size(); ++j) {
@@ -243,6 +245,8 @@ void MSD() {
                               TWChargePoint, 8, var2);
             }
         }
+            }
+    
     }
     hAirFrag->Add(hTWDE1MSD3TW1Oxigen, hGeometryOxigen, 1, -1);
     hAirFragMSDTW->Add(hTWDE1MSD3TW1NoFragOxigen, hGeometryOxigen, 1, -1);
