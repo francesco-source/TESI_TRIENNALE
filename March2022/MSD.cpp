@@ -1,25 +1,24 @@
 
 #include "Functions.cpp"
 #include "Functions.hpp"
-void MSD(int choosefile=4306) {
-    TFile *fileGeom ;
-    TFile *filePileUp ;
+void MSD(int choosefile = 4306) {
+    TFile *fileGeom;
+    TFile *filePileUp;
     TFile *MSDResult;
-    TTree *TGeomOut ;
-     TTree *TPileUpOut;
-    if(choosefile==4313){
-     fileGeom = new TFile("ROOT-FILES/tree4313_newgeom_MAR2022.root");
-    filePileUp = new TFile("ROOT-FILES/tree4313_pileup_MAR2022.root");   
-    MSDResult = new TFile("MSDResult4313.root", "RECREATE");
-    TGeomOut = (TTree *)fileGeom->Get("Tree;1");
-    TPileUpOut = (TTree *)filePileUp->Get("Tree;1");
-    }
-    else {
-    fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
-    filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
-    MSDResult = new TFile("MSDResult4306.root", "RECREATE");
-    TGeomOut = (TTree *)fileGeom->Get("Tree;5");
-    TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
+    TTree *TGeomOut;
+    TTree *TPileUpOut;
+    if (choosefile == 4313) {
+        fileGeom = new TFile("ROOT-FILES/tree4313_newgeom_MAR2022.root");
+        filePileUp = new TFile("ROOT-FILES/tree4313_pileup_MAR2022.root");
+        MSDResult = new TFile("MSDResult4313.root", "RECREATE");
+        TGeomOut = (TTree *)fileGeom->Get("Tree;1");
+        TPileUpOut = (TTree *)filePileUp->Get("Tree;1");
+    } else {
+        fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
+        filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
+        MSDResult = new TFile("MSDResult4306.root", "RECREATE");
+        TGeomOut = (TTree *)fileGeom->Get("Tree;5");
+        TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
     }
     fileGeom->ls();
     filePileUp->ls();
@@ -83,10 +82,10 @@ void MSD(int choosefile=4306) {
     std::vector<double> *MSDDe2Point = 0;
     std::vector<double> *MSDXPoint = 0;
     std::vector<double> *MSDYPoint = 0;
-    std::vector<double>  *TWXPoint=0;
-    std::vector<double>  *TWYPoint=0;
-    Double_t        BeamTGX;
-   Double_t        BeamTGY;
+    std::vector<double> *TWXPoint = 0;
+    std::vector<double> *TWYPoint = 0;
+    Double_t BeamTGX;
+    Double_t BeamTGY;
     Bool_t Frag;
     Bool_t SCPileup = 0;
     Int_t TWPoints = 0;
@@ -94,13 +93,13 @@ void MSD(int choosefile=4306) {
     TBranch *b_TWPoints = 0;
     TBranch *b_TWDe1Point = 0;
     TBranch *b_TWDe2Point = 0;
-    TBranch *b_TWXPoint=0;   //!
-    TBranch *b_TWYPoint=0; 
+    TBranch *b_TWXPoint = 0; 
+    TBranch *b_TWYPoint = 0;
     TBranch *b_TWChargePoint = 0;
     TBranch *b_MSDDe1Point = 0;
     TBranch *b_MSDDe2Point = 0;
-     TBranch        *b_BeamTGX=0;   //!
-   TBranch        *b_BeamTGY=0;
+    TBranch *b_BeamTGX = 0;  
+    TBranch *b_BeamTGY = 0;
     TBranch *b_SCPileup = 0;
     TBranch *b_Frag = 0;
     TBranch *b_MSDXPoint = 0;
@@ -137,7 +136,7 @@ void MSD(int choosefile=4306) {
     TGeomOut->SetBranchAddress("MSDXPoint", &MSDXPoint, &b_MSDXPoint);
     TGeomOut->SetBranchAddress("MSDYPoint", &MSDYPoint, &b_MSDYPoint);
     TGeomOut->SetBranchAddress("BeamTGX", &BeamTGX, &b_BeamTGX);
-   TGeomOut->SetBranchAddress("BeamTGY", &BeamTGY, &b_BeamTGY);
+    TGeomOut->SetBranchAddress("BeamTGY", &BeamTGY, &b_BeamTGY);
     for (UInt_t i = 0; i < nentriesGeom; ++i) {
         //////////////////////////////////////////////////////////////////////////
         /////////////////////Get-Entries del
@@ -244,10 +243,10 @@ void MSD(int choosefile=4306) {
                                TWDe1Point->at(0));
                     foot::Fill(TWChargePoint, h[15], TWChargePoint, 8, var1);
                     foot::Fill(TWChargePoint, h[21], TWChargePoint, 8, var2);
-                for(UInt_t j=0;j<TWChargePoint->size();++j){
-                    std::vector<Float_t> x;
-                     std::vector<Float_t> y;
-                    if(TWChargePoint->at(j)==8 && MSDX.size()<100){
+                    for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
+                        std::vector<Float_t> x;
+                        std::vector<Float_t> y;
+                        if (TWChargePoint->at(j) == 8 && MSDX.size() < 100) {
                             x.push_back(BeamTGX);
                             x.push_back(MSDXPoint->at(0));
                             x.push_back(MSDXPoint->at(1));
@@ -260,13 +259,13 @@ void MSD(int choosefile=4306) {
                             y.push_back(TWYPoint->at(0));
                             MSDX.push_back(x);
                             MSDY.push_back(y);
+                        }
                     }
-                }
                 }
             }
         }
     }
-    foot::GeometryPrimaryDraw(MSDX,MSDY,MSDX.size());
+    foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
     h[8]->Add(h[6], h[7], 1, -1);
     h[9]->Add(h[5], h[7], 1, -1);
     //////////////////////////
