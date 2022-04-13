@@ -83,6 +83,10 @@ void MSD(int choosefile=4306) {
     std::vector<double> *MSDDe2Point = 0;
     std::vector<double> *MSDXPoint = 0;
     std::vector<double> *MSDYPoint = 0;
+    std::vector<double>  *TWXPoint=0;
+    std::vector<double>  *TWYPoint=0;
+    Double_t        BeamTGX;
+   Double_t        BeamTGY;
     Bool_t Frag;
     Bool_t SCPileup = 0;
     Int_t TWPoints = 0;
@@ -90,9 +94,13 @@ void MSD(int choosefile=4306) {
     TBranch *b_TWPoints = 0;
     TBranch *b_TWDe1Point = 0;
     TBranch *b_TWDe2Point = 0;
+    TBranch *b_TWXPoint=0;   //!
+    TBranch *b_TWYPoint=0; 
     TBranch *b_TWChargePoint = 0;
     TBranch *b_MSDDe1Point = 0;
     TBranch *b_MSDDe2Point = 0;
+     TBranch        *b_BeamTGX=0;   //!
+   TBranch        *b_BeamTGY=0;
     TBranch *b_SCPileup = 0;
     TBranch *b_Frag = 0;
     TBranch *b_MSDXPoint = 0;
@@ -100,6 +108,8 @@ void MSD(int choosefile=4306) {
     Float_t MSDZ0 = 40;
     Float_t MSDZ1 = 40 + 3.8;
     Float_t MSDZ2 = 40 + 3.8 + 3.8;
+    std::vector<std::vector<Float_t>> MSDX;
+    std::vector<std::vector<Float_t>> MSDY;
     std::vector<Float_t> MSDZ = {MSDZ0, MSDZ1, MSDZ2};
     Long64_t tGeomEntry = 0;
     Long64_t tPileUpEntry = 0;
@@ -118,12 +128,16 @@ void MSD(int choosefile=4306) {
     TGeomOut->SetBranchAddress("TWDe2Point", &TWDe2Point, &b_TWDe2Point);
     TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint,
                                &b_TWChargePoint);
+    TGeomOut->SetBranchAddress("TWXPoint", &TWXPoint, &b_TWXPoint);
+    TGeomOut->SetBranchAddress("TWYPoint", &TWYPoint, &b_TWYPoint);
     TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
     TGeomOut->SetBranchAddress("MSDDe2Point", &MSDDe2Point, &b_MSDDe2Point);
     TPileUpOut->SetBranchAddress("SCPileup", &SCPileup, &b_SCPileup);
     TGeomOut->SetBranchAddress("Frag", &Frag, &b_Frag);
     TGeomOut->SetBranchAddress("MSDXPoint", &MSDXPoint, &b_MSDXPoint);
     TGeomOut->SetBranchAddress("MSDYPoint", &MSDYPoint, &b_MSDYPoint);
+    TGeomOut->SetBranchAddress("BeamTGX", &BeamTGX, &b_BeamTGX);
+   TGeomOut->SetBranchAddress("BeamTGY", &BeamTGY, &b_BeamTGY);
     for (UInt_t i = 0; i < nentriesGeom; ++i) {
         //////////////////////////////////////////////////////////////////////////
         /////////////////////Get-Entries del
@@ -141,6 +155,10 @@ void MSD(int choosefile=4306) {
         b_Frag->GetEntry(i);
         b_MSDXPoint->GetEntry(i);
         b_MSDYPoint->GetEntry(i);
+        b_TWXPoint->GetEntry(i);
+        b_TWYPoint->GetEntry(i);
+        b_BeamTGX->GetEntry(i);
+        b_BeamTGY->GetEntry(i);
         ausiliarsum = 0;
         for (UInt_t j = 0; j < MSDPoints->size(); ++j) {
             ausiliarsum = ausiliarsum + MSDPoints->at(j);
@@ -226,10 +244,29 @@ void MSD(int choosefile=4306) {
                                TWDe1Point->at(0));
                     foot::Fill(TWChargePoint, h[15], TWChargePoint, 8, var1);
                     foot::Fill(TWChargePoint, h[21], TWChargePoint, 8, var2);
+                for(UInt_t j=0;j<TWChargePoint->size();++j){
+                    std::vector<Float_t> x;
+                     std::vector<Float_t> y;
+                    if(TWChargePoint->at(j)==8 && MSDX.size()<100){
+                            x.push_back(BeamTGX);
+                            x.push_back(MSDXPoint->at(0));
+                            x.push_back(MSDXPoint->at(1));
+                            x.push_back(MSDXPoint->at(2));
+                            x.push_back(TWXPoint->at(0));
+                            y.push_back(BeamTGY);
+                            y.push_back(MSDYPoint->at(0));
+                            y.push_back(MSDYPoint->at(1));
+                            y.push_back(MSDYPoint->at(2));
+                            y.push_back(TWYPoint->at(0));
+                            MSDX.push_back(x);
+                            MSDY.push_back(y);
+                    }
+                }
                 }
             }
         }
     }
+    foot::GeometryPrimaryDraw(MSDX,MSDY,MSDX.size());
     h[8]->Add(h[6], h[7], 1, -1);
     h[9]->Add(h[5], h[7], 1, -1);
     //////////////////////////

@@ -46,8 +46,55 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     }
    
 };
-
 //////////////////////////////////////////////////////////////////////////////////////////////
+
+    void foot::GeometryPrimaryDraw(std::vector<std::vector<Float_t>> &x, std::vector<std::vector<Float_t>> &y,UInt_t dimension=0){
+        TCanvas *c1= new TCanvas();
+    TGLViewer *view =(TGLViewer*)gPad->GetViewer3D();
+    TGeoManager *man= new TGeoManager();
+    TGeoVolume *top=man->MakeBox("box",NULL,180,180,189.40);
+    TGeoVolume *TGT=man->MakeBox("TW",NULL,25.5,25.5,0.5);
+    TGeoVolume *MSD=man->MakeBox("MSD",NULL,55.5,55.5,1.45);
+    TGeoVolume *TW=man->MakeBox("TW",NULL,141.7,141.7,4);
+    MSD->SetLineColor(kGray);
+    TGeoHMatrix *trans_rootMSD1=new TGeoHMatrix("TransROT");
+    trans_rootMSD1->SetDz(40);
+    TGeoHMatrix *trans_rootMSD2=new TGeoHMatrix("TransROT");
+    trans_rootMSD2->SetDz(3.8+40);
+    TGeoHMatrix *trans_rootMSD3=new TGeoHMatrix("TransROT1");
+    trans_rootMSD3->SetDz(3.8+3.8+40);
+    TGeoHMatrix *transRootTW=new TGeoHMatrix("TransROT1");
+    transRootTW->SetDz(180);
+    man->SetTopVolume(top);
+      Float_t MSDZ0 = 40;
+    Float_t MSDZ1 = 40 + 3.8;
+    Float_t MSDZ2 = 40 + 3.8 + 3.8;
+    std::vector<Float_t> MSDZ = {0,MSDZ0, MSDZ1, MSDZ2,189.4};
+    top->AddNode(MSD,0,trans_rootMSD1);
+    top->AddNode(MSD,1,trans_rootMSD2);
+    top->AddNode(MSD,2,trans_rootMSD3);
+    top->AddNode(TGT,3);
+    top->AddNode(TW,4,transRootTW);
+    std::vector<TPolyLine3D*> lines(dimension);
+    for(UInt_t j=0;j<dimension;++j){
+        lines[j]=new TPolyLine3D();
+        for(UInt_t i=0;i<x[j].size();++i){
+
+                 {lines[j]->SetPoint(i,x[j][i],y[j][i],MSDZ[i]);}
+          
+        }
+        lines[j]->SetLineColor(kBlue);
+    }
+    man->CloseGeometry();
+    top->Draw("ogl");
+    for(UInt_t j=0;j<dimension;++j){
+        lines[j]->Draw("SAME");
+    }
+    c1->Print("Grafici/Immagine3DFascio.pdf");
+}
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
     void print(std::vector<T>* v){
@@ -90,7 +137,8 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
             return index;
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
     template<typename T>
     bool foot::GeometryMSD(){
         return true;
