@@ -49,7 +49,7 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     void foot::GeometryPrimaryDraw(std::vector<std::vector<Float_t>> &x, std::vector<std::vector<Float_t>> &y,UInt_t dimension=0){
-        TCanvas *c1= new TCanvas();
+    TCanvas *c1= new TCanvas();
     TGLViewer *view =(TGLViewer*)gPad->GetViewer3D();
     TGeoManager *man= new TGeoManager();
     TGeoVolume *top=man->MakeBox("box",NULL,180,180,189.40);
@@ -105,9 +105,18 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+template <typename T, typename S>
+auto foot::BeamMSD_vs_MSD_RealPoint(T& BeamMSDX, T& BeamMSDY,
+                                    std::vector<S>* MSDX, std::vector<S>* MSDY)
+    -> bool {
+    T dMSDX = static_cast<T>(abs(MSDX->at(1)) + MSDError_X_Y);
+    T dMSDY = static_cast<T>(abs(MSDY->at(1)) + MSDError_X_Y);
+    bool a{BeamMSDX <= dMSDX && BeamMSDY <= dMSDY};
 
+    return a;
+}
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<typename T,typename S>
     std::vector<foot::ind> foot::FindTrueTW(std::vector<T>* energy1, std::vector<T>* energy2
     ,std::vector<S>* MSDPoints,int TWPoints){

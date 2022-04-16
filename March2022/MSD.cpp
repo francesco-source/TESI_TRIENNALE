@@ -84,11 +84,13 @@ void MSD(int choosefile = 4306) {
     std::vector<double> *MSDYPoint = 0;
     std::vector<double> *TWXPoint = 0;
     std::vector<double> *TWYPoint = 0;
+    Double_t        BeamMSDX{0};
+    Double_t        BeamMSDY{0};
     Double_t BeamTGX;
     Double_t BeamTGY;
     Bool_t Frag;
-    Bool_t SCPileup = 0;
-    Int_t TWPoints = 0;
+    Bool_t SCPileup{0};
+    Int_t TWPoints{0};
     TBranch *b_MSDPoints = 0;
     TBranch *b_TWPoints = 0;
     TBranch *b_TWDe1Point = 0;
@@ -104,6 +106,8 @@ void MSD(int choosefile = 4306) {
     TBranch *b_Frag = 0;
     TBranch *b_MSDXPoint = 0;
     TBranch *b_MSDYPoint = 0;
+    TBranch *b_BeamMSDX = 0;   
+    TBranch  *b_BeamMSDY = 0;
     Float_t MSDZ0 = 40;
     Float_t MSDZ1 = 40 + 3.8;
     Float_t MSDZ2 = 40 + 3.8 + 3.8;
@@ -114,6 +118,7 @@ void MSD(int choosefile = 4306) {
     Long64_t tPileUpEntry = 0;
     UInt_t nentriesGeom = TGeomOut->GetEntries();
     int counter = 0;
+    int counter2=0;
     auto Filling = [](std::vector<double> *v, TH1F *histo) {
         for (UInt_t l = 0; l < v->size(); ++l) {
             histo->Fill(v->at(l));
@@ -137,6 +142,9 @@ void MSD(int choosefile = 4306) {
     TGeomOut->SetBranchAddress("MSDYPoint", &MSDYPoint, &b_MSDYPoint);
     TGeomOut->SetBranchAddress("BeamTGX", &BeamTGX, &b_BeamTGX);
     TGeomOut->SetBranchAddress("BeamTGY", &BeamTGY, &b_BeamTGY);
+    TGeomOut->SetBranchAddress("BeamMSDX", &BeamMSDX, &b_BeamMSDX);
+    TGeomOut->SetBranchAddress("BeamMSDY", &BeamMSDY, &b_BeamMSDY);
+
     for (UInt_t i = 0; i < nentriesGeom; ++i) {
         //////////////////////////////////////////////////////////////////////////
         /////////////////////Get-Entries del
@@ -158,6 +166,8 @@ void MSD(int choosefile = 4306) {
         b_TWYPoint->GetEntry(i);
         b_BeamTGX->GetEntry(i);
         b_BeamTGY->GetEntry(i);
+        b_BeamMSDX->GetEntry(i);
+        b_BeamMSDY->GetEntry(i);
         ausiliarsum = 0;
         for (UInt_t j = 0; j < MSDPoints->size(); ++j) {
             ausiliarsum = ausiliarsum + MSDPoints->at(j);
@@ -209,7 +219,7 @@ void MSD(int choosefile = 4306) {
                 foot::Fill(TWChargePoint, h[20], TWChargePoint, 8, var2);
             }
         }
-        if (sum[i] == 3 && counter < 20 && TWPoints == 1) {
+       /* if (sum[i] == 3 && counter < 20 && TWPoints == 1) {
             print(MSDPoints);
             std::cout << "\n";
             print(MSDXPoint);
@@ -221,9 +231,8 @@ void MSD(int choosefile = 4306) {
             print(MSDDe2Point);
             std::cout << "\n";
             counter++;
-        }
-        if (TWPoints == 1 && Frag == false) {
-            if ((MSDPoints->at(0) == 1) && (MSDPoints->at(1) == 1) &&
+        }*/
+        if (TWPoints == 1 && Frag == false && (MSDPoints->at(0) == 1) && (MSDPoints->at(1) == 1) &&
                 (MSDPoints->at(2) == 1)) {
                 std::vector<std::vector<Float_t>> coordinates;
                 std::vector<Float_t> fillCordinates;
@@ -238,11 +247,13 @@ void MSD(int choosefile = 4306) {
                 coordinates.push_back(fillCordinates);
                 fillCordinates.clear();
                 coordinates.push_back(MSDZ);
-                if (foot::GeometryMSDTGLine(coordinates) == true) {
+                if (foot::GeometryMSDTGLine(coordinates)==true) {
                     foot::Fill(TWChargePoint, h[7], TWChargePoint, 8,
                                TWDe1Point->at(0));
                     foot::Fill(TWChargePoint, h[15], TWChargePoint, 8, var1);
                     foot::Fill(TWChargePoint, h[21], TWChargePoint, 8, var2);
+
+                    //data 3D visualisation////
                     for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                         std::vector<Float_t> x;
                         std::vector<Float_t> y;
@@ -262,13 +273,17 @@ void MSD(int choosefile = 4306) {
                         }
                     }
                 }
-            }
+                //////////
+            if(foot::BeamMSD_vs_MSD_RealPoint(BeamMSDX,BeamMSDY,MSDXPoint,MSDYPoint) && TWChargePoint->at(0)==8){
+                        counter2++;
+                }
         }
     }
     foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
     h[8]->Add(h[6], h[7], 1, -1);
     h[9]->Add(h[5], h[7], 1, -1);
     //////////////////////////
+    std::cout<<counter2<<std::endl;
     for (UInt_t j = 0; j < h.size(); ++j) {
         h[j]->Write();
     }
