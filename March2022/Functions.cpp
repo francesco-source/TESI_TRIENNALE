@@ -1,42 +1,66 @@
-
 #include "Functions.hpp"
+#define NC "\e[0m"
+#define RED "\e[0;31m"
+#define GRN "\e[0;32m"
+#define CYN "\e[0;36m"
+#define REDB "\e[41m"
 
 
 
-
-bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
+ static bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,int counter=0,
                         Float_t xTarget = 2, Float_t yTarget = 2,
-                        Float_t errorxyMSd=0.01,Float_t errorZ=0.1) {
+                        Float_t errorxyMSd=0.01,Float_t errorZ=0.01) {
     ///////////////////////////////////////////////////////////////////////////////
-    /////////////Ritorna Falso se la retta prolungata esce dal
+    /////////////Ritorna Falso se la proiezione delle rette prolungate esce dal
     ///target//////////////
     ///////////////////////////////////////////////////////////////////////////////
-    Float_t x[3];
-    Float_t y[3];
-    Float_t z[3];
+    Float_t x_[3];
+    Float_t y_[3];
+    Float_t z_[3];
     for (int i = 0; i < 3; ++i) {
-        x[i] = coordinates[0][i];
+        x_[i] = coordinates[0][i];
     }
     for (int i = 0; i < 3; ++i) {
-        y[i] = coordinates[1][i];
+        y_[i] = coordinates[1][i];
     }
     for (int i = 0; i < 3; ++i) {
-        z[i] = coordinates[2][i];
+        z_[i] = coordinates[2][i];
     }
     Float_t errorxy[3]={errorxyMSd,errorxyMSd,errorxyMSd};
     Float_t errorZeta[3]={errorZ,errorZ,errorZ};
-    TGraphErrors XZ(3, z, x,errorZeta,errorxy);
-    TGraphErrors YZ(3, z, y,errorZeta,errorxy);
+    TGraphErrors XZ(3, z_, x_,errorZeta,errorxy);
+    TGraphErrors YZ(3, z_, y_,errorZeta,errorxy);
     TF1 fitXZ("fitXZ", "[0]*x+[1]", 0, 50);
     TF1 fitYZ("fitYZ", "[0]*x+[1]", 0, 50);
-    fitXZ.SetParameter(0, 0);
-    fitXZ.SetParameter(1, 0);
-    fitYZ.SetParameter(0, 0);
-    fitYZ.SetParameter(1, 0);
-    XZ.Fit("fitXZ", "QN");
-    YZ.Fit("fitYZ", "QN");
+    XZ.Fit("fitXZ","RQ");
+    YZ.Fit("fitYZ","RQ");
     Float_t absXZ = abs(fitXZ.GetParameter(1)-fitXZ.GetParError(1));
     Float_t absYZ = abs(fitYZ.GetParameter(1)-fitYZ.GetParError(1));
+    /*bool b1{absXZ >= xTarget || absYZ >= yTarget};
+    bool b2{absXZ < xTarget && absYZ < yTarget};
+    
+    if(counter<1){
+       gStyle->SetOptFit(1111);
+       TCanvas*canvas=new TCanvas("Canvas","Osservo il fit");
+       canvas->Divide(2);
+       canvas->cd(1);
+      
+       XZ.Draw("A*");
+       XZ.Fit("fitXZ");
+        canvas->cd(2);
+        YZ.Draw("APE");
+       YZ.Fit("fitYZ");
+       canvas->Print("Vediamo un po'.pdf");
+       if(counter==0){
+           std::cout<<std::setw(12)<<"q x"<<"    "<<std::setw(12)
+           <<"Errore X"<<std::setw(12)<<"q y"<<"    "<<std::setw(12)<<"Errore Y"<<std::endl;
+       }
+       std::cout<< NC<<std::setw(12)<<fitXZ.GetParameter(1)
+       <<"    "<< NC<<std::setw(12)<<fitXZ.GetParError(1)<<"";
+       std::cout<<GRN<<std::setw(12)<<fitYZ.GetParameter(1)
+       <<"    "<<GRN<<std::setw(12)<<fitYZ.GetParError(1)<<"                             ";
+       std::cout<<RED<<b1<<"     "<<CYN<<b2<<std::endl;
+    }*/
     if (absXZ >= xTarget || absYZ >= yTarget) {
         return false;
     } else if (absXZ < xTarget && absYZ < yTarget) {
@@ -48,7 +72,8 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
 };
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-    void foot::GeometryPrimaryDraw(std::vector<std::vector<Float_t>> &x, std::vector<std::vector<Float_t>> &y,UInt_t dimension=0){
+  static  void foot::GeometryPrimaryDraw(std::vector<std::vector<Float_t>>& x,
+     std::vector<std::vector<Float_t>>& y,UInt_t dimension=0){
     TCanvas *c1= new TCanvas();
     TGLViewer *view =(TGLViewer*)gPad->GetViewer3D();
     TGeoManager *man= new TGeoManager();
@@ -66,9 +91,9 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     TGeoHMatrix *transRootTW=new TGeoHMatrix("TransROT1");
     transRootTW->SetDz(180);
     man->SetTopVolume(top);
-      Float_t MSDZ0 = 40;
-    Float_t MSDZ1 = 40 + 3.8;
-    Float_t MSDZ2 = 40 + 3.8 + 3.8;
+    Float_t MSDZ0 {40};
+    Float_t MSDZ1  {45.15};
+    Float_t MSDZ2 {40 + 3.8 + 3.8+1.25};
     std::vector<Float_t> MSDZ = {0,MSDZ0, MSDZ1, MSDZ2,189.4};
     top->AddNode(MSD,0,trans_rootMSD1);
     top->AddNode(MSD,1,trans_rootMSD2);
@@ -97,7 +122,7 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
     //////////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
-    void print(std::vector<T>* v){
+     static void print(std::vector<T>* v){
         for(UInt_t i=0;i<v->size();++i){
             std::cout<<" "<<v->at(i)<<" ";
         }
@@ -106,7 +131,7 @@ bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template <typename T, typename S>
-auto foot::BeamMSD_vs_MSD_RealPoint(T& BeamMSDX, T& BeamMSDY,
+static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
                                     std::vector<S>* MSDX, std::vector<S>* MSDY)
     -> bool {
     T dMSDX = static_cast<T>(abs(MSDX->at(1)) + MSDError_X_Y);
@@ -118,7 +143,7 @@ auto foot::BeamMSD_vs_MSD_RealPoint(T& BeamMSDX, T& BeamMSDY,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
     template<typename T,typename S>
-    std::vector<foot::ind> foot::FindTrueTW(std::vector<T>* energy1, std::vector<T>* energy2
+    static std::vector<foot::ind> foot::FindTrueTW(std::vector<T>* energy1, std::vector<T>* energy2
     ,std::vector<S>* MSDPoints,int TWPoints){
             std::vector<ind> index;
             std::vector<std::vector<Float_t>> diff(energy1->size(),std::vector<T>(energy2->size()));
@@ -146,28 +171,22 @@ auto foot::BeamMSD_vs_MSD_RealPoint(T& BeamMSDX, T& BeamMSDY,
             return index;
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    bool foot::GeometryMSD(){
-        return true;
-    }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
     
     template<typename T>
-    void foot::Fill(std::vector<T>* v,
-    TH1F* histo,std::vector<int>* charge,int Charge,double var){
+  static  void foot::Fill(std::vector<T>* v,
+    TH1F* histo,std::vector<int>* charge,int&& which_charge,double var){
         if(var==0){
         for(UInt_t l=0;l<v->size();++l){
-            if(charge->at(l)==Charge){
+            if(charge->at(l)==which_charge){
                 histo->Fill(v->at(l));
             }
         }
         }
         else{
             for(UInt_t l=0;l<v->size();++l){
-            if(charge->at(l)==Charge){
+            if(charge->at(l)==which_charge){
                 histo->Fill((var));
             }
         }
