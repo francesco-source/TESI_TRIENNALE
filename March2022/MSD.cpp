@@ -1,6 +1,8 @@
 #include "Functions.hpp"
 
 void MSD(int choosefile = 4306) {
+    gStyle->SetOptStat(2210);
+    gStyle->SetOptFit(1111);
     TFile *fileGeom;
     TFile *filePileUp;
     TFile *MSDResult;
@@ -48,7 +50,13 @@ void MSD(int choosefile = 4306) {
    /*23 */ h.push_back(std::unique_ptr<TH1F>(new TH1F( "hPointsMSDSawTWNo", "Quanti punti vede l'MSD quando il TW non vede nulla?", 20, 0, 20)));
    /*24 */ h.push_back(std::unique_ptr<TH1F>(new TH1F( "hEnergyMSDSawTWNo", "Che energia vede l'MSD quando il TW non vede nulla con Pile up?", 100, 0, 100)));
    /*25 */ h.push_back(std::unique_ptr<TH1F>(new TH1F("hPointsMSDSawFrag", "Quanti punti vede l'MSD quando il fascio primario frammenta", 20, 0, 20)));
-    
+    std::vector<std::unique_ptr<TH1F>> align;
+   /* 0*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDXPoint","BeamMSD X Points",100,-2,2)));
+   /* 1*/  align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPoint","MSD X Points",100,-2,2)));
+   /* 2*/  align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",100,-2,2)));
+   /* 3*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",100,-2,2)));
+    double Xalign{0.7907-0.8823};
+    double Yalign{0.2927-0.09199};
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
     std::vector<double> *TWDe2Point = 0;
@@ -183,6 +191,14 @@ void MSD(int choosefile = 4306) {
             h[12]->Fill(var1);
             h[18]->Fill(var2);
         }
+        if(sum[i]==3 && (MSDPoints->at(0) == 1) &&
+            (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1)){
+            align[0]->Fill(BeamMSDX);
+            align[1]->Fill(MSDXPoint->at(1)+Xalign);
+            align[2]->Fill(BeamMSDY);
+            align[3]->Fill(MSDYPoint->at(1)+Yalign);
+
+        }
 
         if (sum[i] == 3 && TWPoints == 1) {
             foot::Fill(TWChargePoint, h[13].get(), TWChargePoint, 8, var1);
@@ -215,7 +231,7 @@ void MSD(int choosefile = 4306) {
                 foot::Fill(TWChargePoint, h[21].get(), TWChargePoint, 8, var2);
                 counter3++;
                 // data 3D visualisation////
-                for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
+                /*for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                     std::vector<Float_t> x;
                     std::vector<Float_t> y;
                     if (TWChargePoint->at(j) == 8 && MSDX.size() < 100) {
@@ -232,24 +248,26 @@ void MSD(int choosefile = 4306) {
                         MSDX.push_back(x);
                         MSDY.push_back(y);
                     }
-                }
+                }*/
                 //////////////////////////////
             }
-            //////////
-            if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX, BeamMSDY, MSDXPoint,
-                                              MSDYPoint) &&
-                TWChargePoint->at(0) == 8) {
+            ////////////////////////////////////
+            if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX, BeamMSDY, MSDXPoint, MSDYPoint)) {
                 counter2++;
             }
         }
     }
-    foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
+    //foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
     h[8]->Add(h[6].get(), h[7].get(), 1, -1);
     h[9]->Add(h[5].get(), h[7].get(), 1, -1);
-    //////////////////////////
+    /////////////////////////////////////////////////
     std::cout << counter2 << std::endl;
     for (UInt_t j = 0; j < h.size(); ++j) {
         h[j]->Write();
+    }
+    for(UInt_t j=0;j<align.size();++j){
+        align[j]->Fit("gaus");
+        align[j]->Write();
     }
     // MSDResult->Close();
 }
