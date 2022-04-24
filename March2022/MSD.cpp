@@ -214,19 +214,19 @@ void MSD(int choosefile = 4306) {
             align[5]->Fill(MSDYPoint->at(1)+Yalign);
         }
         if(MSDPoints->size()>0){
-           if(MSDPoints->at(0)==1){
+           if(MSDPoints->at(0)==1 && MSDPoints->at(1)>=0 && MSDPoints->at(2)>=0){
            if(MSDDe1Point->at(0)>=1500 && MSDDe1Point->at(0)<=2500 ){
                MSD_layerPoints[0]->Fill(MSDPoints->at(1));
                MSD_layerPoints[1]->Fill(MSDPoints->at(2));
-               if(MSDPoints->at(1)!=1){
+               if(MSDPoints->at(1)>1){
                    MSD_layerPoints[3]->Fill(MSDPoints->at(1));
                }
-               if(MSDPoints->at(2)!=1){
+               if(MSDPoints->at(2)>1){
                    MSD_layerPoints[4]->Fill(MSDPoints->at(2));
                }
-               if(MSDPoints->at(1)==1 ){
+               if(MSDPoints->at(1)==1){
               MSD_layerPoints[2]->Fill(MSDPoints->at(2));
-              if(MSDPoints->at(2)!=1){
+              if(MSDPoints->at(2)>1){
                   MSD_layerPoints[5]->Fill(MSDPoints->at(2));
               }  
            }
