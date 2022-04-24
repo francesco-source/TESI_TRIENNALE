@@ -231,7 +231,7 @@ void MSD(int choosefile = 4306) {
                 foot::Fill(TWChargePoint, h[21].get(), TWChargePoint, 8, var2);
                 counter3++;
                 // data 3D visualisation////
-                /*for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
+                for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                     std::vector<Float_t> x;
                     std::vector<Float_t> y;
                     if (TWChargePoint->at(j) == 8 && MSDX.size() < 100) {
@@ -248,16 +248,16 @@ void MSD(int choosefile = 4306) {
                         MSDX.push_back(x);
                         MSDY.push_back(y);
                     }
-                }*/
+                }
                 //////////////////////////////
             }
             ////////////////////////////////////
             if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX, BeamMSDY, MSDXPoint, MSDYPoint)) {
-                counter2++;
+                ++counter2;
             }
         }
     }
-    //foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
+   // foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
     h[8]->Add(h[6].get(), h[7].get(), 1, -1);
     h[9]->Add(h[5].get(), h[7].get(), 1, -1);
     /////////////////////////////////////////////////
@@ -266,7 +266,7 @@ void MSD(int choosefile = 4306) {
         h[j]->Write();
     }
     for(UInt_t j=0;j<align.size();++j){
-        align[j]->Fit("gaus");
+        align[j]->Fit("gaus","QN");
         align[j]->Write();
     }
     // MSDResult->Close();

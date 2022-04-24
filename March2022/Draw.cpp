@@ -19,7 +19,7 @@
 #include "TRandom.h"
 #include "TStyle.h"
 #include "TTree.h"
-
+#include<memory>
 
 
 void Draw_MSD_PileUP(int filechoose=4306){
@@ -31,7 +31,7 @@ void Draw_MSD_PileUP(int filechoose=4306){
     else{
       file = new TFile("MSDResult4306.root");
     }
-
+    
     TH1F *hMSDPoints = (TH1F*)file->Get("hMSDPoints"); 
     TH1F *hTWPointDE1 =(TH1F*)file->Get("hTWPointDE1"); 
     TH1F *hTWPointDE1o =(TH1F*)file->Get("hTWPointDE1o");
@@ -77,8 +77,13 @@ void Draw_MSD_PileUP(int filechoose=4306){
     hTWPointDE1Clean->SetLineColor(kRed);
     hGeometryOxigen->SetLineColor(kGreen);
     TCanvas *c4 = new TCanvas("c4", "Pile up= file pile up. Eventi= new Geom");
-    c4->Divide(3,4);
+    TCanvas *c4a = new TCanvas("c4a", "Pile up= file pile up. Eventi= new Geom");
+    TCanvas *c4b = new TCanvas("c4b", "Pile up= file pile up. Eventi= new Geom");
 
+    c4->Divide(2,2);
+    c4a->Divide(2,2);
+    c4b->Divide(2,3);
+  
     c4->cd(1);
     gPad->SetLogy();
     hTWPointDE1->GetXaxis()->SetTitle("dE/dx");
@@ -101,45 +106,45 @@ void Draw_MSD_PileUP(int filechoose=4306){
 
 
 
-    c4->cd(4);
+    c4a->cd(1);
      gPad->SetLogy();
     hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
     hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
     hTWPointDE1Clean->Draw();
 
    
-    c4->cd(5);
+    c4a->cd(2);
     gPad->SetLogy();
     hTWDE1MSD3TW1NoFrag->GetXaxis()->SetTitle("dE/dx");
     hTWDE1MSD3TW1NoFrag->GetYaxis()->SetTitle("Events");
     hTWDE1MSD3TW1NoFrag->Draw();
 
-    c4->cd(6);
+    c4a->cd(3);
     gPad->SetLogy();
     hTWPointDE1Clean->GetXaxis()->SetTitle("dE/dx");
     hTWPointDE1Clean->GetYaxis()->SetTitle("Events");
     hTWPointDE1Clean->Draw();
     hTWDE1MSD3TW1NoFrag->Draw("SAME");
 
-    c4->cd(7);
+    c4b->cd(1);
      gPad->SetLogy();
      hTWDE1MSD3TW1Oxigen->GetXaxis()->SetTitle("dE/dx");
     hTWDE1MSD3TW1Oxigen->GetYaxis()->SetTitle("Events");
     hTWDE1MSD3TW1Oxigen->Draw();
 
-    c4->cd(8);
+    c4b->cd(2);
      gPad->SetLogy();
      hTWDE1MSD3TW1NoFragOxigen->GetXaxis()->SetTitle("dE/dx");
     hTWDE1MSD3TW1NoFragOxigen->GetYaxis()->SetTitle("Events");
     hTWDE1MSD3TW1NoFragOxigen->Draw();
     
-    c4->cd(9);
+    c4b->cd(3);
     gPad->SetLogy();
      hGeometryOxigen->GetXaxis()->SetTitle("dE/dx");
     hGeometryOxigen->GetYaxis()->SetTitle("Events");
     hGeometryOxigen->Draw();
 
-    c4->cd(10);
+    c4b->cd(4);
      gPad->SetLogy();
      hTWDE1MSD3TW1Oxigen->GetXaxis()->SetTitle("dE/dx");
     hTWDE1MSD3TW1Oxigen->GetYaxis()->SetTitle("Events");
@@ -147,14 +152,14 @@ void Draw_MSD_PileUP(int filechoose=4306){
      hTWDE1MSD3TW1NoFragOxigen->Draw("SAME");
       hGeometryOxigen->Draw("SAME");
 
-     c4->cd(11);
+     c4b->cd(5);
     gPad->SetLogy();
     hAirFrag->GetXaxis()->SetTitle("dE/dx");
     hAirFrag->GetYaxis()->SetTitle("Events");
     hAirFrag->Draw();
 
 
-    c4->cd(12);
+    c4b->cd(6);
     gPad->SetLogy();
     hAirFragMSDTW->GetXaxis()->SetTitle("dE/dx");
     hAirFragMSDTW->GetYaxis()->SetTitle("Events");
@@ -162,7 +167,9 @@ void Draw_MSD_PileUP(int filechoose=4306){
 
 
     TCanvas *c5 = new TCanvas("c5", "Pile up= file pile up. Eventi= new Geom");
-    c5->Divide(3,4);
+    TCanvas *c5a = new TCanvas("c5a", "Pile up= file pile up. Eventi= new Geom");
+    c5->Divide(2,3);
+    c5a->Divide(2,3);
     hMSDDE1Points3->SetLineColor(kBlack);
     hMSDDE1Points->SetLineColor(kRed);
     hMSDDE1Points3TW->SetLineColor(kGreen);
@@ -177,35 +184,35 @@ void Draw_MSD_PileUP(int filechoose=4306){
     hMSDDE2Points3TWOssigeniNoFragGeometry->SetLineColor(kRed);
    
     c5->cd(1);
-    gPad->SetLogy();
+
     hMSDDE1Points3->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3->Draw();
 
     c5->cd(2);
-    gPad->SetLogy();
+   
     hMSDDE1Points3TW->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3TW->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3TW->Draw();
 
     c5->cd(3);
-    gPad->SetLogy();
+   
     hMSDDE1Points3TWOssigeni->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3TWOssigeni->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3TWOssigeni->Draw();
     c5->cd(4);
-    gPad->SetLogy();
+  
      hMSDDE1Points3TWOssigeniNoFrag->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3TWOssigeniNoFrag->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3TWOssigeniNoFrag->Draw();
       c5->cd(5);
-    gPad->SetLogy();
+  
     hMSDDE1Points3TWOssigeniNoFragGeometry->GetXaxis()->SetTitle("dE/dx");
     hMSDDE1Points3TWOssigeniNoFragGeometry->GetYaxis()->SetTitle("Events");
     hMSDDE1Points3TWOssigeniNoFragGeometry->Draw();
 
     c5->cd(6);
-    gPad->SetLogy();
+  
     hMSDPoints->GetXaxis()->SetTitle("dE/dx");
     hMSDPoints->GetYaxis()->SetTitle("Events");
     //hMSDDE1Points->Draw();
@@ -214,36 +221,36 @@ void Draw_MSD_PileUP(int filechoose=4306){
     hMSDDE1Points3TWOssigeni->Draw("SAME");
     hMSDDE1Points3TWOssigeniNoFrag->Draw("SAME");
     hMSDDE1Points3TWOssigeniNoFragGeometry->Draw("SAME");
-        c5->cd(7);
-    gPad->SetLogy();
+        c5a->cd(1);
+   
     hMSDDE2Points3->GetXaxis()->SetTitle("dE/dx");
     hMSDDE2Points3->GetYaxis()->SetTitle("Events");
     hMSDDE2Points3->Draw();
 
-    c5->cd(8);
-    gPad->SetLogy();
+    c5a->cd(2);
+    
     hMSDDE2Points3TW->GetXaxis()->SetTitle("dE/dx");
     hMSDDE2Points3TW->GetYaxis()->SetTitle("Events");
     hMSDDE2Points3TW->Draw();
 
-    c5->cd(9);
-    gPad->SetLogy();
+    c5a->cd(3);
+    
     hMSDDE2Points3TWOssigeni->GetXaxis()->SetTitle("dE/dx");
     hMSDDE2Points3TWOssigeni->GetYaxis()->SetTitle("Events");
     hMSDDE2Points3TWOssigeni->Draw();
-    c5->cd(10);
-    gPad->SetLogy();
+    c5a->cd(4);
+  
      hMSDDE2Points3TWOssigeniNoFrag->GetXaxis()->SetTitle("dE/dx");
     hMSDDE2Points3TWOssigeniNoFrag->GetYaxis()->SetTitle("Events");
     hMSDDE2Points3TWOssigeniNoFrag->Draw();
-      c5->cd(11);
-    gPad->SetLogy();
+      c5a->cd(5);
+ 
     hMSDDE2Points3TWOssigeniNoFragGeometry->GetXaxis()->SetTitle("dE/dx");
     hMSDDE2Points3TWOssigeniNoFragGeometry->GetYaxis()->SetTitle("Events");
     hMSDDE2Points3TWOssigeniNoFragGeometry->Draw();
 
-    c5->cd(12);
-    gPad->SetLogy();
+    c5a->cd(6);
+  ;
     hMSDPoints->GetXaxis()->SetTitle("dE/dx");
     hMSDPoints->GetYaxis()->SetTitle("Events");
     hMSDDE2Points3->Draw();
@@ -267,6 +274,7 @@ void Draw_MSD_PileUP(int filechoose=4306){
 
 
     TCanvas *c= new TCanvas("c","Pile up= file pile up. Eventi= new Geom");
+    TCanvas *ca= new TCanvas("ca","Pile up= file pile up. Eventi= new Geom");
     hSCTimePileUp->SetLineColor(kGreen);
     hSCTimeNoPileUp->SetLineColor(kBlue);
     hSCChargePileUp->SetLineColor(kBlack);
@@ -275,7 +283,8 @@ void Draw_MSD_PileUP(int filechoose=4306){
        hTWDe1PointNoPileUp->SetLineColor(kRed);
        hTWChargeNoPointPileUp->SetLineColor(kBlue);
        hTWChargePointPileUp->SetLineColor(kRed);
-    c->Divide(3,5);
+    c->Divide(3,3);
+    ca->Divide(2,3);
        c->cd(1);
     gPad->SetLogy();
      hSCTimePileUp->GetXaxis()->SetTitle("Time");
@@ -326,32 +335,32 @@ void Draw_MSD_PileUP(int filechoose=4306){
       hTWChargeNoPointPileUp->GetYaxis()->SetTitle("Events");
      
 
-      c->cd(10);
+      ca->cd(1);
       gPad->SetLogy();
       hTWDe1PointNoPileUp->GetXaxis()->SetTitle("dE/dx");
       hTWDe1PointNoPileUp->GetYaxis()->SetTitle("Events");
       hTWDe1PointNoPileUp->Draw();
-      c->cd(11);
+      ca->cd(2);
       gPad->SetLogy();
        hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
       hTWDe1Point->GetYaxis()->SetTitle("Events");
       hTWDe1Point->Draw();
-      c->cd(12);
+      ca->cd(3);
        gPad->SetLogy();
        hTWDe1Point->GetXaxis()->SetTitle("dE/dx");
       hTWDe1Point->GetYaxis()->SetTitle("Events");
       hTWDe1Point->Draw();
       hTWDe1PointNoPileUp->Draw("SAME");
     
-      c->cd(13);
+      ca->cd(4);
       gPad->SetLogy();
       hTWDe1Point->Draw();
       
-       c->cd(14);
+       ca->cd(5);
         gPad->SetLogy();
        hTWDe1PointPileUp->Draw();
 
-       c->cd(15);
+       ca->cd(6);
       gPad->SetLogy();
       hTWDe1Point->Draw();
       hTWDe1PointPileUp->Draw("SAME");
@@ -363,9 +372,13 @@ void Draw_MSD_PileUP(int filechoose=4306){
       hTWPoints->GetYaxis()->SetTitle("Events");
 
          c->Print("Grafici/Pile_up.pdf");
+         ca->Print("Grafici/Pile_UP_DE1");
         c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");
-        c4->Print("Grafici/TwLostEnergy.pdf");
-        c5->Print("Grafici/MSDLostEnergy.pdf");
-        c8->Print("Grafici/MSD-Points-Seen.pdf");
+        c4->Print("Grafici/Tw-DE1__DE1_vs_MSD=3_&_TW=1.pdf");
+        c4a->Print("Grafici/TW-DE1__MSD=3_&_TW=1_vs_MSD=3_&_TW=1_Frag=false.pdf");
+        c4b->Print("Grafici/TW-DE1__MSD=3_&_TW=1_Charge=8_Frag=false_Geometry.pdf");
+        c5->Print("Grafici/MSD_DE1_LostEnergy.pdf");
+        c5a->Print("Grafici/MSD_DE2_LostEnergy.pdf");
+        c8->Print("Grafici/MSD-Punti-Visti.pdf");
 }
 

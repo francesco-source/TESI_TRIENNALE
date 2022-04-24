@@ -42,7 +42,7 @@
 
   static  void foot::GeometryPrimaryDraw(std::vector<std::vector<Float_t>>& x,
      std::vector<std::vector<Float_t>>& y,UInt_t dimension=0){
-    TCanvas *c1= new TCanvas();
+    TCanvas *c1= new TCanvas("c1","Schema 3 D geometria");
     TGLViewer *view =(TGLViewer*)gPad->GetViewer3D();
     TGeoManager *man= new TGeoManager();
     TGeoVolume *top=man->MakeBox("box",NULL,180,180,189.40);
@@ -102,8 +102,8 @@ template <typename T, typename S>
 static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
                                     std::vector<S>* MSDX, std::vector<S>* MSDY)
     -> bool {
-    double RealMSDX = static_cast<double>(MSDX->at(1)+Xalign);
-    double RealMSDY = static_cast<double>(MSDY->at(1)+Yalign);
+    T RealMSDX{MSDX->at(1)+Xalign};
+    T RealMSDY{MSDY->at(1)+Yalign};
     bool x;
     bool y;
     if(BeamMSDX==RealMSDX){

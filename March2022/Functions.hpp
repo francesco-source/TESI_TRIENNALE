@@ -51,7 +51,8 @@ static void GeometryPrimaryDraw(std::vector<std::vector<Float_t>>& x,
 template <typename T, typename S>
 static auto BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
                                     std::vector<S>* RealMSDX,
-                                    std::vector<S>* RealMSDY) -> bool;
+                                    std::vector<S>* RealMSDY
+                                    ) -> bool;
 //////////////////////////////////////////////////////////////////////////////
 template <typename T, typename S>
 static std::vector<ind> FindTrueTW(std::vector<T>* energy1,
