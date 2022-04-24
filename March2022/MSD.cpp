@@ -55,8 +55,10 @@ void MSD(int choosefile = 4306) {
    /* 1*/  align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPoint","MSD X Points",100,-2,2)));
    /* 2*/  align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",100,-2,2)));
    /* 3*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",100,-2,2)));
-    double Xalign{0.7907-0.8823};
-    double Yalign{0.2927-0.09199};
+   /* 4*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPointAlign","MSD X Points dopo allineamento",100,-2,2)));
+   /* 5*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPointAlign","MSD Y Points dopo allineamento",100,-2,2)));
+    double Xalign{0.8057-0.8836};
+    double Yalign{0.2682-0.1917};
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
     std::vector<double> *TWDe2Point = 0;
@@ -194,10 +196,11 @@ void MSD(int choosefile = 4306) {
         if(sum[i]==3 && (MSDPoints->at(0) == 1) &&
             (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1)){
             align[0]->Fill(BeamMSDX);
-            align[1]->Fill(MSDXPoint->at(1)+Xalign);
+            align[1]->Fill(MSDXPoint->at(1));
             align[2]->Fill(BeamMSDY);
-            align[3]->Fill(MSDYPoint->at(1)+Yalign);
-
+            align[3]->Fill(MSDYPoint->at(1));
+            align[4]->Fill(MSDYPoint->at(1)+Xalign);
+            align[5]->Fill(MSDYPoint->at(1)+Yalign);
         }
 
         if (sum[i] == 3 && TWPoints == 1) {
@@ -261,13 +264,13 @@ void MSD(int choosefile = 4306) {
     h[8]->Add(h[6].get(), h[7].get(), 1, -1);
     h[9]->Add(h[5].get(), h[7].get(), 1, -1);
     /////////////////////////////////////////////////
-    std::cout << counter2 << std::endl;
     for (UInt_t j = 0; j < h.size(); ++j) {
         h[j]->Write();
     }
     for(UInt_t j=0;j<align.size();++j){
-        align[j]->Fit("gaus","QN");
+        align[j]->Fit("gaus");
         align[j]->Write();
     }
+    std::cout << counter2 << std::endl;
     // MSDResult->Close();
 }

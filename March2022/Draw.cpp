@@ -71,6 +71,12 @@ void Draw_MSD_PileUP(int filechoose=4306){
     TH1F *hTWDe1PointNoPileUp=(TH1F*)file2->Get("TWDe1PointNoPileUP");
     TH1F *hTWDe1PointPileUp= (TH1F*)file2->Get("TWDe1PointPileUP");
     TH1F *hTWPoints=(TH1F*)file2->Get("hTWPoints");
+    TH1F *hBeamMSDXPoint=(TH1F*)file->Get("hBeamMSDXPoint");
+    TH1F *hBeamMSDYPoint=(TH1F*)file->Get("hBeamMSDYPoint");
+    TH1F *hMSDXPoint=(TH1F*)file->Get("hMSDXPoint");
+    TH1F *hMSDYPoint=(TH1F*)file->Get("hMSDYPoint");
+    TH1F *hMSDXPointAlign=(TH1F*)file->Get("hMSDXPointAlign");
+    TH1F *hMSDYPointAling=(TH1F*)file->Get("hMSDYPointAlign");
 
     hTWPointDE1->SetLineColor(kBlack);
     hTWPointDE1o->SetLineColor(kBlue);
@@ -371,6 +377,30 @@ void Draw_MSD_PileUP(int filechoose=4306){
       hTWPoints->GetXaxis()->SetTitle("Points");
       hTWPoints->GetYaxis()->SetTitle("Events");
 
+      TCanvas *cAllineamento=new TCanvas("callienamento","Allienamento");
+      cAllineamento->Divide(3,2);
+
+      cAllineamento->cd(1);
+      hBeamMSDXPoint->Draw();
+
+       cAllineamento->cd(2);
+      hMSDXPoint->Draw();
+
+      cAllineamento->cd(3);
+      hMSDXPointAlign->Draw();
+
+      cAllineamento->cd(4);
+      hBeamMSDYPoint->Draw();
+
+
+      cAllineamento->cd(5);
+      hMSDYPoint->Draw();
+
+       cAllineamento->cd(6);
+      hMSDYPointAling->Draw();
+
+      
+
          c->Print("Grafici/Pile_up.pdf");
          ca->Print("Grafici/Pile_UP_DE1.pdf");
         c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");
@@ -380,5 +410,6 @@ void Draw_MSD_PileUP(int filechoose=4306){
         c5->Print("Grafici/MSD_DE1_LostEnergy.pdf");
         c5a->Print("Grafici/MSD_DE2_LostEnergy.pdf");
         c8->Print("Grafici/MSD-Punti-Visti.pdf");
+        cAllineamento->Print("Grafici/Allineamento.pdf");
 }
 
