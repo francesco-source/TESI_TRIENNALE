@@ -51,12 +51,23 @@ void MSD(int choosefile = 4306) {
    /*24 */ h.push_back(std::unique_ptr<TH1F>(new TH1F( "hEnergyMSDSawTWNo", "Che energia vede l'MSD quando il TW non vede nulla con Pile up?", 100, 0, 100)));
    /*25 */ h.push_back(std::unique_ptr<TH1F>(new TH1F("hPointsMSDSawFrag", "Quanti punti vede l'MSD quando il fascio primario frammenta", 20, 0, 20)));
     std::vector<std::unique_ptr<TH1F>> align;
-   /* 0*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDXPoint","BeamMSD X Points",100,-2,2)));
-   /* 1*/  align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPoint","MSD X Points",100,-2,2)));
-   /* 2*/  align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",100,-2,2)));
-   /* 3*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",100,-2,2)));
-   /* 4*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPointAlign","MSD X Points dopo allineamento",100,-2,2)));
-   /* 5*/ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPointAlign","MSD Y Points dopo allineamento",100,-2,2)));
+   /* 0 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDXPoint","BeamMSD X Points",100,-1.5,2.5)));
+   /* 1 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPoint","MSD X Points",100,-1,2.5)));
+   /* 2 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",100,-2,3)));
+   /* 3 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",100,-2,1.5)));
+   /* 4 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPointAlign","MSD X Points dopo allineamento",100,-2,2)));
+   /* 5 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPointAlign","MSD Y Points dopo allineamento",100,-2,2)));
+   std::vector<std::unique_ptr<TH1F>> MSD_layerPoints;
+   /* 0 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-2","MSD.at(0)=1 cosa vede il secondo layer",25,0,25)));
+   /* 1 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-3","MSD.at(0)=1 cosa vede il terzo layer",25,0,25)));
+   /* 2 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-1-3","MSD.at(0)=1, MSD.at(1)=1, il terzo layer",25,0,25)));
+   /* 3 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-2!","MSD.at(0)=1, MSD.at(1)!=1, il secondo layer",25,0,25)));
+   /* 4 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-3!","MSD.at(0)=1, MSD.at(1)!=1, il terzo layer",25,0,25)));
+   /* 5 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-!1-3","MSD.at(0)=1, MSD.at(1)=!1, il terzo layer",25,0,25)));
+    std::vector<std::unique_ptr<TH1F>> MSD_layerEnergy;
+    /* 0 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirst-MSDEnergy2","MSD.at(0)=1 Energia MSD2",3000,0,3000)));
+    /* 1 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirst-MSDEnergy3","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
+    /* 2 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirstSecond-MSDEnergy3","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3",3000,0,3000)));
     double Xalign{0.8057-0.8836};
     double Yalign{0.2682-0.1917};
     std::vector<int> *MSDPoints = 0;
@@ -127,12 +138,12 @@ void MSD(int choosefile = 4306) {
     int counter2 = 0;
     int counter3 = 0;
     int ausiliarsum = 0;
+    std::vector<int> sum;
     auto Filling = [](std::vector<double> *v, TH1F *histo) {
         for (UInt_t l = 0; l < v->size(); ++l) {
             histo->Fill(v->at(l));
         }
     };
-    std::vector<int> sum;
 
     for (UInt_t i = 0; i < nentriesGeom; ++i) {
         tGeomEntry = TGeomOut->LoadTree(i);
@@ -202,7 +213,26 @@ void MSD(int choosefile = 4306) {
             align[4]->Fill(MSDYPoint->at(1)+Xalign);
             align[5]->Fill(MSDYPoint->at(1)+Yalign);
         }
-
+        if(MSDPoints->size()>0){
+           if(MSDPoints->at(0)==1){
+           if(MSDDe1Point->at(0)>=1500 && MSDDe1Point->at(0)<=2500 ){
+               MSD_layerPoints[0]->Fill(MSDPoints->at(1));
+               MSD_layerPoints[1]->Fill(MSDPoints->at(2));
+               if(MSDPoints->at(1)!=1){
+                   MSD_layerPoints[3]->Fill(MSDPoints->at(1));
+               }
+               if(MSDPoints->at(2)!=1){
+                   MSD_layerPoints[4]->Fill(MSDPoints->at(2));
+               }
+               if(MSDPoints->at(1)==1 ){
+              MSD_layerPoints[2]->Fill(MSDPoints->at(2));
+              if(MSDPoints->at(2)!=1){
+                  MSD_layerPoints[5]->Fill(MSDPoints->at(2));
+              }  
+           }
+           }
+         }
+        }
         if (sum[i] == 3 && TWPoints == 1) {
             foot::Fill(TWChargePoint, h[13].get(), TWChargePoint, 8, var1);
             foot::Fill(TWChargePoint, h[19].get(), TWChargePoint, 8, var2);
@@ -270,6 +300,9 @@ void MSD(int choosefile = 4306) {
     for(UInt_t j=0;j<align.size();++j){
         align[j]->Fit("gaus");
         align[j]->Write();
+    }
+    for(UInt_t j=0;j<MSD_layerPoints.size();++j){
+        MSD_layerPoints[j]->Write();
     }
     std::cout << counter2 << std::endl;
     // MSDResult->Close();

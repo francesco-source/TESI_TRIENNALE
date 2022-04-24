@@ -77,6 +77,12 @@ void Draw_MSD_PileUP(int filechoose=4306){
     TH1F *hMSDYPoint=(TH1F*)file->Get("hMSDYPoint");
     TH1F *hMSDXPointAlign=(TH1F*)file->Get("hMSDXPointAlign");
     TH1F *hMSDYPointAling=(TH1F*)file->Get("hMSDYPointAlign");
+    TH1F *hMSDFirst1_2=(TH1F*)file->Get("hMSDFirst1-2");
+    TH1F *hMSDFirst1_3=(TH1F*)file->Get("hMSDFirst1-3");
+    TH1F *hMSDFirst1_1_3=(TH1F*)file->Get("hMSDFirst1-1-3");
+    TH1F *hMSDFirst1_2d=(TH1F*)file->Get("hMSDFirst1-2!");
+    TH1F *hMSDFirst1_3d=(TH1F*)file->Get("hMSDFirst1-3!");
+    TH1F *hMSDFirst1_1_3d=(TH1F*)file->Get("hMSDFirst1-!1-3");
 
     hTWPointDE1->SetLineColor(kBlack);
     hTWPointDE1o->SetLineColor(kBlue);
@@ -399,7 +405,23 @@ void Draw_MSD_PileUP(int filechoose=4306){
        cAllineamento->cd(6);
       hMSDYPointAling->Draw();
 
-      
+      TCanvas *cMSDPoints=new TCanvas("cMSDPoints","Punti MSD");
+      cMSDPoints->Divide(3,2);
+
+      cMSDPoints->cd(1);
+      hMSDFirst1_2->Draw();
+      cMSDPoints->cd(2);
+      hMSDFirst1_3->Draw();
+      cMSDPoints->cd(3);
+      hMSDFirst1_1_3->Draw();
+      cMSDPoints->cd(4);
+      hMSDFirst1_2d->Draw();
+      cMSDPoints->cd(5);
+      hMSDFirst1_3d->Draw();
+      cMSDPoints->cd(6);
+      hMSDFirst1_1_3d->Draw();
+
+
 
          c->Print("Grafici/Pile_up.pdf");
          ca->Print("Grafici/Pile_UP_DE1.pdf");
@@ -410,6 +432,7 @@ void Draw_MSD_PileUP(int filechoose=4306){
         c5->Print("Grafici/MSD_DE1_LostEnergy.pdf");
         c5a->Print("Grafici/MSD_DE2_LostEnergy.pdf");
         c8->Print("Grafici/MSD-Punti-Visti.pdf");
+        cMSDPoints->Print("Grafici/MSD-Layer1-Vede-Punti=1.pdf");
         cAllineamento->Print("Grafici/Allineamento.pdf");
 }
 
