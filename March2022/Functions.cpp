@@ -1,15 +1,8 @@
 #include "Functions.hpp"
-#define NC "\e[0m"
-#define RED "\e[0;31m"
-#define GRN "\e[0;32m"
-#define CYN "\e[0;36m"
-#define REDB "\e[41m"
-
-
 
  static bool foot::GeometryMSDTGLine(std::vector<std::vector<Float_t>> &coordinates,int counter=0,
                         Float_t xTarget = 2, Float_t yTarget = 2,
-                        Float_t errorxyMSd=0.01,Float_t errorZ=0.01) {
+                        Float_t errorxyMSd=0.014,Float_t errorZ=0.01) {
     ///////////////////////////////////////////////////////////////////////////////
     /////////////Ritorna Falso se la proiezione delle rette prolungate esce dal
     ///target//////////////
@@ -36,31 +29,6 @@
     YZ.Fit("fitYZ","RQ");
     Float_t absXZ = abs(fitXZ.GetParameter(1)-fitXZ.GetParError(1));
     Float_t absYZ = abs(fitYZ.GetParameter(1)-fitYZ.GetParError(1));
-    /*bool b1{absXZ >= xTarget || absYZ >= yTarget};
-    bool b2{absXZ < xTarget && absYZ < yTarget};
-    
-    if(counter<1){
-       gStyle->SetOptFit(1111);
-       TCanvas*canvas=new TCanvas("Canvas","Osservo il fit");
-       canvas->Divide(2);
-       canvas->cd(1);
-      
-       XZ.Draw("A*");
-       XZ.Fit("fitXZ");
-        canvas->cd(2);
-        YZ.Draw("APE");
-       YZ.Fit("fitYZ");
-       canvas->Print("Vediamo un po'.pdf");
-       if(counter==0){
-           std::cout<<std::setw(12)<<"q x"<<"    "<<std::setw(12)
-           <<"Errore X"<<std::setw(12)<<"q y"<<"    "<<std::setw(12)<<"Errore Y"<<std::endl;
-       }
-       std::cout<< NC<<std::setw(12)<<fitXZ.GetParameter(1)
-       <<"    "<< NC<<std::setw(12)<<fitXZ.GetParError(1)<<"";
-       std::cout<<GRN<<std::setw(12)<<fitYZ.GetParameter(1)
-       <<"    "<<GRN<<std::setw(12)<<fitYZ.GetParError(1)<<"                             ";
-       std::cout<<RED<<b1<<"     "<<CYN<<b2<<std::endl;
-    }*/
     if (absXZ >= xTarget || absYZ >= yTarget) {
         return false;
     } else if (absXZ < xTarget && absYZ < yTarget) {
@@ -119,7 +87,7 @@
 }
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
 
     template<typename T>
      static void print(std::vector<T>* v){
@@ -134,11 +102,58 @@ template <typename T, typename S>
 static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
                                     std::vector<S>* MSDX, std::vector<S>* MSDY)
     -> bool {
-    T dMSDX = static_cast<T>(abs(MSDX->at(1)) + MSDError_X_Y);
-    T dMSDY = static_cast<T>(abs(MSDY->at(1)) + MSDError_X_Y);
-    bool a{BeamMSDX <= dMSDX && BeamMSDY <= dMSDY};
+    double RealMSDX = static_cast<double>(MSDX->at(1)+Xalign);
+    double RealMSDY = static_cast<double>(MSDY->at(1)+Yalign);
+    bool x;
+    bool y;
+    if(BeamMSDX==RealMSDX){
+        x=true;
+    }
+    else if(RealMSDX<BeamMSDX){
+        if((RealMSDX+MSDError_X_Y)>=(BeamMSDX-MSDError_X_Y)){
+            x=true;
+        }
+        else{
+            x=false;
+        }
+    }
+    else if(BeamMSDX<RealMSDX){
+        if((BeamMSDX+MSDError_X_Y)>=(RealMSDX-MSDError_X_Y)){
+            x=true;
+        }
+        else{
+            x=false;
+        }
+    }
+    else{
+        x=false;
+    }
 
-    return a;
+    if(BeamMSDY==RealMSDY){
+        y=true;
+    }
+   else if(RealMSDY<BeamMSDY){
+        if((RealMSDY+MSDError_X_Y)>(BeamMSDY-MSDError_X_Y)){
+            y=true;
+        }
+        else{
+            y=false;
+        }
+    }
+    else if(BeamMSDY<RealMSDY){
+        if((BeamMSDY+MSDError_X_Y)>(RealMSDY-MSDError_X_Y)){
+            y=true;
+        }
+        else{
+            y=false;
+        }
+    }
+    else{
+        y=false;
+    }
+
+    return(x && y);
+   
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -26,10 +26,13 @@
 #include "TRandom.h"
 #include "TStyle.h"
 #include "TTree.h"
+#include<memory>
 
 namespace foot {
-constexpr double MSDError_X_Y = 0.01;
+constexpr double MSDError_X_Y = 0.014;
 constexpr double ErrorZ = 0;
+constexpr double Xalign{0.7907-0.8823};
+constexpr double Yalign{0.2927-0.09199};
 //////////////////////////////////////////////////////////////////////////////
 typedef struct index {
     double x = 0;
