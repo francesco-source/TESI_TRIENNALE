@@ -372,7 +372,7 @@ void Draw_MSD_PileUP(int filechoose=4306){
       hTWPoints->GetYaxis()->SetTitle("Events");
 
          c->Print("Grafici/Pile_up.pdf");
-         ca->Print("Grafici/Pile_UP_DE1");
+         ca->Print("Grafici/Pile_UP_DE1.pdf");
         c3->Print("Grafici/Punti TW SOLO PILEUP.pdf");
         c4->Print("Grafici/Tw-DE1__DE1_vs_MSD=3_&_TW=1.pdf");
         c4a->Print("Grafici/TW-DE1__MSD=3_&_TW=1_vs_MSD=3_&_TW=1_Frag=false.pdf");
