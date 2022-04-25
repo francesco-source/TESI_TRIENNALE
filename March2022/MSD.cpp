@@ -1,5 +1,5 @@
 #include "Functions.hpp"
-
+#include"TChain.h"
 void MSD(int choosefile = 4306) {
     gStyle->SetOptStat(2210);
     gStyle->SetOptFit(1111);
@@ -8,19 +8,26 @@ void MSD(int choosefile = 4306) {
     TFile *MSDResult;
     TTree *TGeomOut;
     TTree *TPileUpOut;
+    TChain *Chain;
     if (choosefile == 4313) {
+        Chain= new TChain("Tree;1");
+        Chain->Add("ROOT-FILES/tree4313_newgeom_MAR2022.root");
         fileGeom = new TFile("ROOT-FILES/tree4313_newgeom_MAR2022.root");
         filePileUp = new TFile("ROOT-FILES/tree4313_pileup_MAR2022.root");
         MSDResult = new TFile("MSDResult4313.root", "RECREATE");
         TGeomOut = (TTree *)fileGeom->Get("Tree;1");
         TPileUpOut = (TTree *)filePileUp->Get("Tree;1");
     } else {
+        Chain= new TChain("Tree;4");
+        Chain->Add("ROOT-FILES/tree4306_newgeom_MAR2022.root",577096);
+        Chain->Add("ROOT-FILES/tree4307_newgeom_MAR2022.root",513372);
         fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
         filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
         MSDResult = new TFile("MSDResult4306.root", "RECREATE");
         TGeomOut = (TTree *)fileGeom->Get("Tree;5");
         TPileUpOut = (TTree *)filePileUp->Get("Tree;3");
     }
+    Chain->ls();
     fileGeom->ls();
     filePileUp->ls();
     std::vector<std::unique_ptr<TH1F>> h;
@@ -104,28 +111,28 @@ void MSD(int choosefile = 4306) {
     TBranch *b_MSDYPoint = 0;
     TBranch *b_BeamMSDX = 0;
     TBranch *b_BeamMSDY = 0;
-    UInt_t nentriesGeom = TGeomOut->GetEntries();
+    UInt_t nentriesGeom = Chain->GetEntries();
     Long64_t tGeomEntry = 0;
     Long64_t tPileUpEntry = 0;
-    TGeomOut->SetBranchAddress("MSDPoints", &MSDPoints, &b_MSDPoints);
-    TGeomOut->SetBranchAddress("TWPoints", &TWPoints, &b_TWPoints);
-    TGeomOut->SetBranchAddress("TWDe1Point", &TWDe1Point, &b_TWDe1Point);
-    TGeomOut->SetBranchAddress("TWDe2Point", &TWDe2Point, &b_TWDe2Point);
-    TGeomOut->SetBranchAddress("TWChargePoint", &TWChargePoint,
-                               &b_TWChargePoint);
-    TGeomOut->SetBranchAddress("TWXPoint", &TWXPoint, &b_TWXPoint);
-    TGeomOut->SetBranchAddress("TWYPoint", &TWYPoint, &b_TWYPoint);
-    TGeomOut->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
-    TGeomOut->SetBranchAddress("MSDDe2Point", &MSDDe2Point, &b_MSDDe2Point);
-    TPileUpOut->SetBranchAddress("SCPileup", &SCPileup, &b_SCPileup);
-    TGeomOut->SetBranchAddress("Frag", &Frag, &b_Frag);
-    TGeomOut->SetBranchAddress("MSDXPoint", &MSDXPoint, &b_MSDXPoint);
-    TGeomOut->SetBranchAddress("MSDYPoint", &MSDYPoint, &b_MSDYPoint);
-    TGeomOut->SetBranchAddress("BeamTGX", &BeamTGX, &b_BeamTGX);
-    TGeomOut->SetBranchAddress("BeamTGY", &BeamTGY, &b_BeamTGY);
-    TGeomOut->SetBranchAddress("BeamMSDX", &BeamMSDX, &b_BeamMSDX);
-    TGeomOut->SetBranchAddress("BeamMSDY", &BeamMSDY, &b_BeamMSDY);
     ////////////////////////////////////////////////////////////////////////////
+    Chain->SetBranchAddress("MSDPoints", &MSDPoints, &b_MSDPoints);
+    Chain->SetBranchAddress("TWPoints", &TWPoints, &b_TWPoints);
+    Chain->SetBranchAddress("TWDe1Point", &TWDe1Point, &b_TWDe1Point);
+    Chain->SetBranchAddress("TWDe2Point", &TWDe2Point, &b_TWDe2Point);
+    Chain->SetBranchAddress("TWChargePoint", &TWChargePoint,
+                               &b_TWChargePoint);
+    Chain->SetBranchAddress("TWXPoint", &TWXPoint, &b_TWXPoint);
+    Chain->SetBranchAddress("TWYPoint", &TWYPoint, &b_TWYPoint);
+    Chain->SetBranchAddress("MSDDe1Point", &MSDDe1Point, &b_MSDDe1Point);
+    Chain->SetBranchAddress("MSDDe2Point", &MSDDe2Point, &b_MSDDe2Point);
+    TPileUpOut->SetBranchAddress("SCPileup", &SCPileup, &b_SCPileup);
+    Chain->SetBranchAddress("Frag", &Frag, &b_Frag);
+    Chain->SetBranchAddress("MSDXPoint", &MSDXPoint, &b_MSDXPoint);
+    Chain->SetBranchAddress("MSDYPoint", &MSDYPoint, &b_MSDYPoint);
+    Chain->SetBranchAddress("BeamTGX", &BeamTGX, &b_BeamTGX);
+    Chain->SetBranchAddress("BeamTGY", &BeamTGY, &b_BeamTGY);
+    Chain->SetBranchAddress("BeamMSDX", &BeamMSDX, &b_BeamMSDX);
+    Chain->SetBranchAddress("BeamMSDY", &BeamMSDY, &b_BeamMSDY);
     ////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
     Float_t MSDZ0 = 40;
@@ -145,9 +152,10 @@ void MSD(int choosefile = 4306) {
         }
     };
 
-    for (UInt_t i = 0; i < nentriesGeom; ++i) {
-        tGeomEntry = TGeomOut->LoadTree(i);
-        b_MSDPoints->GetEntry(i);
+    for (UInt_t i = 0; i < Chain->GetEntries(); ++i) {
+        Chain->GetEntry(i);
+        TPileUpOut->GetEntry(i);
+       /* b_MSDPoints->GetEntry(i);
         b_TWPoints->GetEntry(i);
         b_TWDe1Point->GetEntry(i);
         b_TWDe2Point->GetEntry(i);
@@ -163,7 +171,7 @@ void MSD(int choosefile = 4306) {
         b_BeamTGX->GetEntry(i);
         b_BeamTGY->GetEntry(i);
         b_BeamMSDX->GetEntry(i);
-        b_BeamMSDY->GetEntry(i);
+        b_BeamMSDY->GetEntry(i);*/
         ausiliarsum = 0;
         for (UInt_t j = 0; j < MSDPoints->size(); ++j) {
             ausiliarsum = ausiliarsum + MSDPoints->at(j);
