@@ -106,11 +106,11 @@ static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
     T RealMSDY{MSDY->at(1)+Yalign};
     bool x;
     bool y;
-    if(BeamMSDX==RealMSDX){
+    {if(BeamMSDX==RealMSDX){
         x=true;
     }
     else if(RealMSDX<BeamMSDX){
-        if((RealMSDX+MSDError_X_Y)>=(BeamMSDX-MSDError_X_Y)){
+        if((RealMSDX+MSDError_X_Y)>=(BeamMSDX-BeamMSDError_X_Y)){
             x=true;
         }
         else{
@@ -118,7 +118,7 @@ static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
         }
     }
     else if(BeamMSDX<RealMSDX){
-        if((BeamMSDX+MSDError_X_Y)>=(RealMSDX-MSDError_X_Y)){
+        if((BeamMSDX+BeamMSDError_X_Y)>=(RealMSDX-MSDError_X_Y)){
             x=true;
         }
         else{
@@ -128,12 +128,12 @@ static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
     else{
         x=false;
     }
-
-    if(BeamMSDY==RealMSDY){
+    }
+   { if(BeamMSDY==RealMSDY){
         y=true;
     }
    else if(RealMSDY<BeamMSDY){
-        if((RealMSDY+MSDError_X_Y)>(BeamMSDY-MSDError_X_Y)){
+        if((RealMSDY+MSDError_X_Y)>=(BeamMSDY-BeamMSDError_X_Y)){
             y=true;
         }
         else{
@@ -141,7 +141,7 @@ static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
         }
     }
     else if(BeamMSDY<RealMSDY){
-        if((BeamMSDY+MSDError_X_Y)>(RealMSDY-MSDError_X_Y)){
+        if((BeamMSDY+BeamMSDError_X_Y)>=(RealMSDY-MSDError_X_Y)){
             y=true;
         }
         else{
@@ -151,7 +151,7 @@ static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
     else{
         y=false;
     }
-
+   }
     return(x && y);
    
 }

@@ -1,7 +1,15 @@
 #include "Functions.hpp"
 #include"TChain.h"
+template<typename T>
+T Fitgaus(T *x,double_t* par){
+    T xx =x[0];
+    T val= par[0]*TMath::Gaus(xx+par[3],par[1],par[2]);
+    return val;
+    
+}
 void MSD(int choosefile = 4306) {
-    gStyle->SetOptStat(2210);
+
+    gStyle->SetOptStat(1111);
     gStyle->SetOptFit(1111);
     TFile *fileGeom;
     TFile *filePileUp;
@@ -58,12 +66,14 @@ void MSD(int choosefile = 4306) {
    /*24 */ h.push_back(std::unique_ptr<TH1F>(new TH1F( "hEnergyMSDSawTWNo", "Che energia vede l'MSD quando il TW non vede nulla con Pile up?", 100, 0, 100)));
    /*25 */ h.push_back(std::unique_ptr<TH1F>(new TH1F("hPointsMSDSawFrag", "Quanti punti vede l'MSD quando il fascio primario frammenta", 20, 0, 20)));
     std::vector<std::unique_ptr<TH1F>> align;
-   /* 0 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDXPoint","BeamMSD X Points",100,-1.5,2.5)));
-   /* 1 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPoint","MSD X Points",100,-1,2.5)));
-   /* 2 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",100,-2,3)));
-   /* 3 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",100,-2,1.5)));
-   /* 4 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPointAlign","MSD X Points dopo allineamento",100,-2,2)));
-   /* 5 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPointAlign","MSD Y Points dopo allineamento",100,-2,2)));
+   /* 0 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDXPoint","BeamMSD X Points",150*4,-2,3)));/* -2 3 ci sta*/
+   /* 1 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPoint","MSD X Points",150*3,-2,3))); 
+    /* 2 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",150*4,-1,3)));
+   /* 3 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",150*4,-1,3)));
+   /* 4 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPointAlign","MSD X Points dopo allineamento",150*4,-2,3)));
+   /* 5 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPointAlign","MSD Y Points dopo allineamento",150*4,-1,3)));
+  /* 6 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("Sottrazione X post allineamento","Sottrazione X post allineamento",150*4,-2,3)));
+  /* 7 */ align.push_back(std::unique_ptr<TH1F>(new TH1F("Sottrazione Y post allineamento","Sottrazione Y post allineamento",150*4,-1,3)));
    std::vector<std::unique_ptr<TH1F>> MSD_layerPoints;
    /* 0 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-2","MSD.at(0)=1 cosa vede il secondo layer",25,0,25)));
    /* 1 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1-3","MSD.at(0)=1 cosa vede il terzo layer",25,0,25)));
@@ -75,8 +85,8 @@ void MSD(int choosefile = 4306) {
     /* 0 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirst-MSDEnergy2","MSD.at(0)=1 Energia MSD2",3000,0,3000)));
     /* 1 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirst-MSDEnergy3","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
     /* 2 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirstSecond-MSDEnergy3","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3",3000,0,3000)));
-    double Xalign{0.8057-0.8836};
-    double Yalign{0.2682-0.1917};
+    double Xalign=0.7996-0.8846;
+    double Yalign=0.2827-0.09578;
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
     std::vector<double> *TWDe2Point = 0;
@@ -155,23 +165,7 @@ void MSD(int choosefile = 4306) {
     for (UInt_t i = 0; i < Chain->GetEntries(); ++i) {
         Chain->GetEntry(i);
         TPileUpOut->GetEntry(i);
-       /* b_MSDPoints->GetEntry(i);
-        b_TWPoints->GetEntry(i);
-        b_TWDe1Point->GetEntry(i);
-        b_TWDe2Point->GetEntry(i);
-        b_TWChargePoint->GetEntry(i);
-        b_MSDDe1Point->GetEntry(i);
-        b_MSDDe2Point->GetEntry(i);
-        b_SCPileup->GetEntry(i);
-        b_Frag->GetEntry(i);
-        b_MSDXPoint->GetEntry(i);
-        b_MSDYPoint->GetEntry(i);
-        b_TWXPoint->GetEntry(i);
-        b_TWYPoint->GetEntry(i);
-        b_BeamTGX->GetEntry(i);
-        b_BeamTGY->GetEntry(i);
-        b_BeamMSDX->GetEntry(i);
-        b_BeamMSDY->GetEntry(i);*/
+        
         ausiliarsum = 0;
         for (UInt_t j = 0; j < MSDPoints->size(); ++j) {
             ausiliarsum = ausiliarsum + MSDPoints->at(j);
@@ -212,16 +206,17 @@ void MSD(int choosefile = 4306) {
             h[12]->Fill(var1);
             h[18]->Fill(var2);
         }
-        if(sum[i]==3 && (MSDPoints->at(0) == 1) &&
-            (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1)){
+        if(sum[i]==3 &&(MSDPoints->at(0) == 1) &&
+            (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1) 
+            && (TWPoints==1) && (TWChargePoint->at(0)==8)){
             align[0]->Fill(BeamMSDX);
             align[1]->Fill(MSDXPoint->at(1));
             align[2]->Fill(BeamMSDY);
             align[3]->Fill(MSDYPoint->at(1));
-            align[4]->Fill(MSDYPoint->at(1)+Xalign);
+            align[4]->Fill(MSDXPoint->at(1)+Xalign);
             align[5]->Fill(MSDYPoint->at(1)+Yalign);
         }
-        if(MSDPoints->size()>0){
+       if(MSDPoints->size()>0){
            if(MSDPoints->at(0)==1 && MSDPoints->at(1)>=0 && MSDPoints->at(2)>=0){
            if(MSDDe1Point->at(0)>=1500 && MSDDe1Point->at(0)<=2500 ){
                MSD_layerPoints[0]->Fill(MSDPoints->at(1));
@@ -293,25 +288,65 @@ void MSD(int choosefile = 4306) {
                 //////////////////////////////
             }
             ////////////////////////////////////
-            if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX, BeamMSDY, MSDXPoint, MSDYPoint)) {
+           
+        }
+        if(TWPoints == 1  && (MSDPoints->at(0) == 1) &&
+            (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1))
+         if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX, BeamMSDY, MSDXPoint, MSDYPoint) && TWChargePoint->at(0)==8) {
                 ++counter2;
             }
+    }
+    // foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
+        h[8]->Add(h[6].get(), h[7].get(), 1, -1);
+        h[9]->Add(h[5].get(), h[7].get(), 1, -1);
+        /////////////////////////////////////////////////
+        for (UInt_t j = 0; j < h.size(); ++j) {
+            h[j]->Write();
         }
-    }
-   // foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
-    h[8]->Add(h[6].get(), h[7].get(), 1, -1);
-    h[9]->Add(h[5].get(), h[7].get(), 1, -1);
-    /////////////////////////////////////////////////
-    for (UInt_t j = 0; j < h.size(); ++j) {
-        h[j]->Write();
-    }
-    for(UInt_t j=0;j<align.size();++j){
-        align[j]->Fit("gaus");
+        
+        TF1 *align0= new TF1 ("align0",Fitgaus<double>,-1,2.5,4);
+        align0->SetParameters(5000,align[0]->GetMean(),align[0]->GetStdDev(),0);
+        align[0]->Fit("align0","R");
+
+        TF1 *align1= new TF1 ("align1",Fitgaus<double>,0,2,4);
+        align1->SetParameters(6000,align[1]->GetMean(),align[1]->GetStdDev(),0);
+        align[1]->Fit("align1");
+
+        TF1 *align2= new TF1 ("align2",Fitgaus<double>,-0.5,1.,4);
+         align2->SetParameters(10000,align[2]->GetMean(),align[2]->GetStdDev(),0);
+        align[2]->Fit("align2");
+
+        TF1 *align3= new TF1 ("align3",Fitgaus<double>,-0.7,0.8,4);
+        align3->SetParameters(6000,align[3]->GetMean(),align[3]->GetStdDev(),0);
+        align[3]->Fit("align3");
+
+        TF1 *align4= new TF1 ("align4",Fitgaus<double>,-0.7,0.7,4);
+        align4->SetParameters(6000,align[4]->GetMean(),align[4]->GetStdDev(),0);
+        align[4]->Fit("align4");
+
+        TF1 *align5= new TF1 ("align5",Fitgaus<double>,-0.5,1,4);
+        align5->SetParameters(6000,align[5]->GetMean(),align[5]->GetStdDev(),0);
+        align[5]->Fit("align5");
+        int entries6=0;
+        align[6]->Add(align[0].get(),align[4].get(),1,-1);
+        for(int j=0;j<600;++j){
+               entries6=entries6+ abs(align[6]->GetBinContent(j));
+        }
+        align[6]->SetEntries(entries6);
+        align[7]->Add(align[2].get(),align[5].get(),1,-1);
+        int entries7=0;
+         for(int j=0;j<600;++j){
+               entries7=entries7+ abs(align[7]->GetBinContent(j));
+        }
+        align[7]->SetEntries(entries7);
+        for(UInt_t j=0;j<align.size();++j){
         align[j]->Write();
-    }
+        }
+
     for(UInt_t j=0;j<MSD_layerPoints.size();++j){
         MSD_layerPoints[j]->Write();
-    }
+        }
+
     std::cout << counter2 << std::endl;
     // MSDResult->Close();
 }

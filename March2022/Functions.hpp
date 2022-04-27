@@ -29,10 +29,11 @@
 #include<memory>
 
 namespace foot {
-constexpr double MSDError_X_Y = 0.014;
+constexpr double MSDError_X_Y = 0.03;
+constexpr double BeamMSDError_X_Y=0.1;
 constexpr double ErrorZ = 0;
-constexpr double Xalign{0.8057-0.8836};
-constexpr double Yalign{0.2682-0.1917};
+constexpr double Xalign{0.7996-0.8846};
+constexpr double Yalign{0.2827-0.09578};
 //////////////////////////////////////////////////////////////////////////////
 typedef struct index {
     double x = 0;

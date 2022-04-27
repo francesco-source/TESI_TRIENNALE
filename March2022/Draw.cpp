@@ -432,7 +432,7 @@ void Draw_MSD_PileUP(int filechoose=4306){
         c5->Print("Grafici/MSD_DE1_LostEnergy.pdf");
         c5a->Print("Grafici/MSD_DE2_LostEnergy.pdf");
         c8->Print("Grafici/MSD-Punti-Visti.pdf");
-        cMSDPoints->Print("Grafici/MSD-Layer1-Vede-Punti=1.pdf");
+        cMSDPoints->Print("Grafici/MSD-Layer1Punti=1.pdf");
         cAllineamento->Print("Grafici/Allineamento.pdf");
 }
 
