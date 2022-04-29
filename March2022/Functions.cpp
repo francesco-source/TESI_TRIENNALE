@@ -99,7 +99,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template <typename T, typename S>
-static auto foot::BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
+static auto foot::BeamMSD_vs_MSDRealPoint(T BeamMSDX, T BeamMSDY,
                                     std::vector<S>* MSDX, std::vector<S>* MSDY)
     -> bool {
     T RealMSDX{MSDX->at(1)+Xalign};

@@ -1,5 +1,6 @@
 #include "Functions.hpp"
 #include"TChain.h"
+
 template<typename T>
 T Fitgaus(T *x,double_t* par){
     T xx =x[0];
@@ -69,12 +70,12 @@ void MSD(int choosefile = 4306) {
     std::vector<std::unique_ptr<TH1F>> align;
    /* 0 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDXPoint","BeamMSD X Points",150*4,-2,3)));/* -2 3 ci sta*/
    /* 1 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPoint","MSD X Points",150*3,-2,3))); 
-   /* 2 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",150*4,-1,3)));
-   /* 3 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",150*4,-1,3)));
+   /* 2 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hBeamMSDYPoint","BeamMSD Y Points",150*4,-2,3)));
+   /* 3 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPoint","MSD Y Points",150*4,-2,3)));
    /* 4 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDXPointAlign","MSD X Points dopo allineamento",150*4,-2,3)));
-   /* 5 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPointAlign","MSD Y Points dopo allineamento",150*4,-1,3)));
+   /* 5 */align.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDYPointAlign","MSD Y Points dopo allineamento",150*4,-2,3)));
    /* 6 */align.push_back(std::unique_ptr<TH1F>(new TH1F("Sottrazione X post allineamento","Sottrazione X post allineamento",150*4,-2,3)));
-   /* 7 */align.push_back(std::unique_ptr<TH1F>(new TH1F("Sottrazione Y post allineamento","Sottrazione Y post allineamento",150*4,-1,3)));
+   /* 7 */align.push_back(std::unique_ptr<TH1F>(new TH1F("Sottrazione Y post allineamento","Sottrazione Y post allineamento",150*4,-2,3)));
 
    std::vector<std::unique_ptr<TH1F>> MSD_layerPoints;
    /* 0 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1","MSD primo Layer Points=1",25,0,25)));
@@ -85,15 +86,19 @@ void MSD(int choosefile = 4306) {
    /* 5 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDThird1Filter","MSD terzo Layer Points=1, filterDE",25,0,25)));
    /* 6 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDTW_After_filters","MSD TW alfer filters",25,0,25)));
    /* 7 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDTW_witth_charge","MSD=3 TW=1 with charge",25,0,25)));
+   TH2F *BeamMSDX_MSDX_Pre= new TH2F("BeamMSDX-MSDX-Pre","BeamMSDX-MSDXPoint pre allienamento",150*4,-2,3,150*4,-2,3);
+   TH2F *BeamMSDY_MSDY_Pre= new TH2F("BeamMSDY-MSDY-Pre","BeamMSDY-MSDYPoint pre allienamento",150*4,-2,3,150*4,-2,3);
+   TH2F *BeamMSDX_MSDX_Post= new TH2F("BeamMSDX-MSDX-Post","BeamMSDX-MSDXPoint post allienamento",150*4,-2,3,150*4,-2,3);
+   TH2F *BeamMSDY_MSDY_Post= new TH2F("BeamMSDY-MSDY-Post","BeamMSDY-MSDYPoint post allienamento",150*4,-2,3,150*4,-2,3);
     std::vector<std::unique_ptr<TH1F>> MSD_layerEnergy;
     /* 0 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirstDE1","MSD.at(0)=1 Energia MSD2",3000,0,3000)));
-    /* 1 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hSecondDE1","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
-    /* 2 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hThirdDE1","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3",3000,0,3000)));
-     /* 0 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirstDE2","MSD.at(0)=1 Energia MSD2",3000,0,3000)));
-    /* 1 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hSecondDE2","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
-    /* 2 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hThirdDE2","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3",3000,0,3000)));
+    /* 1  */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hSecondDE1","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
+    /* 2  */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hThirdDE1","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3",3000,0,3000)));
+     /* 3 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirstDE2","MSD.at(0)=1 Energia MSD2",3000,0,3000)));
+    /* 4  */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hSecondDE2","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
+    /* 5  */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hThirdDE2","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3",3000,0,3000)));
     double Xalign=0.7996-0.8846;
-    double Yalign=0.2827-0.09578;
+    double Yalign=-0.2797-0.09578;
     std::vector<int> *MSDPoints = 0;
     std::vector<double> *TWDe1Point = 0;
     std::vector<double> *TWDe2Point = 0;
@@ -218,10 +223,14 @@ void MSD(int choosefile = 4306) {
             && (TWPoints==1) && (TWChargePoint->at(0)==8)){
             align[0]->Fill(BeamMSDX);
             align[1]->Fill(MSDXPoint->at(1));
-            align[2]->Fill(BeamMSDY);
+            align[2]->Fill(-BeamMSDY);
             align[3]->Fill(MSDYPoint->at(1));
             align[4]->Fill(MSDXPoint->at(1)+Xalign);
             align[5]->Fill(MSDYPoint->at(1)+Yalign);
+            BeamMSDX_MSDX_Pre->Fill(BeamMSDX,MSDXPoint->at(1));
+            BeamMSDY_MSDY_Pre->Fill(-BeamMSDY,MSDYPoint->at(1));
+            BeamMSDX_MSDX_Post->Fill(BeamMSDX,MSDXPoint->at(1)+Xalign);
+            BeamMSDY_MSDY_Post->Fill(-BeamMSDY,MSDYPoint->at(1)+Yalign);
         }
         
 
@@ -318,7 +327,7 @@ void MSD(int choosefile = 4306) {
         }*/
         if(TWPoints == 1  && (MSDPoints->at(0) == 1) &&
             (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1))
-         if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX, BeamMSDY, MSDXPoint, MSDYPoint)
+         if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX,-BeamMSDY, MSDXPoint, MSDYPoint)
           && TWChargePoint->at(0)==8) {
               
                 ++counter2;
@@ -339,7 +348,7 @@ void MSD(int choosefile = 4306) {
         align1->SetParameters(6000,align[1]->GetMean(),align[1]->GetStdDev(),0);
         align[1]->Fit("align1");
 
-        TF1 *align2= new TF1 ("align2",Fitgaus<double>,-0.5,1.,4);
+        TF1 *align2= new TF1 ("align2",Fitgaus<double>,-2,3.,4);
          align2->SetParameters(10000,align[2]->GetMean(),align[2]->GetStdDev(),0);
         align[2]->Fit("align2");
 
@@ -373,6 +382,11 @@ void MSD(int choosefile = 4306) {
         align[j]->Write();
         }
         
+
+        BeamMSDX_MSDX_Pre->Write();
+        BeamMSDY_MSDY_Pre->Write();
+        BeamMSDX_MSDX_Post->Write();
+        BeamMSDY_MSDY_Post->Write();
         /*for(UInt_t j=0;j<MSD_layerPoints.size();++j){
         MSD_layerPoints[j]->Write();
         }
@@ -380,8 +394,8 @@ void MSD(int choosefile = 4306) {
         MSD_layerEnergy[j]->Write();
         }*/
 
-
-        std::cout << counter2 << std::endl;
+        std::cout<<"Il numero di primari osservati dal BeamMonitor è : "<<align[0]->GetEntries()<<std::endl;
+        std::cout <<"Il numero di primari post allineamento è :"<< counter2 << std::endl;
 
 
         // MSDResult->Close();

@@ -33,7 +33,7 @@ constexpr double MSDError_X_Y = 0.03;
 constexpr double BeamMSDError_X_Y=0.1;
 constexpr double ErrorZ = 0;
 constexpr double Xalign{0.7996-0.8846};
-constexpr double Yalign{0.2827-0.09578};
+constexpr double Yalign{-0.2797-0.09578};
 //////////////////////////////////////////////////////////////////////////////
 typedef struct index {
     double x = 0;
@@ -50,7 +50,7 @@ static void GeometryPrimaryDraw(std::vector<std::vector<Float_t>>& x,
 
 //////////////////////////////////////////////////////////////////////////////
 template <typename T, typename S>
-static auto BeamMSD_vs_MSDRealPoint(T& BeamMSDX, T& BeamMSDY,
+static auto BeamMSD_vs_MSDRealPoint(T BeamMSDX, T BeamMSDY,
                                     std::vector<S>* RealMSDX,
                                     std::vector<S>* RealMSDY
                                     ) -> bool;
