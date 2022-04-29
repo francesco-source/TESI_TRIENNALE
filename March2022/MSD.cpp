@@ -90,6 +90,8 @@ void MSD(int choosefile = 4306) {
    TH2F *BeamMSDY_MSDY_Pre= new TH2F("BeamMSDY-MSDY-Pre","BeamMSDY-MSDYPoint pre allienamento",150*4,-2,3,150*4,-2,3);
    TH2F *BeamMSDX_MSDX_Post= new TH2F("BeamMSDX-MSDX-Post","BeamMSDX-MSDXPoint post allienamento",150*4,-2,3,150*4,-2,3);
    TH2F *BeamMSDY_MSDY_Post= new TH2F("BeamMSDY-MSDY-Post","BeamMSDY-MSDYPoint post allienamento",150*4,-2,3,150*4,-2,3);
+    TH2F *BeamMSDX_MSDX_Clean= new TH2F("BeamMSDX-MSDX-Clean","BeamMSDX-MSDXPoint post allienamento puliti",150*4,-2,3,150*4,-2,3);
+   TH2F *BeamMSDY_MSDY_Clean= new TH2F("BeamMSDY-MSDY-Clean","BeamMSDY-MSDYPoint post allienamento puliti",150*4,-2,3,150*4,-2,3);
     std::vector<std::unique_ptr<TH1F>> MSD_layerEnergy;
     /* 0 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirstDE1","MSD.at(0)=1 Energia MSD2",3000,0,3000)));
     /* 1  */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hSecondDE1","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
@@ -329,7 +331,8 @@ void MSD(int choosefile = 4306) {
             (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1))
          if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX,-BeamMSDY, MSDXPoint, MSDYPoint)
           && TWChargePoint->at(0)==8) {
-              
+              BeamMSDX_MSDX_Clean->Fill(BeamMSDX,MSDXPoint->at(1));
+              BeamMSDY_MSDY_Clean->Fill(-BeamMSDY,MSDYPoint->at(1));
                 ++counter2;
             }
     }
@@ -387,6 +390,8 @@ void MSD(int choosefile = 4306) {
         BeamMSDY_MSDY_Pre->Write();
         BeamMSDX_MSDX_Post->Write();
         BeamMSDY_MSDY_Post->Write();
+        BeamMSDX_MSDX_Clean->Write();
+        BeamMSDY_MSDY_Clean->Write();
         /*for(UInt_t j=0;j<MSD_layerPoints.size();++j){
         MSD_layerPoints[j]->Write();
         }
