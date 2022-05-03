@@ -99,6 +99,7 @@ void MSD(int choosefile = 4306) {
      /* 3 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hFirstDE2","MSD.at(0)=1 Energia MSD2",3000,0,3000)));
     /* 4  */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hSecondDE2","MSD.at(0)=1 Energia MSD3",3000,0,3000)));
     /* 5  */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hThirdDE2","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3",3000,0,3000)));
+    /*  6 */ MSD_layerEnergy.push_back(std::unique_ptr<TH1F>(new TH1F("hThirdDE2TWChrge=8","MSD->at(0)=1, MSD->at(1)=1,Energia MSD3 TWCharge=8",3000,0,3000)));
     double Xalign=0.7996-0.8846;
     double Yalign=-0.2797-0.09578;
     std::vector<int> *MSDPoints = 0;
@@ -186,7 +187,7 @@ void MSD(int choosefile = 4306) {
         }
         sum.push_back(ausiliarsum);
 
-       /* Filling(TWDe1Point, h[1].get());
+        Filling(TWDe1Point, h[1].get());
         foot::Fill(TWDe1Point, h[2].get(), TWChargePoint, 8);
         if (sum[i] == 3 && TWPoints == 1) {
             Filling(TWDe1Point, h[3].get());
@@ -219,7 +220,7 @@ void MSD(int choosefile = 4306) {
         if (sum[i] == 3 && TWPoints == 1) {
             h[12]->Fill(var1);
             h[18]->Fill(var2);
-        }*/
+        }
         if(sum[i]==3 &&(MSDPoints->at(0) == 1) &&
             (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1) 
             && (TWPoints==1) && (TWChargePoint->at(0)==8)){
@@ -249,13 +250,16 @@ void MSD(int choosefile = 4306) {
                     MSD_layerPoints[2]->Fill(MSDPoints->at(2));
                     MSD_layerEnergy[2]->Fill(MSDDe1Point->at(2)); 
                      MSD_layerEnergy[5]->Fill(MSDDe2Point->at(2)); 
+                     if( TWPoints==1 && TWChargePoint->at(0)==8 && MSDDe1Point->at(2)<1000){
+                            MSD_layerEnergy[6]->Fill(MSDDe1Point->at(2));
+                     }
                 } 
                }
            }
-           if(MSDPoints->at(0)==1 && MSDDe1Point->at(0)>=1000 && MSDDe2Point->at(0)>=1000){
+           if(MSDPoints->at(0)==1 && MSDDe1Point->at(0)>=1000 && MSDDe2Point->at(1)>=1000){
            MSD_layerPoints[3]->Fill(MSDPoints->at(0));
         }
-
+       
            if(MSDPoints->at(0)==1 && MSDPoints->at(1)>=0){           
            if(MSDDe1Point->at(0)>=1000 && MSDPoints->at(1)==1 && MSDDe1Point->at(1)>=1000 && MSDDe2Point->at(1)>=1000){
             MSD_layerPoints[4]->Fill(MSDPoints->at(1));
@@ -272,7 +276,36 @@ void MSD(int choosefile = 4306) {
             MSD_layerPoints[7]->Fill(TWPoints);
        }
 
+       }*/
+       if(TWPoints==1 && TWChargePoint->at(0)!=8 && MSDPoints->at(0)==1 &&  MSDPoints->at(1)==1 &&  MSDPoints->at(2)==1){
+           if(MSDDe1Point->at(2)>=1500){
+                MSD_layerPoints[0]->Fill(1);
+           }
+           if(MSDDe1Point->at(1)>=1500){
+               if(MSDDe1Point->at(2)<1200){
+                   MSD_layerPoints[1]->Fill(1);
+               }
+           }
+           if(MSDDe1Point->at(0)>=1500){
+               if(MSDDe1Point->at(1)<=1200){
+                 MSD_layerPoints[2]->Fill(1);  
+               }
+           }     
        }
+       if(MSDPoints->size()==3){
+       if(MSDPoints->at(0)==1){
+           MSD_layerPoints[3]->Fill(1);
+           if(MSDPoints->at(1)==1){
+             MSD_layerPoints[4]->Fill(1);  
+             if(MSDPoints->at(2)==1){
+                 MSD_layerPoints[5]->Fill(1);
+           }
+           }
+           
+       }
+       }
+
+
         if (sum[i] == 3 && TWPoints == 1) {
             foot::Fill(TWChargePoint, h[13].get(), TWChargePoint, 8, var1);
             foot::Fill(TWChargePoint, h[19].get(), TWChargePoint, 8, var2);
@@ -282,7 +315,7 @@ void MSD(int choosefile = 4306) {
             }
         }
 
-        if (TWPoints == 1 && Frag == false && (MSDPoints->at(0) == 1) &&
+       /* if (TWPoints == 1 && Frag == false && (MSDPoints->at(0) == 1) &&
             (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1)) {
             std::vector<std::vector<Float_t>> coordinates;
             std::vector<Float_t> fillCordinates;
@@ -337,12 +370,12 @@ void MSD(int choosefile = 4306) {
             }
     }
     // foot::GeometryPrimaryDraw(MSDX, MSDY, MSDX.size());
-        //h[8]->Add(h[6].get(), h[7].get(), 1, -1);
-        //h[9]->Add(h[5].get(), h[7].get(), 1, -1);
+        h[8]->Add(h[6].get(), h[7].get(), 1, -1);
+        h[9]->Add(h[5].get(), h[7].get(), 1, -1);
         /////////////////////////////////////////////////
-      /*  for (UInt_t j = 0; j < h.size(); ++j) {
+       for (UInt_t j = 0; j < h.size(); ++j) {
             h[j]->Write();
-        }*/
+        }
         TF1 *align0= new TF1 ("align0",Fitgaus<double>,-1,2.5,4);
         align0->SetParameters(5000,align[0]->GetMean(),align[0]->GetStdDev(),0);
         align[0]->Fit("align0","R");
@@ -392,12 +425,12 @@ void MSD(int choosefile = 4306) {
         BeamMSDY_MSDY_Post->Write();
         BeamMSDX_MSDX_Clean->Write();
         BeamMSDY_MSDY_Clean->Write();
-        /*for(UInt_t j=0;j<MSD_layerPoints.size();++j){
+        for(UInt_t j=0;j<MSD_layerPoints.size();++j){
         MSD_layerPoints[j]->Write();
         }
          for(UInt_t j=0;j<MSD_layerEnergy.size();++j){
         MSD_layerEnergy[j]->Write();
-        }*/
+        }
 
         std::cout<<"Il numero di primari osservati dal BeamMonitor è : "<<align[0]->GetEntries()<<std::endl;
         std::cout <<"Il numero di primari post allineamento è :"<< counter2 << std::endl;
