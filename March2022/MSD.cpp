@@ -296,8 +296,11 @@ void MSD(int choosefile = 4306) {
             BeamMSD[5]->Fill(BeamMSDY,MSDYPoint->at(2));
             BeamMSD[6]->Fill(BeamMSDX,MSDXPoint->at(1)+Xalign);
             BeamMSD[7]->Fill(BeamMSDY,MSDYPoint->at(1)+Yalign);
-            if(BeamMSDX<=0.3 && BeamMSDX>=0.5){
-                BeamMSD[11]->Fill(BeamMSDX,MSDXPoint->at(1));
+            if(BeamTGX<=-0.5 || BeamTGX>=0.5){
+              BeamMSD[11]->Fill(BeamMSDX,MSDXPoint->at(1));
+            }
+            else if(BeamTGX>=-0.3 && BeamTGX<=0.3){
+                    BeamMSD[11]->Fill(BeamMSDX,MSDXPoint->at(1));
             }
              if(!(cutg->IsInside(BeamMSDX,MSDXPoint->at(1)+Xalign))){
             energy->Fill(MSDDe1Point->at(1));
