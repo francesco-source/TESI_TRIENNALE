@@ -28,9 +28,10 @@ void MSD(int choosefile = 4306) {
         TGeomOut = (TTree *)fileGeom->Get("Tree;1");
         TPileUpOut = (TTree *)filePileUp->Get("Tree;1");
     } else {
-        Chain= new TChain("Tree;4");
+        Chain= new TChain("Tree");
         Chain->Add("ROOT-FILES/tree4306_newgeom_MAR2022.root",577096);
         Chain->Add("ROOT-FILES/tree4307_newgeom_MAR2022.root",513372);
+        Chain->Add("ROOT-FILES/tree4305_newgeom_MAR2022.root",162105);
         fileGeom = new TFile("ROOT-FILES/tree4306_newgeom_MAR2022.root");
         filePileUp = new TFile("ROOT-FILES/tree4306_pileup_MAR2022.root");
         MSDResult = new TFile("MSDResult4306.root", "RECREATE");
@@ -40,6 +41,7 @@ void MSD(int choosefile = 4306) {
     Chain->ls();
     fileGeom->ls();
     filePileUp->ls();
+    std::cout<<Chain->GetEntries()<<std::endl;
     std::vector<std::unique_ptr<TH1F>> h;
    /* 0 */ h.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDPoints", " Punti nel MSD", 10, 0, 10)));
    /* 1 */ h.push_back(std::unique_ptr<TH1F>(new TH1F("hTWPointDE1", " DE1 TW", 100, 0, 100)));
@@ -81,7 +83,7 @@ void MSD(int choosefile = 4306) {
    /* 0 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1","MSD primo Layer Points=1",25,0,25)));
    /* 1 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDSecond","MSD secondo Layer Points=1",25,0,25)));
    /* 2 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDThird","MSD terzo Layer Points=1",25,0,25)));
-   /* 3 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDFirst1Filter","MSD primo Layer Points=1, filterDE",25,0,25)));
+   /* 3 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDTW","MSD=3 e TW=1",25,0,25)));
    /* 4 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDSecond1Filter","MSD secondo Layer Points=1, filterDE",25,0,25)));
    /* 5 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDThird1Filter","MSD terzo Layer Points=1, filterDE",25,0,25)));
    /* 6 */  MSD_layerPoints.push_back(std::unique_ptr<TH1F>(new TH1F("hMSDTW_After_filters","MSD TW alfer filters",25,0,25)));
@@ -355,6 +357,20 @@ void MSD(int choosefile = 4306) {
        }
 
        }*/
+       if(MSDPoints->size()==3){
+           if(MSDPoints->at(0)==1){
+               MSD_layerPoints[0]->Fill(1);
+           if(MSDPoints->at(1)==1){
+               MSD_layerPoints[1]->Fill(1);
+               if(MSDPoints->at(2)==1){
+                   MSD_layerPoints[2]->Fill(1);
+                   if(TWPoints==1){
+                       MSD_layerPoints[3]->Fill(1);
+                   }
+               }
+           }
+           }         
+       }
        
       /* if(TWPoints==1 && TWChargePoint->at(0)!=8 
        && MSDPoints->at(0)==1 
@@ -374,6 +390,7 @@ void MSD(int choosefile = 4306) {
                }
            }     
        }*/
+
       /* if(MSDPoints->size()==3){
        if(MSDPoints->at(0)==1){
            MSD_layerPoints[3]->Fill(1);
@@ -397,7 +414,7 @@ void MSD(int choosefile = 4306) {
             }
         }*/
 
-      /* if (TWPoints == 1 &&  (MSDPoints->at(0) == 1) &&
+      if (TWPoints>=0 && (MSDPoints->at(0) == 1) &&
             (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1)) {
             std::vector<std::vector<Float_t>> coordinates;
             std::vector<Float_t> fillCordinates;
@@ -416,14 +433,15 @@ void MSD(int choosefile = 4306) {
             if (foot::GeometryMSDTGLine(coordinates, counter3) == true) {
                 counterOKTarget->Fill(1);
 
-                foot::Fill(TWChargePoint, h[7].get(), TWChargePoint, 8,
+                /*foot::Fill(TWChargePoint, h[7].get(), TWChargePoint, 8,
                            TWDe1Point->at(0));
                 foot::Fill(TWChargePoint, h[15].get(), TWChargePoint, 8, var1);
-                foot::Fill(TWChargePoint, h[21].get(), TWChargePoint, 8, var2);
+                foot::Fill(TWChargePoint, h[21].get(), TWChargePoint, 8, var2);*/
+
                 counter3++;
-             
+                
                 // data 3D visualisation////
-               /* for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
+                /*for (UInt_t j = 0; j < TWChargePoint->size(); ++j) {
                     std::vector<Float_t> x;
                     std::vector<Float_t> y;
                     if (TWChargePoint->at(j) == 8 && MSDX.size() < 100) {
@@ -440,7 +458,7 @@ void MSD(int choosefile = 4306) {
                         MSDX.push_back(x);
                         MSDY.push_back(y);
                     }
-                }
+                }*/
                 //////////////////////////////
             }
             else{
@@ -448,7 +466,7 @@ void MSD(int choosefile = 4306) {
             }
             ////////////////////////////////////
            
-        }*/
+        }
         if(TWPoints == 1  && (MSDPoints->at(0) == 1) &&
             (MSDPoints->at(1) == 1) && (MSDPoints->at(2) == 1))
          if (foot::BeamMSD_vs_MSDRealPoint(BeamMSDX,BeamMSDY, MSDXPoint, MSDYPoint)
